@@ -1,4 +1,5 @@
 10_maldetect-paths
+12_maldetect-cron.daily-documentroots
 15_maldetect-no-autoupdate
 20_maldetect-remove-shebang
 25_maldetect-use-var-instead-dirs

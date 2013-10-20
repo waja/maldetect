@@ -1,0 +1,13 @@
+--- a/cron.daily
++++ b/cron.daily
+@@ -38,4 +38,10 @@
+ 	if [ -d "/usr/local/apache/htdocs" ]; then
+ 		/usr/bin/maldet -b -r /usr/local/apache/htdocs 2 >> /dev/null 2>&1
+ 	fi
++	if [ -d "/var/www/" ] && [ ! -d "/var/www/html" ]; then
++		/usr/bin/maldet -b -r /var/www 2 >> /dev/null 2>&1
++	fi
++	if [ -d "/srv/www/" ]; then
++		/usr/bin/maldet -b -r /var/www 2 >> /dev/null 2>&1
++	fi
+ fi
