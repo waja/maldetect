@@ -1,0 +1,23 @@
+Source: maldetect
+Section: utils
+Priority: optional
+Maintainer: Jan Wagner <waja@cyconet.org>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.4
+Homepage: http://www.rfxn.com/projects/linux-malware-detect/
+#Vcs-Git: git://git.debian.org/collab-maint/maldetect.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/maldetect.git;a=summary
+
+Package: maldetect
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Linux malware detector
+ Linux Malware Detect (LMD) is a malware scanner for Linux released under the
+ GNU GPLv2 license, that is designed around the threats faced in shared hosted
+ environments. It uses threat data from network edge intrusion detection systems
+ to extract malware that is actively being used in attacks and generates
+ signatures for detection. In addition, threat data is also derived from user
+ submissions with the LMD checkout feature and from malware community
+ resources. The signatures that LMD uses are MD5 file hashes and HEX pattern
+ matches, they are also easily exported to any number of detection tools such as
+ ClamAV.
