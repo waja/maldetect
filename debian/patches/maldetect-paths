@@ -1,0 +1,153 @@
+diff -Nur maldetect-1.4.2-orig//cron.daily maldetect-1.4.2-new//cron.daily
+--- maldetect-1.4.2-orig//cron.daily	2013-04-11 18:23:27.000000000 +0200
++++ maldetect-1.4.2-new//cron.daily	2013-05-24 21:15:41.000000000 +0200
+@@ -1,44 +1,41 @@
+ #!/bin/bash
+ 
+ # clear quarantine/session/tmp data every 14 days
+-/usr/sbin/tmpwatch 336 /usr/local/maldetect/tmp >> /dev/null 2>&1
+-/usr/sbin/tmpwatch 336 /usr/local/maldetect/sess >> /dev/null 2>&1
+-/usr/sbin/tmpwatch 336 /usr/local/maldetect/quarantine >> /dev/null 2>&1
+-/usr/sbin/tmpwatch 336 /usr/local/maldetect/pub/*/ >> /dev/null 2>&1
+-
+-# check for new release version
+-/usr/local/maldetect/maldet -d >> /dev/null 2>&1
++/usr/sbin/tmpwatch 336 /usr/share/maldetect/tmp >> /dev/null 2>&1
++/usr/sbin/tmpwatch 336 /var/lib/maldetect/sess >> /dev/null 2>&1
++/usr/sbin/tmpwatch 336 /var/lib/maldetect/quarantine >> /dev/null 2>&1
++/usr/sbin/tmpwatch 336 /var/lib/maldetect/pub/*/ >> /dev/null 2>&1
+ 
+ # check for new definition set
+-/usr/local/maldetect/maldet -u >> /dev/null 2>&1
++/usr/bin/maldet -u >> /dev/null 2>&1
+ 
+ # if were running inotify monitoring, send daily hit summary
+ if [ "$(ps -A --user root -o "comm" | grep inotifywait)" ]; then
+-        /usr/local/maldetect/maldet --alert-daily >> /dev/null 2>&1
++        /usr/bin/maldet --alert-daily >> /dev/null 2>&1
+ else
+ 	# scan the last 2 days of file changes
+ 	if [ -d "/home/virtual" ] && [ -d "/usr/lib/opcenter" ]; then
+ 		# ensim
+-	        /usr/local/maldetect/maldet -b -r /home/virtual/?/fst/var/www/html 2 >> /dev/null 2>&1
+-	        /usr/local/maldetect/maldet -b -r /home/virtual/?/fst/home/?/public_html 2 >> /dev/null 2>&1
++	        /usr/bin/maldet -b -r /home/virtual/?/fst/var/www/html 2 >> /dev/null 2>&1
++	        /usr/bin/maldet -b -r /home/virtual/?/fst/home/?/public_html 2 >> /dev/null 2>&1
+ 	elif [ -d "/etc/psa" ] && [ -d "/var/lib/psa" ]; then
+ 		# psa
+-		/usr/local/maldetect/maldet -b -r /var/www/vhosts/?/httpdocs 2 >> /dev/null 2>&1
+-		/usr/local/maldetect/maldet -b -r /var/www/vhosts/?/subdomains/?/httpdocs 2 >> /dev/null 2>&1
++		/usr/bin/maldet -b -r /var/www/vhosts/?/httpdocs 2 >> /dev/null 2>&1
++		/usr/bin/maldet -b -r /var/www/vhosts/?/subdomains/?/httpdocs 2 >> /dev/null 2>&1
+ 	elif [ -d "/usr/local/directadmin" ]; then
+ 		# DirectAdmin
+-                /usr/local/maldetect/maldet -b -r /var/www/html/?/ 2 >> /dev/null 2>&1
+-                /usr/local/maldetect/maldet -b -r /home?/?/domains/?/public_html 2 >> /dev/null 2>&1
++                /usr/bin/maldet -b -r /var/www/html/?/ 2 >> /dev/null 2>&1
++                /usr/bin/maldet -b -r /home?/?/domains/?/public_html 2 >> /dev/null 2>&1
+ 	else
+ 		# cpanel, interworx and other standard home/user/public_html setups
+-	        /usr/local/maldetect/maldet -b -r /home?/?/public_html 2 >> /dev/null 2>&1
++	        /usr/bin/maldet -b -r /home?/?/public_html 2 >> /dev/null 2>&1
+ 	fi
+ 
+ 	# scan default apache docroot paths
+ 	if [ -d "/var/www/html" ]; then
+-		/usr/local/maldetect/maldet -b -r /var/www/html 2 >> /dev/null 2>&1
++		/usr/bin/maldet -b -r /var/www/html 2 >> /dev/null 2>&1
+ 	fi
+ 	if [ -d "/usr/local/apache/htdocs" ]; then
+-		/usr/local/maldetect/maldet -b -r /usr/local/apache/htdocs 2 >> /dev/null 2>&1
++		/usr/bin/maldet -b -r /usr/local/apache/htdocs 2 >> /dev/null 2>&1
+ 	fi
+ fi
+diff -Nur maldetect-1.4.2-orig//files/hexfifo.pl maldetect-1.4.2-new//files/hexfifo.pl
+--- maldetect-1.4.2-orig//files/hexfifo.pl	2013-04-09 09:17:30.000000000 +0200
++++ maldetect-1.4.2-new//files/hexfifo.pl	2013-05-24 21:12:50.000000000 +0200
+@@ -9,7 +9,7 @@
+ ##
+ #
+ 
+-$named_pipe_name = "/usr/local/maldetect/hexfifo";
++$named_pipe_name = "/var/lib/maldetect/hexfifo";
+ $timeout = "3";
+ 
+ if (-p $named_pipe_name) {
+@@ -40,7 +40,7 @@
+     }
+  }
+ 
+-$dat_hexstring="/usr/local/maldetect/sigs/hex.dat";
++$dat_hexstring="/var/lib/maldetect/sigs/hex.dat";
+ open(DAT, $dat_hexstring) || die("Could not open $dat_hexstring");
+ @raw_data=<DAT>;
+ close(DAT); 
+diff -Nur maldetect-1.4.2-orig//files/hexstring.pl maldetect-1.4.2-new//files/hexstring.pl
+--- maldetect-1.4.2-orig//files/hexstring.pl	2013-04-09 09:17:30.000000000 +0200
++++ maldetect-1.4.2-new//files/hexstring.pl	2013-05-24 21:23:02.000000000 +0200
+@@ -19,7 +19,7 @@
+ $instr = $ARGV[0];
+ 
+ 
+-$dat_hexstring="/usr/local/maldetect/sigs/hex.dat";
++$dat_hexstring="/var/lib/maldetect/sigs/hex.dat";
+ open(DAT, $dat_hexstring) || die("Could not open $dat_hexstring");
+ @raw_data=<DAT>;
+ close(DAT); 
+diff -Nur maldetect-1.4.2-orig//files/internals.conf maldetect-1.4.2-new//files/internals.conf
+--- maldetect-1.4.2-orig//files/internals.conf	2013-04-09 09:17:30.000000000 +0200
++++ maldetect-1.4.2-new//files/internals.conf	2013-05-24 21:26:00.000000000 +0200
+@@ -29,11 +29,11 @@
+ ignore_sigs=$inspath/ignore_sigs
+ ignore_inotify=$inspath/ignore_inotify
+ ignore_file_ext=$inspath/ignore_file_ext
+-quardir=$inspath/quarantine
+-sessdir=$inspath/sess
+-sigdir=$inspath/sigs
+-cldir=$inspath/clean
+-tmpdir=$inspath/tmp
++quardir=/var/lib/maldetect/quarantine
++sessdir=/var/lib/maldetect/sess
++sigdir=/var/lib/maldetect/sigs
++cldir=/var/lib/maldetect/clean
++tmpdir=/var/lib/maldetect/tmp
+ 
+ def_verf=$sigdir/maldet.sigs.ver
+ def_ver=`cat $sigdir/maldet.sigs.ver`
+@@ -50,16 +50,16 @@
+ lmdurl_hash=http://www.rfxn.com/downloads/maldet.current.hash
+ lmdurl_ver=http://www.rfxn.com/downloads/maldet.current.ver
+ 
+-hexm_pl=$inspath/hexstring.pl
+-hexmfifo_pl=$inspath/hexfifo.pl
++hexm_pl=/usr/lib/maldetect/hexstring.pl
++hexmfifo_pl=/usr/lib/maldetect/hexfifo.pl
+ dat_md5hash=$sigdir/md5.dat
+ dat_hexstring=$sigdir/hex.dat
+ dat_hex_cav=$sigdir/rfxn.ndb
+ dat_md5_cav=$sigdir/rfxn.hdb
+ 
+-tlog=$inspath/inotify/tlog
+-inotify=$inspath/inotify/inotifywait
+-inotify_log="$inspath/inotify/inotify_log"
++tlog=/var/lib/maldetect/inotify/tlog
++inotify=/usr/bin/inotifywait
++inotify_log="/var/lib/maldetect/inotify/inotify_log"
+ inotify_trim=150000
+-hex_fifo=$inspath/hexfifo
++hex_fifo=/var/lib/maldetect/hexfifo
+ pubuser_minuid=10
+diff -Nur maldetect-1.4.2-orig//files/maldet maldetect-1.4.2-new//files/maldet
+--- maldetect-1.4.2-orig//files/maldet	2013-04-13 06:58:30.000000000 +0200
++++ maldetect-1.4.2-new//files/maldet	2013-05-24 21:26:29.000000000 +0200
+@@ -9,8 +9,8 @@
+ ##
+ #
+ ver=1.4.2
+-inspath=/usr/local/maldetect
+-cnf=$inspath/conf.maldet
++inspath=/usr/share/maldetect
++cnf=/etc/maldetect.conf
+ intcnf=$inspath/internals.conf
+ datestamp=`date +"%m%d%y-%H%M"`
+ rver=$ver
