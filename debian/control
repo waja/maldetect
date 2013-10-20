@@ -11,6 +11,7 @@ Homepage: http://www.rfxn.com/projects/linux-malware-detect/
 Package: maldetect
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: inotify-tools
 Description: Linux malware detector
  Linux Malware Detect (LMD) is a malware scanner for Linux released under the
  GNU GPLv2 license, that is designed around the threats faced in shared hosted
