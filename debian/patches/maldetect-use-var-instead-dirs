@@ -1,0 +1,12 @@
+diff -Nur maldetect-1.4.2-orig//files/maldet maldetect-1.4.2-new//files/maldet
+--- maldetect-1.4.2-orig//files/maldet	2013-05-24 22:46:52.000000000 +0200
++++ maldetect-1.4.2-new//files/maldet	2013-05-24 22:51:59.000000000 +0200
+@@ -666,7 +666,7 @@
+         if [ -z "$setmodsec" ]; then
+ 		eout "{scan} scan of $spath ($tot_files files) in progress..." 1
+ 	fi
+-	for hit in `$clamscan -d $inspath/sigs/rfxn.ndb -d $inspath/sigs/rfxn.hdb $clamav_db -r --infected --no-summary -f $find_results 2> /dev/null | tr -d ':' | sed 's/.UNOFFICIAL//' | awk '{print$2":"$1}'`; do
++	for hit in `$clamscan -d $dat_hex_cav -d $dat_md5_cav $clamav_db -r --infected --no-summary -f $find_results 2> /dev/null | tr -d ':' | sed 's/.UNOFFICIAL//' | awk '{print$2":"$1}'`; do
+ 		file=`echo $hit | tr ':' ' ' | awk '{print$2}'`
+ 		signame=`echo $hit | tr ':' ' ' | awk '{print$1}'`
+ 		clamsig=`echo $signame | grep -iE "HEX|MD5"`

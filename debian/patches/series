@@ -1,1 +1,4 @@
 maldetect-paths
+maldetect-no-autoupdate
+maldetect-remove-shebang
+maldetect-use-var-instead-dirs

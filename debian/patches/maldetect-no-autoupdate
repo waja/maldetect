@@ -1,0 +1,112 @@
+diff -Nur maldetect-1.4.2-orig//files/maldet maldetect-1.4.2-new//files/maldet
+--- maldetect-1.4.2-orig//files/maldet	2013-05-24 21:27:53.000000000 +0200
++++ maldetect-1.4.2-new//files/maldet	2013-05-24 21:30:46.000000000 +0200
+@@ -117,7 +117,7 @@
+ signature set: $def_ver
+ usage maldet [-h|--help] [-l|--log] [-e|--report] [-p|--purge] [-c|--checkout]
+ [-b|--background] [-m|--monitor] [-k|--kill-monitor] [-a|--scan-all] [-r|--scan-recent]
+-[-q|--quarantine] [-s|--restore] [-n|--clean] [-u|--update] [-d|--update-ver]
++[-q|--quarantine] [-s|--restore] [-n|--clean] [-u|--update]
+ EOF
+ }
+ 
+@@ -132,9 +132,6 @@
+     -u, --update
+        Update malware detection signatures from rfxn.com
+ 
+-    -d, --update-ver
+-       Update the installed version from rfxn.com
+-
+     -m, --monitor USERS|PATHS|FILE
+        Run maldet with inotify kernel level file create/modify monitoring
+        If USERS is specified, monitor user homedirs for UID's > 500
+@@ -1325,78 +1322,6 @@
+         fi
+ }
+ 
+-
+-lmdup() {
+-ofile=$tmpdir/.lmdup_vercheck.$$
+-tmp_inspath=/usr/local/lmd_update
+-rm -rf $tmp_inspath
+-rm -f $ofile
+-
+-mkdir -p $tmp_inspath
+-chmod 750 $tmp_inspath
+-
+-eout "{update} checking for available updates..." 1
+-
+-$wget --referer="http://www.rfxn.com/LMD-$rver" -q -t5 -T5 "$lmdurl_ver" -O $ofile >> /dev/null 2>&1
+-if [ -s "$ofile" ]; then
+-	installed_ver=`echo $ver | tr -d '.'`
+-	current_ver=`cat $ofile | tr -d '.'`
+-	current_hver=`cat $ofile`
+-	if [ "$current_ver" -gt "$installed_ver" ]; then
+-		eout "{update} new version $current_hver found, updating..." 1
+-		$wget --referer="http://www.rfxn.com/LMD-$rver" -q -t5 -T5 "http://www.rfxn.com/downloads/maldetect-current.tar.gz" -O "$tmp_inspath/maldetect-current.tar.gz"
+-		if [ -f "$tmp_inspath/maldetect-current.tar.gz" ]; then
+-		 cd $tmp_inspath/
+-		 tar xfz maldetect-current.tar.gz
+-		 cd maldetect-*
+-		 chmod 750 install.sh
+-		 sh -c './install.sh' >> /dev/null 2>&1
+-		 eout "{update} completed update v$ver => v$current_hver, running signature updates..." 1
+-		 $inspath/maldet --update 1
+-		 eout "{update} update and config import completed." 1
+-		else
+-			eout "{update} could not download maldetect-current.tar.gz, please try again later." 1
+-			exit
+-		fi
+-	else
+-		eout "{update} hashing install files and checking against server..." 1
+-		md5sum $inspath/maldet $inspath/internals.conf $inspath/inotify/tlog $inspath/inotify/inotifywait $inspath/clean/* | awk '{print$1}' | tr '\n' ' ' | tr -d ' ' > $lmd_hashf
+-		ofile_hash=$tmpdir/.lmdup_hashcheck
+-		$wget --referer="http://www.rfxn.com/LMD-$rver" -q -t5 -T5 "$lmdurl_hash" -O $ofile_hash >> /dev/null 2>&1
+-		if [ -f "$ofile_hash" ]; then
+-			installed_hash=`cat $lmd_hashf`
+-			current_hash=`cat $ofile_hash`
+-			if [ ! "$installed_hash" == "$current_hash" ]; then
+-				eout "{update} version check shows latest but hash check failed, forcing update..." 1
+-		                $wget --referer="http://www.rfxn.com/LMD-$rver" -q -t5 -T5 "http://www.rfxn.com/downloads/maldetect-current.tar.gz" -O "$tmp_inspath/maldetect-current.tar.gz"
+-	        	        if [ -f "$tmp_inspath/maldetect-current.tar.gz" ]; then
+-	                	 cd $tmp_inspath/
+-	        	         tar xfz maldetect-current.tar.gz
+-		                 cd maldetect-*
+-        		         chmod 750 install.sh
+-		                 sh -c './install.sh' >> /dev/null 2>&1
+-        	        	 eout "{update} completed update v$ver => v$current_hver, running signature updates..." 1
+-        		         $inspath/maldet --update 1
+-	                	 eout "{update} update and config import completed." 1
+-                		else
+-        	                 eout "{update} could not download maldetect-current.tar.gz, please try again later." 1
+-	                         exit
+-				fi
+-			else
+-				eout "{update} latest version already installed." 1
+-			fi
+-		else
+-			eout "{update} latest version already installed." 1
+-		fi
+-	fi
+-else
+-	eout "{update} could not download version file from server, please try again later." 1
+-	exit
+-fi
+-
+-rm -rf $tmp_inspath $ofile $ofile_hash
+-}
+-
+ sigup() {
+ check_clibkeyutils
+ eout "{sigup} performing signature update check..." 1
+@@ -1634,10 +1559,6 @@
+ 		header
+ 		purge
+ 	;;
+-	-d|--update-ver|--update-version)
+-		header
+-		lmdup
+-	;;
+ 	-u|--update)
+ 		shift
+ 		if [ ! "$1" == "1" ]; then

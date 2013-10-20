@@ -1,0 +1,18 @@
+diff -Nur maldetect-1.4.2-orig//files/conf.maldet maldetect-1.4.2-new//files/conf.maldet
+--- maldetect-1.4.2-orig//files/conf.maldet	2013-04-09 09:17:30.000000000 +0200
++++ maldetect-1.4.2-new//files/conf.maldet	2013-05-24 21:32:50.000000000 +0200
+@@ -1,5 +1,3 @@
+-#!/bin/bash
+-#
+ ##
+ # Linux Malware Detect v1.4.2
+ #             (C) 2002-2013, R-fx Networks <proj@r-fx.org>
+diff -Nur maldetect-1.4.2-orig//files/internals.conf maldetect-1.4.2-new//files/internals.conf
+--- maldetect-1.4.2-orig//files/internals.conf	2013-05-24 21:31:26.000000000 +0200
++++ maldetect-1.4.2-new//files/internals.conf	2013-05-24 21:32:50.000000000 +0200
+@@ -1,5 +1,3 @@
+-#!/bin/bash
+-#
+ ##
+ # Linux Malware Detect v1.4.2
+ #             (C) 2002-2013, R-fx Networks <proj@r-fx.org>
