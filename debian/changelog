@@ -1,3 +1,15 @@
+maldetect (1.4.2+dfsg-2) unstable; urgency=low
+
+  * [dc4a787] Add some more DocumentRoots locations
+  * [7e967b6] Recommand inotify-tools
+  * [3c10279] Adjust patches/25_maldetect-use-var-instead-dirs to use session
+    dir value
+  * [c7e724a] Add packages of used binaries into Depends/Recommends
+  * [aef4be8] Try to get debian/watch running
+  * [a7ec4a9] Fix depends
+
+ -- Jan Wagner <waja@cyconet.org>  Sun, 20 Oct 2013 23:26:57 +0200
+
 maldetect (1.4.2+dfsg-1) unstable; urgency=low
 
   * Initial release
