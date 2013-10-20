@@ -1,5 +1,6 @@
 # Compulsory line, this is a version 3 file
 version=3
 
-# examine a Webserver directory
+# drop the dfsg from version
+opts="dversionmangle=s/\+(debian|dfsg|ds|deb)\d*$//" \
 http://www.rfxn.com/downloads/maldetect-(.*)\.tar\.gz
