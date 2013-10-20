@@ -23,14 +23,9 @@ cp -a "$tarball" "$tarball.orig"
 distdir="$(basename $(ls -d $tdir/*))"
 srcdir="$tdir/$distdir"
 
-#echo "Adjusting $srcdir/configure"
-sed -i 's/perlmods\/Makefile\ //' $srcdir/configure
-sed -i '/perlmods\/Makefile/d' $srcdir/configure
-#echo "Adjusting $srcdir/Makefile*"
-sed -i 's/perlmods\ //' $srcdir/Makefile*
-#echo "Removing $srcdir/perlmods/
-rm -rf $srcdir/perlmods/
+#echo "Removing $srcdir/files/inotify/*inotify*
+rm -rf $srcdir/files/inotify/*inotify*
 
-#tarball=$(echo $tarball|sed 's/\.orig\.tar\.gz/+dfsg.orig.tar.gz/')
+tarball=$(echo $tarball|sed 's/\.orig\.tar\.gz/+dfsg.orig.tar.gz/')
 tar -cof "${tarball/.gz}" -C $tdir/ $distdir
 gzip -f9 "${tarball/.gz}"
