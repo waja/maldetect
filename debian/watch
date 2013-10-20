@@ -2,5 +2,5 @@
 version=3
 
 # drop the dfsg from version
-opts="dversionmangle=s/\+(debian|dfsg|ds|deb)\d*$//" \
-http://www.rfxn.com/downloads/maldetect-(.*)\.tar\.gz
+opts="dversionmangle=s/\+(debian|dfsg|ds|deb)\d*$//,filenamemangle=s/maldet\.current\.ver/maldetect-$1.tar.gz/" \
+http://www.rfxn.com/downloads/maldet.current.ver (.*)
