@@ -1,3 +1,9 @@
+maldetect (1.4.2+dfsg-3) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+
+ -- Jan Wagner <waja@cyconet.org>  Sun, 20 Oct 2013 23:31:02 +0200
+
 maldetect (1.4.2+dfsg-2) unstable; urgency=low
 
   * [dc4a787] Add some more DocumentRoots locations
