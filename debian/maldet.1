@@ -13,7 +13,113 @@ Linux Malware Detect is a malware scanner for Linux released under the GNU GPLv2
 The driving force behind LMD is that there is currently limited availability of open source/restriction free tools for Linux systems that focus on malware detection and more important that get it right. Many of the AV products that perform malware detection on Linux have a very poor track record of detecting threats, especially those targeted at shared hosted environments.
 .PP
 The threat landscape in shared hosted environments is unique from that of the standard AV products detection suite in that they are detecting primarily OS level trojans, rootkits and traditional file-infecting viruses but missing the ever increasing variety of malware on the user account level which serves as an attack platform.
-.HP
+.SH FEATURES
+.IP \(bu 3
+MD5 file hash detection for quick threat identification
+.IP \(bu 3
+HEX based pattern matching for identifying threat variants
+.IP \(bu 3
+statistical analysis component for detection of obfuscated threats (e.g: base64)
+.IP \(bu 3
+integrated detection of ClamAV to use as scanner engine for improved performance
+.IP \(bu 3
+integrated signature update feature with \fB-u\fP|\fB--update\fP
+.IP \(bu 3
+integrated version update feature with \fB-d\fP|\fB--update-ver\fP
+.IP \(bu 3
+scan-recent option to scan only files that have been added/changed in X days
+.IP \(bu 3
+scan-all option for full path based scanning
+.IP \(bu 3
+checkout option to upload suspected malware to rfxn.com for review / hashing
+.IP \(bu 3
+full reporting system to view current and previous scan results
+.IP \(bu 3
+quarantine queue that stores threats in a safe fashion with no permissions
+.IP \(bu 3
+quarantine batching option to quarantine the results of a current or past scans
+.IP \(bu 3
+quarantine restore option to restore files to original path, owner and perms
+.IP \(bu 3
+quarantine suspend account option to Cpanel suspend or shell revoke users
+.IP \(bu 3
+cleaner rules to attempt removal of malware injected strings
+.IP \(bu 3
+cleaner batching option to attempt cleaning of previous scan reports
+.IP \(bu 3
+cleaner rules to remove base64 and \fBgzinflate\fP(base64 injected malware
+.IP \(bu 3
+daily cron based scanning of all changes in last 24h in user homedirs
+.IP \(bu 3
+daily cron script compatible with stock RH style systems, Cpanel & Ensim
+.IP \(bu 3
+kernel based inotify real time file scanning of created/modified/moved files
+.IP \(bu 3
+kernel inotify monitor that can take path data from STDIN or FILE
+.IP \(bu 3
+kernel inotify monitor convenience feature to monitor system users
+.IP \(bu 3
+kernel inotify monitor can be restricted to a configurable user html root
+.IP \(bu 3
+kernel inotify monitor with dynamic sysctl limits for optimal performance
+.IP \(bu 3
+kernel inotify alerting through daily and/or optional weekly reports
+.IP \(bu 3
+HTTP upload scanning through mod_security2 inspectFile hook
+.IP \(bu 3
+e-mail alert reporting after every scan execution (manual & daily)
+.IP \(bu 3
+path, extension and signature based ignore options
+.IP \(bu 3
+background scanner option for unattended scan operations
+.IP \(bu 3
+verbose logging & output of all actions
+.SH THREAT SOURCE DATA
+The defining difference with LMD is that it doesn't just detect malware based 
+on signatures/hashes that someone else generated but rather it is an 
+encompassing project that actively tracks in the wild threats and generates 
+signatures based on those real world threats that are currently circulating.
+.PP
+There are four main sources for malware data that is used to generate LMD 
+signatures:
+.IP \(bu 3
+Network Edge IPS: The network I manage hosts over 35,000 web sites and as
+such receives a large amount of daily abuse, all of which is logged by our 
+network edge IPS. The IPS events are processed to extract malware url's, 
+decode POST payload and base64/gzip encoded abuse data and ultimately that 
+malware is retrieved, reviewed, classified and then signatures generated as 
+appropriate. The vast majority of LMD signatures have been derived from IPS 
+extracted data.
+.IP \(bu 3
+Community Data: Data is aggregated from multiple community malware websites
+such as clean-mx and malwaredomainlist then processed to retrieve new 
+malware, review, classify and then generate signatures.
+.IP \(bu 3
+ClamAV: The HEX & MD5 detection signatures from ClamAV are monitored for
+relevant updates that apply to the target user group of LMD and added to the 
+project as appropriate. To date there has been roughly 400 signatures ported 
+from ClamAV while the LMD project has contributed back to ClamAV by 
+submitting over 1,100 signatures and continues to do so on an ongoing basis.
+.IP \(bu 3
+User Submission: LMD has a checkout feature that allows users to submit
+suspected malware for review, this has grown into a very popular feature and 
+generates on average about 30-50 submissions per week.
+.SH SIGNATURE UPDATES
+The LMD signatures are updated typically once per day or more frequently
+depending on incoming threat data from the LMD checkout feature, IPS malware
+extraction and other sources. The updating of signatures in LMD installations
+is performed daily through the default cron.daily script with the \fB--update\fP
+option, which can be run manually at any time.
+.TP
+.B
+An RSS & XML data source is available for tracking malware threat updates:
+RSS Recent Signatures: http://www.rfxn.com/api/lmd
+XML Recent Signatures: http://www.rfxn.com/api/lmd?id=recent
+.TP
+.B
+XML All Signatures:
+http://www.rfxn.com/api/lmd?id=all
+.SH CLI USAGE
 The command line options are as follows:
 .HP
 \fB\-b\fR, \fB\-\-background\fR
