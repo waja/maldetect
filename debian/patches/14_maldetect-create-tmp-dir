@@ -1,0 +1,13 @@
+--- a/files/maldet
++++ b/files/maldet
+@@ -66,6 +66,10 @@
+ 	echo $ver > $lmd_verf
+ fi
+ 
++if [ ! -d "$tmpdir" ] && [ ! "$tmpdir" == "" ]; then
++	mkdir -p $tmpdir
++fi
++
+ if [ -z "$wget" ]; then
+ 	header
+ 	echo "could not find required binary wget, aborting."
