@@ -126,7 +126,7 @@
 -tlog=$inspath/inotify/tlog
 -inotify=$inspath/inotify/inotifywait
 -inotify_log="$inspath/inotify/inotify_log"
-+tlog=/var/lib/maldetect/inotify/tlog
++tlog=/usr/lib/maldetect/inotify/tlog
 +inotify=/usr/bin/inotifywait
 +inotify_log="/var/lib/maldetect/inotify/inotify_log"
  inotify_trim=150000
