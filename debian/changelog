@@ -1,13 +1,22 @@
+maldetect (1.4.2+dfsg-4) unstable; urgency=low
+
+  * [28658d2] Don't create obsolete tmp dirs
+  * [47b9027] Install modsec shell script into /usr/lib/maldetect/
+  * [aadc4e4] Ignore config now in /etc/maldetect
+  * [d076b12] Mention modsec.sh in README.Debian
+
+ -- Jan Wagner <waja@cyconet.org>  Thu, 24 Oct 2013 12:58:46 +0200
+
 maldetect (1.4.2+dfsg-3) unstable; urgency=low
 
-  * [2ad821f] install manpage
-  * [376ae5a] extend man page
-  * [5bea798] move internal.conf to /etc/maldetect/
-  * [53fdfc8] install tlog binary to /usr/lib/maldetect/
-  * [b4b39e4] log into /var/log/maldetect.log
-  * [ea8db65] use correct patch of logfile in output
-  * [2c8a6e0] install maldetect.conf into /etc/maldetect/
-  * [dc488a2] use /tmp/maldetect/ as temporary dir
+  * [2ad821f] Install manpage
+  * [376ae5a] Extend man page
+  * [5bea798] Move internal.conf to /etc/maldetect/
+  * [53fdfc8] Install tlog binary to /usr/lib/maldetect/
+  * [b4b39e4] Log into /var/log/maldetect.log
+  * [ea8db65] Use correct patch of logfile in output
+  * [2c8a6e0] Install maldetect.conf into /etc/maldetect/
+  * [dc488a2] Use /tmp/maldetect/ as temporary dir
 
  -- Jan Wagner <waja@cyconet.org>  Thu, 24 Oct 2013 11:42:01 +0200
 
