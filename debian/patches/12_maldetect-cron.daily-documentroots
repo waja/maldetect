@@ -3,7 +3,7 @@
 @@ -1,5 +1,7 @@
  #!/bin/bash
  
-+TDDOCROOT="/var/www/html /usr/local/apache/htdocs /var/www/ /srv/www/"
++STDDOCROOT="/var/www/html /usr/local/apache/htdocs /var/www/ /srv/www/"
 +
  # clear quarantine/session/tmp data every 14 days
  /usr/sbin/tmpwatch 336 /tmp/maldetect >> /dev/null 2>&1
