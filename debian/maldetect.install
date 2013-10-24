@@ -1,7 +1,7 @@
 files/maldet	usr/bin
 files/*.pl	usr/lib/maldetect
 files/ignore*	usr/share/maldetect
-files/internals.conf	usr/share/maldetect
+files/internals.conf	etc/maldetect
 files/VERSION.hash	usr/share/maldetect
 files/clean	var/lib/maldetect
 files/sigs	var/lib/maldetect

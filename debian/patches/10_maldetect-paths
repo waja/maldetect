@@ -1,6 +1,5 @@
-diff -Nur maldetect-1.4.2-orig//cron.daily maldetect-1.4.2-new//cron.daily
---- maldetect-1.4.2-orig//cron.daily	2013-04-11 18:23:27.000000000 +0200
-+++ maldetect-1.4.2-new//cron.daily	2013-05-24 21:15:41.000000000 +0200
+--- a/cron.daily
++++ b/cron.daily
 @@ -1,44 +1,41 @@
  #!/bin/bash
  
@@ -61,9 +60,8 @@ diff -Nur maldetect-1.4.2-orig//cron.daily maldetect-1.4.2-new//cron.daily
 +		/usr/bin/maldet -b -r /usr/local/apache/htdocs 2 >> /dev/null 2>&1
  	fi
  fi
-diff -Nur maldetect-1.4.2-orig//files/hexfifo.pl maldetect-1.4.2-new//files/hexfifo.pl
---- maldetect-1.4.2-orig//files/hexfifo.pl	2013-04-09 09:17:30.000000000 +0200
-+++ maldetect-1.4.2-new//files/hexfifo.pl	2013-05-24 21:12:50.000000000 +0200
+--- a/files/hexfifo.pl
++++ b/files/hexfifo.pl
 @@ -9,7 +9,7 @@
  ##
  #
@@ -82,9 +80,8 @@ diff -Nur maldetect-1.4.2-orig//files/hexfifo.pl maldetect-1.4.2-new//files/hexf
  open(DAT, $dat_hexstring) || die("Could not open $dat_hexstring");
  @raw_data=<DAT>;
  close(DAT); 
-diff -Nur maldetect-1.4.2-orig//files/hexstring.pl maldetect-1.4.2-new//files/hexstring.pl
---- maldetect-1.4.2-orig//files/hexstring.pl	2013-04-09 09:17:30.000000000 +0200
-+++ maldetect-1.4.2-new//files/hexstring.pl	2013-05-24 21:23:02.000000000 +0200
+--- a/files/hexstring.pl
++++ b/files/hexstring.pl
 @@ -19,7 +19,7 @@
  $instr = $ARGV[0];
  
@@ -94,9 +91,8 @@ diff -Nur maldetect-1.4.2-orig//files/hexstring.pl maldetect-1.4.2-new//files/he
  open(DAT, $dat_hexstring) || die("Could not open $dat_hexstring");
  @raw_data=<DAT>;
  close(DAT); 
-diff -Nur maldetect-1.4.2-orig//files/internals.conf maldetect-1.4.2-new//files/internals.conf
---- maldetect-1.4.2-orig//files/internals.conf	2013-04-09 09:17:30.000000000 +0200
-+++ maldetect-1.4.2-new//files/internals.conf	2013-05-24 21:26:00.000000000 +0200
+--- a/files/internals.conf
++++ b/files/internals.conf
 @@ -29,11 +29,11 @@
  ignore_sigs=$inspath/ignore_sigs
  ignore_inotify=$inspath/ignore_inotify
@@ -137,17 +133,18 @@ diff -Nur maldetect-1.4.2-orig//files/internals.conf maldetect-1.4.2-new//files/
 -hex_fifo=$inspath/hexfifo
 +hex_fifo=/var/lib/maldetect/hexfifo
  pubuser_minuid=10
-diff -Nur maldetect-1.4.2-orig//files/maldet maldetect-1.4.2-new//files/maldet
---- maldetect-1.4.2-orig//files/maldet	2013-04-13 06:58:30.000000000 +0200
-+++ maldetect-1.4.2-new//files/maldet	2013-05-24 21:26:29.000000000 +0200
-@@ -9,8 +9,8 @@
+--- a/files/maldet
++++ b/files/maldet
+@@ -9,9 +9,9 @@
  ##
  #
  ver=1.4.2
 -inspath=/usr/local/maldetect
 -cnf=$inspath/conf.maldet
+-intcnf=$inspath/internals.conf
 +inspath=/usr/share/maldetect
-+cnf=/etc/maldetect.conf
- intcnf=$inspath/internals.conf
++cnf=/etc/maldetect/maldetect.conf
++intcnf=/etc/maldetect/internals.conf
  datestamp=`date +"%m%d%y-%H%M"`
  rver=$ver
+ 
