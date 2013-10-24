@@ -11,7 +11,7 @@
 -
 -# check for new release version
 -/usr/local/maldetect/maldet -d >> /dev/null 2>&1
-+/usr/sbin/tmpwatch 336 /usr/share/maldetect/tmp >> /dev/null 2>&1
++/usr/sbin/tmpwatch 336 /tmp/maldetect >> /dev/null 2>&1
 +/usr/sbin/tmpwatch 336 /var/lib/maldetect/sess >> /dev/null 2>&1
 +/usr/sbin/tmpwatch 336 /var/lib/maldetect/quarantine >> /dev/null 2>&1
 +/usr/sbin/tmpwatch 336 /var/lib/maldetect/pub/*/ >> /dev/null 2>&1
