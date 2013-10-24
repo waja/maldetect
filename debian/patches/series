@@ -1,5 +1,6 @@
 10_maldetect-paths
 12_maldetect-cron.daily-documentroots
+13_maldetect-cron.daily-default
 14_maldetect-create-tmp-dir
 15_maldetect-no-autoupdate
 20_maldetect-remove-shebang
