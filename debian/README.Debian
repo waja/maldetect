@@ -1,6 +1,9 @@
 maldetect for Debian
 --------------------
 
-<possible notes regarding this package - if none, delete this file>
+maldetect (1.4.2+dfsg-3) unstable; urgency=low
 
- -- Jan Wagner <waja@cyconet.org>  Sun, 20 Oct 2013 14:03:27 +0200
+  The modsec.sh script can be found in /usr/lib/maldetect. More informations
+  how to use this script can be found in /usr/share/doc/maldetect/README.gz.
+
+ -- Jan Wagner <waja@cyconet.org>  Thu, 24 Oct 2013 12:45:23 +0200
