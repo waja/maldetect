@@ -1,0 +1,2 @@
+# DocumentRoots where daily crobjob should look for documents
+STDDOCROOT="/var/www/ /srv/www/"
