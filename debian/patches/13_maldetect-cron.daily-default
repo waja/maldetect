@@ -1,0 +1,12 @@
+--- a/cron.daily
++++ b/cron.daily
+@@ -1,5 +1,9 @@
+ #!/bin/bash
+ 
++if [ -r "/etc/default/maldetect" ]; then
++	source /etc/default/maldetect
++fi
++
+ if [ ! "${STDDOCROOT}" ]; then
+ 	STDDOCROOT="/var/www/html /usr/local/apache/htdocs /var/www/ /srv/www/"
+ fi
