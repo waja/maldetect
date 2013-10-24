@@ -1,3 +1,11 @@
+maldetect (1.4.2+dfsg-7) unstable; urgency=low
+
+  * [8cb810c] Don't ship obsolete sinatures
+  * [0e17453] Ship postinst maintainer script to fetch actual sigatures and
+    definitions
+
+ -- Jan Wagner <waja@cyconet.org>  Thu, 24 Oct 2013 18:04:44 +0200
+
 maldetect (1.4.2+dfsg-6) unstable; urgency=low
 
   * [46d7da7] Fix tmp dir in cron.daily script
