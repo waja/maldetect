@@ -18,3 +18,21 @@
  		file=`echo $hit | tr ':' ' ' | awk '{print$2}'`
  		signame=`echo $hit | tr ':' ' ' | awk '{print$1}'`
  		clamsig=`echo $signame | grep -iE "HEX|MD5"`
+@@ -1518,7 +1518,7 @@
+ 			spath=/home
+ 		fi
+ 		if [ "$set_background" == "1" ]; then
+-			eout "{scan} launching scan of $spath to background, see $inspath/event_log for progress" 1
++			eout "{scan} launching scan of $spath to background, see $logf for progress" 1
+                         scan "$spath" all >> /dev/null 2>&1 &
+ 		else
+ 		        scan "$spath" all
+@@ -1540,7 +1540,7 @@
+ 			days=7
+ 		fi
+                 if [ "$set_background" == "1" ]; then
+-                        eout "{scan} launching scan of $spath changes in last ${days}d to background, see $inspath/event_log for progress" 1
++                        eout "{scan} launching scan of $spath changes in last ${days}d to background, see $logf for progress" 1
+ 			scan "$spath" "$days" >> /dev/null 2>&1 &
+ 		else
+ 			scan "$spath" "$days"
