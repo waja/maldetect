@@ -1,3 +1,14 @@
+maldetect (1.4.2+dfsg-6) unstable; urgency=low
+
+  * [46d7da7] Fix tmp dir in cron.daily script
+  * [54bce9a] Move DocumentsRoots into variable in cronjob
+  * [6e55b4c] Fix typo in debian/patches/12_maldetect-cron.daily-documentroots
+  * [08372ed] Only set DocumentRoot dirs value in cronjob, if its empty
+  * [2bffff6] Implement /etc/default for DocumentRoots in cronjob
+  * [9037264] Install /etc/default/maldetect
+
+ -- Jan Wagner <waja@cyconet.org>  Thu, 24 Oct 2013 16:48:08 +0200
+
 maldetect (1.4.2+dfsg-5) unstable; urgency=low
 
   * [2d32582] Add Vcs-fields
