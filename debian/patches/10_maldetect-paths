@@ -115,7 +115,7 @@
 +sessdir=/var/lib/maldetect/sess
 +sigdir=/var/lib/maldetect/sigs
 +cldir=/var/lib/maldetect/clean
-+tmpdir=/var/lib/maldetect/tmp
++tmpdir=/tmp/maldetect
  
  def_verf=$sigdir/maldet.sigs.ver
  def_ver=`cat $sigdir/maldet.sigs.ver`
