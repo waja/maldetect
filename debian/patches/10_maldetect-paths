@@ -102,15 +102,23 @@
  wget=`which wget 2> /dev/null`
  if [ "$OSTYPE" == "FreeBSD" ]; then
  	md5sum="/sbin/md5 -q"
-@@ -29,11 +29,11 @@
- ignore_sigs=$inspath/ignore_sigs
- ignore_inotify=$inspath/ignore_inotify
- ignore_file_ext=$inspath/ignore_file_ext
+@@ -25,15 +25,15 @@
+ mail=`which mail 2> /dev/null`
+ 
+ suppress_cleanhit=$email_ignore_clean
+-ignore_paths=$inspath/ignore_paths
+-ignore_sigs=$inspath/ignore_sigs
+-ignore_inotify=$inspath/ignore_inotify
+-ignore_file_ext=$inspath/ignore_file_ext
 -quardir=$inspath/quarantine
 -sessdir=$inspath/sess
 -sigdir=$inspath/sigs
 -cldir=$inspath/clean
 -tmpdir=$inspath/tmp
++ignore_paths=/etc/ignore_paths
++ignore_sigs=/etc/ignore_sigs
++ignore_inotify=/etc/ignore_inotify
++ignore_file_ext=/etc/ignore_file_ext
 +quardir=/var/lib/maldetect/quarantine
 +sessdir=/var/lib/maldetect/sess
 +sigdir=/var/lib/maldetect/sigs
