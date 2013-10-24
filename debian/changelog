@@ -1,3 +1,11 @@
+maldetect (1.4.2+dfsg-5) unstable; urgency=low
+
+  * [2d32582] Add Vcs-fields
+  * [b0b894a] Fix path of ignore configs
+  * [6b3db0b] Create tmp dir if not existing
+
+ -- Jan Wagner <waja@cyconet.org>  Thu, 24 Oct 2013 14:22:30 +0200
+
 maldetect (1.4.2+dfsg-4) unstable; urgency=low
 
   * [28658d2] Don't create obsolete tmp dirs
