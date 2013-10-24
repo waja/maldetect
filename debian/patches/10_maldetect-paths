@@ -93,6 +93,15 @@
  close(DAT); 
 --- a/files/internals.conf
 +++ b/files/internals.conf
+@@ -9,7 +9,7 @@
+ ##
+ #
+ 
+-logf=$inspath/event_log
++logf=/var/log/maldetect.log
+ wget=`which wget 2> /dev/null`
+ if [ "$OSTYPE" == "FreeBSD" ]; then
+ 	md5sum="/sbin/md5 -q"
 @@ -29,11 +29,11 @@
  ignore_sigs=$inspath/ignore_sigs
  ignore_inotify=$inspath/ignore_inotify
