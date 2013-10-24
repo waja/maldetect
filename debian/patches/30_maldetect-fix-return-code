@@ -1,0 +1,9 @@
+--- a/files/maldet
++++ b/files/maldet
+@@ -1597,6 +1597,5 @@
+ 		header
+ 		usage_short
+ 	esac
+-	shift
+ 	done
+ fi
