@@ -5,5 +5,5 @@ files/*.pl	usr/lib/maldetect
 files/modsec.sh	usr/lib/maldetect
 files/inotify/tlog	usr/lib/maldetect/inotify
 files/VERSION.hash	usr/share/maldetect
-files/clean	var/lib/maldetect
-files/sigs	var/lib/maldetect
+#files/clean	var/lib/maldetect
+#files/sigs	var/lib/maldetect

@@ -1,6 +1,8 @@
 usr/bin
 usr/lib/maldetect
 usr/share/maldetect
+var/lib/maldetect/clean
 var/lib/maldetect/inotify
 var/lib/maldetect/quarantine
 var/lib/maldetect/sess
+var/lib/maldetect/sigs
