@@ -1,8 +1,15 @@
-maldetect (1.4.2+dfsg-3) UNRELEASED; urgency=low
+maldetect (1.4.2+dfsg-3) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * [2ad821f] install manpage
+  * [376ae5a] extend man page
+  * [5bea798] move internal.conf to /etc/maldetect/
+  * [53fdfc8] install tlog binary to /usr/lib/maldetect/
+  * [b4b39e4] log into /var/log/maldetect.log
+  * [ea8db65] use correct patch of logfile in output
+  * [2c8a6e0] install maldetect.conf into /etc/maldetect/
+  * [dc488a2] use /tmp/maldetect/ as temporary dir
 
- -- Jan Wagner <waja@cyconet.org>  Sun, 20 Oct 2013 23:31:02 +0200
+ -- Jan Wagner <waja@cyconet.org>  Thu, 24 Oct 2013 11:42:01 +0200
 
 maldetect (1.4.2+dfsg-2) unstable; urgency=low
 
