@@ -1,3 +1,9 @@
+maldetect (1.4.2+dfsg-9) unstable; urgency=low
+
+  * [0ab55b5] Remove broken patch 30_maldetect-fix-return-code
+
+ -- Jan Wagner <waja@cyconet.org>  Tue, 29 Oct 2013 21:32:16 +0100
+
 maldetect (1.4.2+dfsg-8) unstable; urgency=low
 
   * [24e7b66] Remove unneeded 'shift' to prevent return with '1'
