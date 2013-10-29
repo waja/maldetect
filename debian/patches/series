@@ -5,4 +5,4 @@
 15_maldetect-no-autoupdate
 20_maldetect-remove-shebang
 25_maldetect-use-var-instead-dirs
-30_maldetect-fix-return-code
+#30_maldetect-fix-return-code
