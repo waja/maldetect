@@ -5,8 +5,6 @@ Maintainer: Jan Wagner <waja@cyconet.org>
 Build-Depends: debhelper (>= 8.0.0)
 Standards-Version: 3.9.4
 Homepage: http://www.rfxn.com/projects/linux-malware-detect/
-#Vcs-Git: git://git.debian.org/collab-maint/maldetect.git
-#Vcs-Browser: http://git.debian.org/?p=collab-maint/maldetect.git;a=summary
 Vcs-Git: git://git@github.com:waja/maldetect.git
 Vcs-Browser: https://github.com/waja/maldetect
 
