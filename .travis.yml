@@ -1,0 +1,11 @@
+language: c
+
+install:
+    - sudo apt-get update -qq
+    - sudo apt-get install -qq debhelper devscripts
+
+script:
+    - debuild -uc -us
+
+#notifications:
+#  email: false
