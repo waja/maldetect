@@ -2,7 +2,7 @@ language: c
 
 install:
     - sudo apt-get update -qq
-    - sudo apt-get install -qq debhelper devscripts
+    - sudo apt-get install -qq --no-install-recommends debhelper devscripts
 
 script:
     - debuild -uc -us
