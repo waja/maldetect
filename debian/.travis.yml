@@ -1,0 +1,12 @@
+language: c
+
+install:
+    - sudo apt-get update -qq
+    - sudo apt-get install -qq --no-install-recommends debhelper devscripts
+
+script:
+    - VER=$(head -1 debian/changelog | awk -F'[()]' '{print $2}' | awk -F'+' '{print $1}'); wget http://www.rfxn.com/downloads/maldetect-${VER}.tar.gz -O ../maldetect_${VER}.orig.tar.gz && ./debian/bin/repack.sh ../maldetect_${VER}.orig.tar.gz
+    - debuild -uc -us
+
+#notifications:
+#  email: false
