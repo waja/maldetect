@@ -1,1 +1,1 @@
-diff-ignore=.travis.yml|.gitignore
+diff-ignore=.travis.yml|.gitignore|.git
