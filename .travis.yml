@@ -1,11 +1,19 @@
 language: c
 
-install:
+before_install:
+    # update package list
     - sudo apt-get update -qq
+
+install:
+    # install build dependencies
     - sudo apt-get install -qq --no-install-recommends debhelper devscripts
 
-script:
+before_script:
+    # download original and repack tarball
     - VER=$(head -1 debian/changelog | awk -F'[()]' '{print $2}' | awk -F'+' '{print $1}'); wget http://www.rfxn.com/downloads/maldetect-${VER}.tar.gz -O ../maldetect_${VER}.orig.tar.gz && ./debian/bin/repack.sh ../maldetect_${VER}.orig.tar.gz
+
+script:
+    # build the debian package
     - debuild -uc -us
 
 #notifications:

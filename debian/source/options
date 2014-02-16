@@ -1,1 +1,1 @@
-extend-diff-ignore = '^\.travis'
+extend-diff-ignore = '(^|/)(\.travis\.yml|\.git|\.gitgnore|config\.sub|config\.guess)'
