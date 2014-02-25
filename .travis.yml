@@ -16,5 +16,9 @@ script:
     # build the debian package
     - debuild -uc -us
 
+after_script:
+    # run lintian after build
+    - sudo apt-get install -qq --no-install-recommends lintian
+    - lintian --info --display-info --display-experimental --pedantic --show-overrides ../*.deb && lintian --info --display-info --display-experimental --pedantic --show-overrides ../*.dsc
 #notifications:
 #  email: false
