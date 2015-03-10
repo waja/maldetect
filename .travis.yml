@@ -19,7 +19,7 @@ before_script:
 
 script:
     # build the debian package
-    - debuild -uc -us
+    - dpkg-buildpackage -uc -us
 
 after_script:
     # run lintian after build
