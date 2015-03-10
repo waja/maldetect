@@ -1,3 +1,9 @@
+maldetect (1.4.2+dfsg-11) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Jan Wagner <waja@cyconet.org>  Tue, 10 Mar 2015 14:18:53 +0100
+
 maldetect (1.4.2+dfsg-10) unstable; urgency=low
 
   * [2d4ef8a] Exit with 0 even if update of signature doesn't in postinst
