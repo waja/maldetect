@@ -5,8 +5,13 @@ before_install:
     - sudo apt-get update -qq
 
 install:
-    # install build dependencies
-    - sudo apt-get install -qq --no-install-recommends debhelper devscripts
+    # install packages needed for mk-build-deps
+    - sudo apt-get install -qq --no-install-recommends devscripts equivs
+    # pull build deps from debian/control
+    - sudo mk-build-deps -ir
+    # remove packages needed for mk-build-deps
+    - sudo apt-get purge -qq equivs
+    - sudo apt-get autoremove -qq
 
 before_script:
     # download original and repack tarball
