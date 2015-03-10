@@ -1,3 +1,9 @@
+maldetect (1.4.2+dfsg-10) unstable; urgency=low
+
+  * [2d4ef8a] Exit with 0 even if update of signature doesn't in postinst
+
+ -- Jan Wagner <waja@cyconet.org>  Tue, 29 Oct 2013 22:10:35 +0100
+
 maldetect (1.4.2+dfsg-9) unstable; urgency=low
 
   * [0ab55b5] Remove broken patch 30_maldetect-fix-return-code
