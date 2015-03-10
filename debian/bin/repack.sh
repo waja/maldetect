@@ -16,7 +16,7 @@ tarball=
 tarball="$(readlink -f "$tarball")"
 
 tdir="$(mktemp -d)"
-trap '[ ! -d "$tdir" ] || rm -r "$tdir"' EXIT
+trap '[ ! -d "$tdir" ] || rm -rf "$tdir"' EXIT
 
 tar -xzf $tarball -C $tdir
 cp -a "$tarball" "$tarball.orig"
