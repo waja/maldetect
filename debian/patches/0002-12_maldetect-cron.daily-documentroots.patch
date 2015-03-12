@@ -1,3 +1,13 @@
+From: Jan Wagner <waja@cyconet.org>
+Date: Thu, 12 Mar 2015 22:41:40 +0100
+Subject: 12_maldetect-cron.daily-documentroots
+
+---
+ cron.daily | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/cron.daily b/cron.daily
+index 07b99ff..b79f316 100755
 --- a/cron.daily
 +++ b/cron.daily
 @@ -1,5 +1,9 @@
@@ -10,7 +20,7 @@
  # clear quarantine/session/tmp data every 14 days
  /usr/sbin/tmpwatch 336 /tmp/maldetect >> /dev/null 2>&1
  /usr/sbin/tmpwatch 336 /var/lib/maldetect/sess >> /dev/null 2>&1
-@@ -32,10 +36,9 @@
+@@ -32,10 +36,9 @@ else
  	fi
  
  	# scan default apache docroot paths

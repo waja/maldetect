@@ -1,7 +1,16 @@
-diff -Nur maldetect-1.4.2-orig//files/maldet maldetect-1.4.2-new//files/maldet
---- maldetect-1.4.2-orig//files/maldet	2013-05-24 21:27:53.000000000 +0200
-+++ maldetect-1.4.2-new//files/maldet	2013-05-24 21:30:46.000000000 +0200
-@@ -117,7 +117,7 @@
+From: Jan Wagner <waja@cyconet.org>
+Date: Thu, 12 Mar 2015 22:41:40 +0100
+Subject: 15_maldetect-no-autoupdate
+
+---
+ files/maldet | 81 +-----------------------------------------------------------
+ 1 file changed, 1 insertion(+), 80 deletions(-)
+
+diff --git a/files/maldet b/files/maldet
+index 7e39f28..946e217 100755
+--- a/files/maldet
++++ b/files/maldet
+@@ -121,7 +121,7 @@ cat <<EOF
  signature set: $def_ver
  usage maldet [-h|--help] [-l|--log] [-e|--report] [-p|--purge] [-c|--checkout]
  [-b|--background] [-m|--monitor] [-k|--kill-monitor] [-a|--scan-all] [-r|--scan-recent]
@@ -10,7 +19,7 @@ diff -Nur maldetect-1.4.2-orig//files/maldet maldetect-1.4.2-new//files/maldet
  EOF
  }
  
-@@ -132,9 +132,6 @@
+@@ -136,9 +136,6 @@ usage $0 [ OPTION ]
      -u, --update
         Update malware detection signatures from rfxn.com
  
@@ -20,7 +29,7 @@ diff -Nur maldetect-1.4.2-orig//files/maldet maldetect-1.4.2-new//files/maldet
      -m, --monitor USERS|PATHS|FILE
         Run maldet with inotify kernel level file create/modify monitoring
         If USERS is specified, monitor user homedirs for UID's > 500
-@@ -1325,78 +1322,6 @@
+@@ -1329,78 +1326,6 @@ sil=$1
          fi
  }
  
@@ -99,7 +108,7 @@ diff -Nur maldetect-1.4.2-orig//files/maldet maldetect-1.4.2-new//files/maldet
  sigup() {
  check_clibkeyutils
  eout "{sigup} performing signature update check..." 1
-@@ -1634,10 +1559,6 @@
+@@ -1638,10 +1563,6 @@ else
  		header
  		purge
  	;;

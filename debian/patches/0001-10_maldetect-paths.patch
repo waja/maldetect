@@ -1,3 +1,17 @@
+From: Jan Wagner <waja@cyconet.org>
+Date: Thu, 12 Mar 2015 22:41:40 +0100
+Subject: 10_maldetect-paths
+
+---
+ cron.daily           | 33 +++++++++++++++------------------
+ files/hexfifo.pl     |  4 ++--
+ files/hexstring.pl   |  2 +-
+ files/internals.conf | 32 ++++++++++++++++----------------
+ files/maldet         |  6 +++---
+ 5 files changed, 37 insertions(+), 40 deletions(-)
+
+diff --git a/cron.daily b/cron.daily
+index 5b2a1d9..07b99ff 100755
 --- a/cron.daily
 +++ b/cron.daily
 @@ -1,44 +1,41 @@
@@ -60,6 +74,8 @@
 +		/usr/bin/maldet -b -r /usr/local/apache/htdocs 2 >> /dev/null 2>&1
  	fi
  fi
+diff --git a/files/hexfifo.pl b/files/hexfifo.pl
+index 3cb4540..a8ae19d 100755
 --- a/files/hexfifo.pl
 +++ b/files/hexfifo.pl
 @@ -9,7 +9,7 @@
@@ -71,7 +87,7 @@
  $timeout = "3";
  
  if (-p $named_pipe_name) {
-@@ -40,7 +40,7 @@
+@@ -40,7 +40,7 @@ if (-p $named_pipe_name) {
      }
   }
  
@@ -80,9 +96,11 @@
  open(DAT, $dat_hexstring) || die("Could not open $dat_hexstring");
  @raw_data=<DAT>;
  close(DAT); 
+diff --git a/files/hexstring.pl b/files/hexstring.pl
+index d3077a3..8348e2f 100755
 --- a/files/hexstring.pl
 +++ b/files/hexstring.pl
-@@ -19,7 +19,7 @@
+@@ -19,7 +19,7 @@ if ($#ARGV != 0) {
  $instr = $ARGV[0];
  
  
@@ -91,6 +109,8 @@
  open(DAT, $dat_hexstring) || die("Could not open $dat_hexstring");
  @raw_data=<DAT>;
  close(DAT); 
+diff --git a/files/internals.conf b/files/internals.conf
+index 6688433..9d1f0e0 100644
 --- a/files/internals.conf
 +++ b/files/internals.conf
 @@ -9,7 +9,7 @@
@@ -102,7 +122,7 @@
  wget=`which wget 2> /dev/null`
  if [ "$OSTYPE" == "FreeBSD" ]; then
  	md5sum="/sbin/md5 -q"
-@@ -25,15 +25,15 @@
+@@ -25,15 +25,15 @@ wc=`which wc 2> /dev/null`
  mail=`which mail 2> /dev/null`
  
  suppress_cleanhit=$email_ignore_clean
@@ -127,7 +147,7 @@
  
  def_verf=$sigdir/maldet.sigs.ver
  def_ver=`cat $sigdir/maldet.sigs.ver`
-@@ -50,16 +50,16 @@
+@@ -50,16 +50,16 @@ lmd_hashf=$inspath/VERSION.hash
  lmdurl_hash=http://www.rfxn.com/downloads/maldet.current.hash
  lmdurl_ver=http://www.rfxn.com/downloads/maldet.current.ver
  
@@ -150,6 +170,8 @@
 -hex_fifo=$inspath/hexfifo
 +hex_fifo=/var/lib/maldetect/hexfifo
  pubuser_minuid=10
+diff --git a/files/maldet b/files/maldet
+index 38a9236..fadf612 100755
 --- a/files/maldet
 +++ b/files/maldet
 @@ -9,9 +9,9 @@

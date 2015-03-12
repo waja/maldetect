@@ -1,0 +1,23 @@
+From: Jan Wagner <waja@cyconet.org>
+Date: Thu, 12 Mar 2015 22:41:40 +0100
+Subject: 14_maldetect-create-tmp-dir
+
+---
+ files/maldet | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/files/maldet b/files/maldet
+index fadf612..7e39f28 100755
+--- a/files/maldet
++++ b/files/maldet
+@@ -66,6 +66,10 @@ else
+ 	echo $ver > $lmd_verf
+ fi
+ 
++if [ ! -d "$tmpdir" ] && [ ! "$tmpdir" == "" ]; then
++	mkdir -p $tmpdir
++fi
++
+ if [ -z "$wget" ]; then
+ 	header
+ 	echo "could not find required binary wget, aborting."

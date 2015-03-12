@@ -1,0 +1,29 @@
+From: Jan Wagner <waja@cyconet.org>
+Date: Thu, 12 Mar 2015 22:41:40 +0100
+Subject: 20_maldetect-remove-shebang
+
+---
+ files/conf.maldet    | 2 --
+ files/internals.conf | 2 --
+ 2 files changed, 4 deletions(-)
+
+diff --git a/files/conf.maldet b/files/conf.maldet
+index c7912ec..81ca48e 100644
+--- a/files/conf.maldet
++++ b/files/conf.maldet
+@@ -1,5 +1,3 @@
+-#!/bin/bash
+-#
+ ##
+ # Linux Malware Detect v1.4.2
+ #             (C) 2002-2013, R-fx Networks <proj@r-fx.org>
+diff --git a/files/internals.conf b/files/internals.conf
+index 9d1f0e0..023b441 100644
+--- a/files/internals.conf
++++ b/files/internals.conf
+@@ -1,5 +1,3 @@
+-#!/bin/bash
+-#
+ ##
+ # Linux Malware Detect v1.4.2
+ #             (C) 2002-2013, R-fx Networks <proj@r-fx.org>

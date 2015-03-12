@@ -1,8 +1,7 @@
-10_maldetect-paths
-12_maldetect-cron.daily-documentroots
-13_maldetect-cron.daily-default
-14_maldetect-create-tmp-dir
-15_maldetect-no-autoupdate
-20_maldetect-remove-shebang
-25_maldetect-use-var-instead-dirs
-#30_maldetect-fix-return-code
+0001-10_maldetect-paths.patch
+0002-12_maldetect-cron.daily-documentroots.patch
+0003-13_maldetect-cron.daily-default.patch
+0004-14_maldetect-create-tmp-dir.patch
+0005-15_maldetect-no-autoupdate.patch
+0006-20_maldetect-remove-shebang.patch
+0007-25_maldetect-use-var-instead-dirs.patch

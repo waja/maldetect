@@ -1,6 +1,16 @@
+From: Jan Wagner <waja@cyconet.org>
+Date: Thu, 12 Mar 2015 22:41:40 +0100
+Subject: 25_maldetect-use-var-instead-dirs
+
+---
+ files/maldet | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/files/maldet b/files/maldet
+index 946e217..f6c3111 100755
 --- a/files/maldet
 +++ b/files/maldet
-@@ -445,7 +445,7 @@
+@@ -449,7 +449,7 @@ view_report() {
   rid="$1"
   if [ "$rid" == "list" ]; then
  	eout "Available Reports:"
@@ -9,7 +19,7 @@
  		SCANID=`cat $file | grep "SCAN ID"`
  		TIME=`cat $file | grep "TIME"`
  		if [ ! -z "$SCANID" ] && [ ! -z "$TIME" ]; then
-@@ -666,7 +666,7 @@
+@@ -670,7 +670,7 @@ scan() {
          if [ -z "$setmodsec" ]; then
  		eout "{scan} scan of $spath ($tot_files files) in progress..." 1
  	fi
@@ -18,7 +28,7 @@
  		file=`echo $hit | tr ':' ' ' | awk '{print$2}'`
  		signame=`echo $hit | tr ':' ' ' | awk '{print$1}'`
  		clamsig=`echo $signame | grep -iE "HEX|MD5"`
-@@ -1518,7 +1518,7 @@
+@@ -1522,7 +1522,7 @@ else
  			spath=/home
  		fi
  		if [ "$set_background" == "1" ]; then
@@ -27,7 +37,7 @@
                          scan "$spath" all >> /dev/null 2>&1 &
  		else
  		        scan "$spath" all
-@@ -1540,7 +1540,7 @@
+@@ -1544,7 +1544,7 @@ else
  			days=7
  		fi
                  if [ "$set_background" == "1" ]; then

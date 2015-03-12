@@ -1,3 +1,13 @@
+From: Jan Wagner <waja@cyconet.org>
+Date: Thu, 12 Mar 2015 22:41:40 +0100
+Subject: 13_maldetect-cron.daily-default
+
+---
+ cron.daily | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/cron.daily b/cron.daily
+index b79f316..991abca 100755
 --- a/cron.daily
 +++ b/cron.daily
 @@ -1,5 +1,9 @@
