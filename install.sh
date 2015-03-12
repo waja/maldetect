@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 ##
-# Linux Malware Detect v1.4.1
+# Linux Malware Detect v1.4.2
 #             (C) 2002-2013, R-fx Networks <proj@r-fx.org>
 #             (C) 2013, Ryan MacDonald <ryan@r-fx.org>
 # inotifywait (C) 2007, Rohan McGovern  <rohan@mcgovern.id.au>
@@ -53,7 +53,7 @@ fi
 	touch $logf
 	$inspath/maldet --alert-daily
 	$inspath/maldet --alert-weekly
-        echo "Linux Malware Detect v1.4.1"
+        echo "Linux Malware Detect v1.4.2"
         echo "            (C) 2002-2013, R-fx Networks <proj@r-fx.org>"
         echo "            (C) 2013, Ryan MacDonald <ryan@r-fx.org>"
         echo "inotifywait (C) 2007, Rohan McGovern <rohan@mcgovern.id.au>"

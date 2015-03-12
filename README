@@ -1,4 +1,4 @@
-Linux Malware Detect v1.4.1
+Linux Malware Detect v1.4.2
             (C) 2002-2013, R-fx Networks <proj@r-fx.org>
             (C) 2013, Ryan MacDonald <ryan@r-fx.org>
 inotifywait (C) 2007, Rohan McGovern <rohan@mcgovern.id.au>
@@ -51,7 +51,7 @@ as an attack platform.
 Using the CYMRU malware hash registry, which provides malware detection data 
 for 30 major AV packages, we can demonstrate this short coming in current 
 threat detection. The following is an analysis of the core MD5 hashes (5,393) 
-in LMD 1.4.1 and the percentage of major AV products that currently detect 
+in LMD 1.4.2 and the percentage of major AV products that currently detect 
 the hashes.
 
 KNOWN MALWARE:      1029
@@ -154,7 +154,7 @@ XML All Signatures:    http://www.rfxn.com/api/lmd?id=all
 
 .: 5 [ DETECTED THREATS ]
 
-LMD 1.4.1 has a total of 7,241 (5393 MD5 / 1848 HEX) signatures (before updates),
+LMD 1.4.2 has a total of 7,241 (5393 MD5 / 1848 HEX) signatures (before updates),
 below is a listing of the top 60 threats by prevalence detected by LMD.
 
 base64.inject.unclassed    bin.dccserv.irsexxy      bin.fakeproc.Xnuxer
