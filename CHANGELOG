@@ -1,3 +1,6 @@
+v1.4.2-1 | Apr 8th 2013:
+[New] detection and alerting of openssl heartbleed vulnerability
+
 v1.4.2 | Feb 25th 2013:
 [New] detection and alerting of libkeyutils root compromised libraries
 [Change] cron.daily now tests for directadmin and scans appropriate user domain paths

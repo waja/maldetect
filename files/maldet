@@ -245,6 +245,74 @@ trap_exit() {
 	fi
 }
 
+check_opensslheartbleed() {
+rpm=`which rpm 2> /dev/null`
+if [ "$rpm" ]; then
+	check_openssl=`$rpm -q openssl | grep 1.0.1 | head -n1`
+	goodrev="5.7"
+	if [ "$check_openssl" ]; then
+	        rev=`echo $check_openssl| grep 1.0.1 | sed -e 's/el6_/ /' -e 's/.x86_64/ /' -e 's/.i686/ /' | awk '{print$2}'`
+	        if [ "$(echo $rev | tr -d '.')" -lt "$(echo $goodrev | tr -d '.')" ]; then
+	                alert_heartbleed=1
+	        fi
+	fi
+fi
+
+if [ "$alert_heartbleed" ]; then
+	eout "{heartbleed} !! ATTENTION !! OpenSSL heartbleed vulnerability detected in $check_openssl package, run 'yum update -y openssl' and restart server immediately!" 1
+	rver="$ver.heartbleed"
+	if [ "$email_addr" ]; then
+	emlf="$tmpdir/.hb.eml.$$"
+	cat >> $emlf <<EOF
+Important security notice follows;
+	The Linux Malware Detect installation running on $HOSTNAME has detected a critical vulnerability with the currently installed version of OpenSSL, $check_openssl. This version is known to contain the Heartbleed (http://heartbleed.com/) vulnerability which can disclose sensitive information from SSL communications this host may be conducting, including but not limited to username/password credentials, transaction information along with other customer identifiable information. You are advised to take immediate corrective action to ensure the security of SSL communication with this host.
+
+The OpenSSL packages can be updated using the 'yum' package manager as follows:
+
+# yum update -y openssl
+
+It is vitally important to restart the server to ensure all services that may be using the OpenSSL libraries are properly reloaded. Optionally, you can selectively restart services that conduct SSL communication, these services include but are not limited to:
+Apache
+cPanel/WHM
+Dovecot
+Courier
+Exim
+Pure-FTPd
+ProFTPd
+
+If you are currently running an automation platform such as cPanel/WHM, DirectAdmin or Plesk, you may need to manually update the software as it may build OpenSSL libraries statically into the software distribution making it vulnerable outside of system updates. This
+is the case with cPanel/WHM which requires an 'upcp' operation in the event daily updates are not enabled. You can manually force an update of cPanel/WHM as follows:
+
+# /scripts/upcp --force
+
+The failure to restart the server or all associated OpenSSL services can leave the vulnerability open to exploitation by remote attackers.
+
+Vulnerability Test:
+http://filippo.io/Heartbleed/#$HOSTNAME
+http://filippo.io/Heartbleed/#$HOSTNAME:993
+http://filippo.io/Heartbleed/#$HOSTNAME:995
+http://filippo.io/Heartbleed/#$HOSTNAME:2078
+http://filippo.io/Heartbleed/#$HOSTNAME:2083
+http://filippo.io/Heartbleed/#$HOSTNAME:2087
+http://filippo.io/Heartbleed/#$HOSTNAME:2096
+
+Further Reading:
+http://heartbleed.com/
+http://www.cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0160
+https://www.openssl.org/news/secadv_20140407.txt
+https://access.redhat.com/security/cve/CVE-2014-0160
+
+--
+Linux Malware Detect v$ver < proj@rfxn.com >
+EOF
+
+cat $emlf | mail -s "[!!] OpenSSL Heartbleed vulnerability on $HOSTNAME [!!]" $email_addr
+rm -f $emlf
+	fi
+fi
+}
+
+
 check_clibkeyutils() {
 files="/lib64/libkeyutils.so.1.9 /lib64/libkeyutils-1.2.so.2 /lib/libkeyutils.so.1.9 /lib/libkeyutils-1.2.so.2"
 for lib in $files; do
@@ -1398,7 +1466,8 @@ rm -rf $tmp_inspath $ofile $ofile_hash
 }
 
 sigup() {
-check_clibkeyutils
+#check_clibkeyutils
+#check_opensslheartbleed
 eout "{sigup} performing signature update check..." 1
 if [ -z "$def_ver" ]; then
 	eout "{sigup} could not determine signature version" 1
@@ -1584,7 +1653,8 @@ else
 		shift
 		if [ -z "$setmodsec" ]; then
 			header
-			check_clibkeyutils
+			#check_clibkeyutils
+			#check_opensslheartbleed
 		fi
 		svc=a
 		trap trap_exit 2

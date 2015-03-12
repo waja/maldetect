@@ -1,4 +1,8 @@
 #!/bin/bash
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:$PATH
+
+# sleep for random value to give upstream a bit of headroom
+sleep $(echo $RANDOM | cut -c1-3) >> /dev/null 2>&1
 
 # clear quarantine/session/tmp data every 14 days
 /usr/sbin/tmpwatch 336 /usr/local/maldetect/tmp >> /dev/null 2>&1
