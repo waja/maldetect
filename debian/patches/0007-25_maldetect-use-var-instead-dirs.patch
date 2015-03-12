@@ -6,11 +6,9 @@ Subject: 25_maldetect-use-var-instead-dirs
  files/maldet | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/files/maldet b/files/maldet
-index 946e217..f6c3111 100755
 --- a/files/maldet
 +++ b/files/maldet
-@@ -449,7 +449,7 @@ view_report() {
+@@ -517,7 +517,7 @@
   rid="$1"
   if [ "$rid" == "list" ]; then
  	eout "Available Reports:"
@@ -19,7 +17,7 @@ index 946e217..f6c3111 100755
  		SCANID=`cat $file | grep "SCAN ID"`
  		TIME=`cat $file | grep "TIME"`
  		if [ ! -z "$SCANID" ] && [ ! -z "$TIME" ]; then
-@@ -670,7 +670,7 @@ scan() {
+@@ -738,7 +738,7 @@
          if [ -z "$setmodsec" ]; then
  		eout "{scan} scan of $spath ($tot_files files) in progress..." 1
  	fi
@@ -28,7 +26,7 @@ index 946e217..f6c3111 100755
  		file=`echo $hit | tr ':' ' ' | awk '{print$2}'`
  		signame=`echo $hit | tr ':' ' ' | awk '{print$1}'`
  		clamsig=`echo $signame | grep -iE "HEX|MD5"`
-@@ -1522,7 +1522,7 @@ else
+@@ -1592,7 +1592,7 @@
  			spath=/home
  		fi
  		if [ "$set_background" == "1" ]; then
@@ -37,7 +35,7 @@ index 946e217..f6c3111 100755
                          scan "$spath" all >> /dev/null 2>&1 &
  		else
  		        scan "$spath" all
-@@ -1544,7 +1544,7 @@ else
+@@ -1614,7 +1614,7 @@
  			days=7
  		fi
                  if [ "$set_background" == "1" ]; then

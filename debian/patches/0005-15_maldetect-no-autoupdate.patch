@@ -6,11 +6,9 @@ Subject: 15_maldetect-no-autoupdate
  files/maldet | 81 +-----------------------------------------------------------
  1 file changed, 1 insertion(+), 80 deletions(-)
 
-diff --git a/files/maldet b/files/maldet
-index 7e39f28..946e217 100755
 --- a/files/maldet
 +++ b/files/maldet
-@@ -121,7 +121,7 @@ cat <<EOF
+@@ -121,7 +121,7 @@
  signature set: $def_ver
  usage maldet [-h|--help] [-l|--log] [-e|--report] [-p|--purge] [-c|--checkout]
  [-b|--background] [-m|--monitor] [-k|--kill-monitor] [-a|--scan-all] [-r|--scan-recent]
@@ -19,7 +17,7 @@ index 7e39f28..946e217 100755
  EOF
  }
  
-@@ -136,9 +136,6 @@ usage $0 [ OPTION ]
+@@ -136,9 +136,6 @@
      -u, --update
         Update malware detection signatures from rfxn.com
  
@@ -29,7 +27,7 @@ index 7e39f28..946e217 100755
      -m, --monitor USERS|PATHS|FILE
         Run maldet with inotify kernel level file create/modify monitoring
         If USERS is specified, monitor user homedirs for UID's > 500
-@@ -1329,78 +1326,6 @@ sil=$1
+@@ -1397,78 +1394,6 @@
          fi
  }
  
@@ -106,9 +104,9 @@ index 7e39f28..946e217 100755
 -}
 -
  sigup() {
- check_clibkeyutils
- eout "{sigup} performing signature update check..." 1
-@@ -1638,10 +1563,6 @@ else
+ #check_clibkeyutils
+ #check_opensslheartbleed
+@@ -1708,10 +1633,6 @@
  		header
  		purge
  	;;

@@ -6,12 +6,11 @@ Subject: 13_maldetect-cron.daily-default
  cron.daily | 4 ++++
  1 file changed, 4 insertions(+)
 
-diff --git a/cron.daily b/cron.daily
-index b79f316..991abca 100755
 --- a/cron.daily
 +++ b/cron.daily
-@@ -1,5 +1,9 @@
- #!/bin/bash
+@@ -4,6 +4,10 @@
+ # sleep for random value to give upstream a bit of headroom
+ sleep $(echo $RANDOM | cut -c1-3) >> /dev/null 2>&1
  
 +if [ -r "/etc/default/maldetect" ]; then
 +	source /etc/default/maldetect
