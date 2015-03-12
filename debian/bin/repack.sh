@@ -25,6 +25,7 @@ srcdir="$tdir/$distdir"
 
 #echo "Removing $srcdir/files/inotify/*inotify*
 rm -rf $srcdir/files/inotify/*inotify*
+rm -rf $srcdir/.git
 
 tarball=$(echo $tarball|sed 's/\.orig\.tar\.gz/+dfsg.orig.tar.gz/')
 tar -cof "${tarball/.gz}" -C $tdir/ $distdir
