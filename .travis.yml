@@ -25,5 +25,16 @@ after_script:
     # run lintian after build
     - sudo apt-get install -qq --no-install-recommends lintian
     - lintian --info --display-info --display-experimental --pedantic --show-overrides ../*.deb && lintian --info --display-info --display-experimental --pedantic --show-overrides ../*.dsc
+
+env:
+  global:
+    # travis encrypt -r waja/maldetect GITHUBTOKEN=XXXXXX (https://help.github.com/articles/creating-an-access-token-for-command-line-use / http://docs.travis-ci.com/user/encryption-keys/)
+    secure: "sEPL9Q6apSnNbW1p6GPRxtZj39i4eDEQp8aQ5WTTBbOCwZinNL8bLkPkioGXlp21tC7bAYN7Wxrzl1CwH4HYNACpQtJvUv6+AMbT4OkOibsellzWf7SvRYAofxjKq8AoU3WQP3+K/sN35LBX2yM685x1e4lqYX0onn5ffn56MVY="
+
+after_success:
+    - mkdir -p debian/build/release/
+    - for FILE in $(dcmd ../*.changes); do cp ../$(basename $FILE) debian/build/release/; done
+    - debian/bin/github-release.sh "$TRAVIS_REPO_SLUG" "debian/`head -1 debian/changelog | awk -F'[()]' '{print $2}' | awk -F'+' '{print $1}'`" debian/build/release/*
+
 #notifications:
 #  email: false
