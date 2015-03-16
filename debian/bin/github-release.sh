@@ -30,8 +30,8 @@
 
 # This script provides a simple continuous deployment
 # solution that allows Travis CI to publish a new GitHub 
-# release and upload assets to it whenever an annotated or
-# signed tag is pushed (git tag -a/-s; git push --tags).
+# release and upload assets to it whenever a tag is pushed:
+# git tag; git push --tags
 #
 # It is created as a temporary solution whilst we wait for
 # Travis DPL to support GitHub:
@@ -83,7 +83,7 @@ REPO=$1 && shift
 RELEASE=$1 && shift
 RELEASEFILES=$@
 
-if ! TAG=`git describe --exact-match --all 2>/dev/null`; then
+if ! TAG=`git describe --exact-match --tags 2>/dev/null`; then
   echo "This commit is not a tag so not creating a release"
   exit 0
 fi
@@ -98,7 +98,6 @@ if [ "$TRAVIS" = "true" ] && [ "$TRAVIS_TAG" != "$RELEASE" ]; then
   exit 1
 fi
 
-TAG=`echo "$TAG" | sed 's/^tags\///'`
 if [ "$TAG" != "$RELEASE" ]; then
   echo "Error: The tag ($TAG) does not match the indicated release ($RELEASE)"
   exit 1
