@@ -1,8 +1,23 @@
-maldetect (1.4.2+dfsg-11) UNRELEASED; urgency=medium
+maldetect (1.4.2+dfsg-12) unstable; urgency=medium
 
-  * 
+  * [ca1d5ee] travis-ci: don't install build-deps manual
+  * [f40f41d] travis-ci: build package with dpkg-buildpackage
+  * [6eba7e4] debian/bin/repack.sh: Force remove the temorary dir
+  * [b05a8f1] Imported Upstream version 1.4.2
+  * [f9248b0] Imported Upstream version 1.4.2
+  * [e21f4cd] Refreshing patches
+  * [4f34098] Imported Upstream version 1.4.2
+  * [94a6c9a] Refreshing patches
+  * [6f71c04] Bump Standards-Version to 3.9.6, no changes needed
+  * [ded6519] Remove absolute path from postinst script
+  * [909b7be] debian/bin/repack.sh: also remove .git from upstream when
+    repacking
+  * [03e1c35] travis-ci: Initial support for uploading releases to github
+  * [6f44f4f] Merging upstream changes of github-release.sh
+  * [b6b774f] Updating copyright and author of debian/bin/github-release.sh
+  * [cc4a0a2] travis-ci: fixing version detection for github-release.sh
 
- -- Jan Wagner <waja@cyconet.org>  Tue, 10 Mar 2015 14:18:53 +0100
+ -- Jan Wagner <waja@cyconet.org>  Thu, 19 Mar 2015 17:52:44 +0100
 
 maldetect (1.4.2+dfsg-10) unstable; urgency=low
 
