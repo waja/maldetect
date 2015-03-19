@@ -1,3 +1,9 @@
+maldetect (1.4.2+dfsg-13) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Jan Wagner <waja@cyconet.org>  Thu, 19 Mar 2015 19:39:47 +0100
+
 maldetect (1.4.2+dfsg-12) unstable; urgency=medium
 
   * [ca1d5ee] travis-ci: don't install build-deps manual
