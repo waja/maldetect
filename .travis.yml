@@ -34,7 +34,7 @@ env:
 after_success:
     - mkdir -p debian/build/release/
     - for FILE in $(dcmd ../*.changes); do cp ../$(basename $FILE) debian/build/release/; done
-    - debian/bin/github-release.sh "$TRAVIS_REPO_SLUG" "debian/`head -1 debian/changelog | awk -F'[()]' '{print $2}' | awk -F'+' '{print $1}'`" debian/build/release/*
+    - debian/bin/github-release.sh "$TRAVIS_REPO_SLUG" "debian/`head -1 debian/changelog | awk -F'[()]' '{print $2}'`" debian/build/release/*
 
 #notifications:
 #  email: false
