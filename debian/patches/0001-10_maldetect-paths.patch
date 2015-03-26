@@ -177,3 +177,14 @@ Subject: 10_maldetect-paths
  datestamp=`date +"%m%d%y-%H%M"`
  rver=$ver
  
+--- a/files/inotify/tlog
++++ b/files/inotify/tlog
+@@ -24,7 +24,7 @@
+ 
+ 
+ # Base run path; no trailing slash
+-BASERUN="/usr/local/maldetect/tmp"
++BASERUN="/tmp/maldetect/"
+ 
+ if [ "$1" == "" ] && [ "$2" == "" ]; then
+ 	echo "$0 usage: [file] [tlog]"
