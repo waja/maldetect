@@ -10,7 +10,12 @@ Homepage: http://www.rfxn.com/projects/linux-malware-detect/
 
 Package: maldetect
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, ed, gawk | mawk, bsd-mailx | mailx, wget
+Depends: bsd-mailx | mailx,
+         ed,
+         gawk | mawk,
+         wget,
+         ${misc:Depends},
+         ${shlibs:Depends}
 Recommends: clamav, inotify-tools
 Description: Linux malware detector
  Linux Malware Detect (LMD) is a malware scanner for Linux released under the
