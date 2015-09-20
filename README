@@ -1,7 +1,6 @@
-Linux Malware Detect v1.4.2
-            (C) 2002-2013, R-fx Networks <proj@r-fx.org>
-            (C) 2013, Ryan MacDonald <ryan@r-fx.org>
-inotifywait (C) 2007, Rohan McGovern <rohan@mcgovern.id.au>
+Linux Malware Detect v1.5
+            (C) 2002-2015, R-fx Networks <proj@r-fx.org>
+            (C) 2015, Ryan MacDonald <ryan@r-fx.org>
 This program may be freely redistributed under the terms of the GNU GPL v2
 
 ::::::::::::::::::::::::::::::::::
@@ -50,23 +49,22 @@ as an attack platform.
 
 Using the CYMRU malware hash registry, which provides malware detection data 
 for 30 major AV packages, we can demonstrate this short coming in current 
-threat detection. The following is an analysis of the core MD5 hashes (5,393) 
-in LMD 1.4.2 and the percentage of major AV products that currently detect 
+threat detection. The following is an analysis of 8,883 MD5 hashes that ship 
+in LMD 1.5 and the percentage of major AV products that currently detect 
 the hashes.
 
-KNOWN MALWARE:      1029
-% AV DETECT (AVG):  48
-% AV DETECT (LOW):  58
-% AV DETECT (HIGH): 80
-UNKNOWN MALWARE:    4364
+KNOWN MALWARE:      1951
+ % AV DETECT (AVG):  58
+ % AV DETECT (LOW):  10
+ % AV DETECT (HIGH): 100
+UNKNOWN MALWARE:    6931
 
-What this information means, is that of the of the 5,393 hashes, 81% or 4,364 
-malware items are NOT detected / known by the top 30 major AV packages. The 1,029 
-malware items that are known / detected have an average of a 48% detection 
-rate among major AV packages with a low / high margin of detection at 58 and 
-80 percent respective. This clearly demonstrates the lacking capacity in currently
-available tools and why it is important that something fill the void, especially
-in the Linux shared hosted environment.
+What this information means, is that of the 8,883 hashes, 78% or 6,931 malware threats
+are NOT detected by top-30 AV products. The 1,951 detected malware threats that are known
+have an average detection rate of 58% among top-30 AV products with a low and high
+detection rate of 10% and 100% respectively. This clearly demonstrates the significant
+lapse in user space malware detection that top-30 AV products currently provide. It is for
+this reason LMD was created, to fill a void, specifically for shared hosted environments.
 
 .: 2 [ FEATURES ]
 
@@ -111,7 +109,15 @@ signatures based on those real world threats that are currently circulating.
 
 There are four main sources for malware data that is used to generate LMD 
 signatures:
-- Network Edge IPS: The network I manage hosts over 35,000 web sites and as 
+- Network Edge IPS: Through networks managed as part of my day-to-day job,
+primarily web hosting related, our web servers receive a large amount of daily
+abuse events, all of which is logged by our network edge IPS. The IPS events
+are processed to extract malware url's, decode POST payload and base64/gzip
+encoded abuse data and ultimately that malware is retrieved, reviewed, classified
+and then signatures generated as appropriate. The vast majority of LMD signatures
+have been derived from IPS extracted data.
+
+The network I manage hosts over 35,000 web sites and as 
 such receives a large amount of daily abuse, all of which is logged by our 
 network edge IPS. The IPS events are processed to extract malware url's, 
 decode POST payload and base64/gzip encoded abuse data and ultimately that 
@@ -154,7 +160,7 @@ XML All Signatures:    http://www.rfxn.com/api/lmd?id=all
 
 .: 5 [ DETECTED THREATS ]
 
-LMD 1.4.2 has a total of 7,241 (5393 MD5 / 1848 HEX) signatures (before updates),
+LMD 1.5 has a total of 10,796 (8883 MD5 / 1913 HEX) signatures (before updates),
 below is a listing of the top 60 threats by prevalence detected by LMD.
 
 base64.inject.unclassed    bin.dccserv.irsexxy      bin.fakeproc.Xnuxer
@@ -181,7 +187,7 @@ php.pktflood.oey           php.shell.rc99           php.shell.shellcomm
 .: 6 [ THREAT SHARING ]
 
 I am a firm believer in not reinventing the wheel, for my own sanity or that
-of others. As such all unique theat data is submitted to CYMRU & ClamAV so
+of others. As such all unique threat data is submitted to CYMRU & ClamAV so
 that the open source and anti-malware community at large can grow from this
 project.
 
@@ -362,12 +368,12 @@ inotify processes.
 The support for HTTP upload scanning is provided through mod_security2's inspectFile hook.
 This feature allows for a validation script to be used in permitting or denying an upload. 
 
-The convenience script to faciliate this is called modsec.sh and is located in the
+The convenience script to faciliate this is called hookscan.sh and is located in the
 /usr/local/maldetect installation path. The default setup is to run a standard maldet scan
 with no clamav support, no cleaner rule executions and quarantining enabled; these options
 are set in the interest of performance vs accuracy which is a fair tradeoff. 
 
-The scan options can be modified in the modsec.sh file if so desired, the default
+The scan options can be modified in the hookscan.sh file if so desired, the default
 scan options are as follows:
 --config-option quar_hits=1,quar_clean=0,clamav_scan=0 --modsec -a "$file"
 
@@ -383,8 +389,8 @@ or at the top of the appropraite rules file for your setup.
 
 /usr/local/apache/conf/modsec2.user.conf (or similar mod_security2 rules file):
 SecRequestBodyAccess On
-SecRule FILES_TMPNAMES "@inspectFile /usr/local/maldetect/modsec.sh" \
-                "log,auditlog,deny,severity:2,phase:2,t:none"
+SecRule FILES_TMPNAMES "@inspectFile /usr/local/maldetect/hookscan.sh" \
+                "id:'999999',log,auditlog,deny,severity:2,phase:2,t:none"
 
 A restart of the HTTPd service is required following these changes.
 
@@ -394,13 +400,13 @@ configurations this is the modsec_audit.log located under /usr/local/apache/logs
 /var/log/httpd.
 
 The log entry will appear similar to the following:
-Message: Access denied with code 406 (phase 2). File "/tmp/20111120-....-file" rejected by
-the approver script "/usr/local/maldetect/modsec.sh": 0 maldet: {HEX}php.cmdshell.r57.317
-/tmp/20111120-....-file [file "/usr/local/apache/conf/modsec2.user.conf"] [line "3"]
+Message: Access denied with code 406 (phase 2). File "/tmp/20121120-....-file" rejected by
+the approver script "/usr/local/maldetect/hookscan.sh": 0 maldet: {HEX}php.cmdshell.r57.317
+/tmp/20121120-....-file [file "/usr/local/apache/conf/modsec2.user.conf"] [line "3"]
 [severity "CRITICAL"]
 
 The default alerting options will apply and an e-mail will be sent when hits are found. This
-can be changed in the modsec.sh script by editing the --config-option values.
+can be changed in the hookscan.sh script by editing the --config-option values.
 
 To disable alerts append email_alert=0 to the --config-option values:
 --config-option quar_hits=1,quar_clean=0,clamav_scan=0,email_alert=0
@@ -432,10 +438,10 @@ e-mail reports for upload hits.
 To restore files quarantined under non-root users, you must pass the -U|--user option to LMD,
 for example if user nobody quarantined a file you would like to restore, it can be restored as
 follows:
-maldet --user nobody /usr/local/maldetect/pub/nobody/quar/20111120-file-SFwTeu.22408
+maldet --user nobody /usr/local/maldetect/pub/nobody/quar/20121120-file-SFwTeu.22408
 
 Or, as always the scan ID can be used to restore
-maldet --user nobody 112011-0032.13771
+maldet --user nobody 112012-0032.13771
 
 .: 13 [ CLEANER RULES ]
 
