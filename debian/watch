@@ -1,6 +1,5 @@
 # Compulsory line, this is a version 3 file
 version=3
 
-# drop the dfsg from version
-opts="dversionmangle=s/\+(debian|dfsg|ds|deb)\d*$//,filenamemangle=s/maldet\.current\.ver/maldetect-$1.tar.gz/" \
-http://www.rfxn.com/downloads/maldet.current.ver (.*)
+opts=filenamemangle=s/.+\/v?(\d\S*)\.tar\.gz/linux-malware-detect-$1\.tar\.gz/ \
+  https://github.com/rfxn/linux-malware-detect/releases .*/v?(\d\S*)\.tar\.gz
