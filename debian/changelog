@@ -1,8 +1,12 @@
-maldetect (1.4.2+dfsg-13) UNRELEASED; urgency=medium
+maldetect (1.4.2+dfsg-13) unstable; urgency=medium
 
-  * 
+  * [7c040b9] Fixing BASERUN path for tlog in 0001-10_maldetect-paths.patch
+    (Closes #5)
+  * [fbca634] debian/control: reformating with warp-and-sort
+  * [85b0d0d] Reformating with warp-and-sort the rest of debian/
+  * [a8a5d87] Updating debian watch file
 
- -- Jan Wagner <waja@cyconet.org>  Thu, 19 Mar 2015 19:39:47 +0100
+ -- Jan Wagner <waja@cyconet.org>  Sun, 20 Sep 2015 19:34:30 +0200
 
 maldetect (1.4.2+dfsg-12) unstable; urgency=medium
 
