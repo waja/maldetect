@@ -1,43 +1,74 @@
 #!/bin/bash
 #
 ##
-# Linux Malware Detect v1.4.2
-#             (C) 2002-2013, R-fx Networks <proj@r-fx.org>
-#             (C) 2013, Ryan MacDonald <ryan@r-fx.org>
-# inotifywait (C) 2007, Rohan McGovern  <rohan@mcgovern.id.au>
+# Linux Malware Detect v1.5
+#             (C) 2002-2015, R-fx Networks <proj@r-fx.org>
+#             (C) 2015, Ryan MacDonald <ryan@r-fx.org>
 # This program may be freely redistributed under the terms of the GNU GPL v2
 ##
 #
+PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+ver=1.5
 inspath=/usr/local/maldetect
-logf=$inspath/event_log
+logf=$inspath/logs/event_log
 cnftemp=.ca.def
+find=`which find 2> /dev/null`
+
+
+clamav_linksigs() {
+        cpath="$1"
+        if [ -d "$cpath" ]; then
+                rm -f $cpath/rfxn.* ; cp -f $inspath/sigs/rfxn.ndb $inspath/sigs/rfxn.hdb $cpath/ 2> /dev/null
+                rm -f $cpath/lmd.user.* ; cp -f $inspath/sigs/lmd.user.ndb $inspath/sigs/lmd.user.hdb $cpath/ 2> /dev/null
+        fi
+}
 
 if [ ! -d "$inspath" ] && [ -d "files" ]; then
 	mkdir -p $inspath
 	chmod 755 $inspath
 	cp -pR files/* $inspath
 	chmod 755 $inspath/maldet
+	mkdir -p $inspath/clean $inspath/pub $inspath/quarantine $inspath/sess $inspath/sigs $inspath/tmp 2> /dev/null
+	chmod 750 $inspath/quarantine $inspath/sess $inspath/tmp $inspath/internals/tlog 2> /dev/null
 	ln -fs $inspath/maldet /usr/local/sbin/maldet
 	ln -fs $inspath/maldet /usr/local/sbin/lmd
-	cp $inspath/inotify/libinotifytools.so.0 /usr/lib/
 	cp -f CHANGELOG COPYING.GPL README $inspath/
+	clamav_paths="/usr/local/cpanel/3rdparty/share/clamav/ /var/lib/clamav/ /var/clamav/ /usr/share/clamav/ /usr/local/share/clamav"
+	for lp in $clamav_paths; do
+		clamav_linksigs "$lp"
+	done
+	killall -SIGUSR2 clamd 2> /dev/null
 else
-	$inspath/maldet -k >> /dev/null 2>&1
+	if [ "$(ps -A --user root -o "cmd" | grep maldetect | grep inotifywait)" ]; then
+		$inspath/maldet -k >> /dev/null 2>&1
+		monmode=1
+	fi
+	$find $inspath.* -maxdepth 0 -type d -mtime +30 | xargs rm -rf
 	mv $inspath $inspath.bk$$
-	rm -f $inspath.last
 	ln -fs $inspath.bk$$ $inspath.last
-        mkdir -p $inspath
-        chmod 755 $inspath
-        cp -pR files/* $inspath
-        chmod 755 $inspath/maldet
+	mkdir -p $inspath
+	chmod 755 $inspath
+	cp -pR files/* $inspath
+	chmod 755 $inspath/maldet
 	ln -fs $inspath/maldet /usr/local/sbin/maldet
 	ln -fs $inspath/maldet /usr/local/sbin/lmd
-	cp $inspath/inotify/libinotifytools.so.0 /usr/lib/
 	cp -f $inspath.bk$$/ignore_* $inspath/  >> /dev/null 2>&1
-	cp -f $inspath.bk$$/sess/* $inspath/sess/ >> /dev/null 2>&1
-	cp -f $inspath.bk$$/tmp/* $inspath/tmp/ >> /dev/null 2>&1
-	cp -f $inspath.bk$$/quarantine/* $inspath/quarantine/ >> /dev/null 2>&1
+	if [ "$ver" == "1.5" ]; then
+		cp -f $inspath.bk$$/sess/* $inspath/sess/ >> /dev/null 2>&1
+		cp -f $inspath.bk$$/tmp/* $inspath/tmp/ >> /dev/null 2>&1
+		cp -f $inspath.bk$$/quarantine/* $inspath/quarantine/ >> /dev/null 2>&1
+	fi
+	cp -f $inspath.bk$$/sigs/custom.* $inspath/sigs/ >> /dev/null 2>&1
+	cp -f $inspath.bk$$/monitor_paths $inspath/ >> /dev/null 2>&1
+	cp -pf $inspath.bk$$/clean/custom.* $inspath/clean/ >> /dev/null 2>&1
 	cp -f CHANGELOG COPYING.GPL README $inspath/
+	mkdir -p $inspath/clean $inspath/pub $inspath/quarantine $inspath/sess $inspath/sigs $inspath/tmp 2> /dev/null
+	chmod 750 $inspath/quarantine $inspath/sess $inspath/tmp $inspath/internals/tlog 2> /dev/null
+	clamav_paths="/usr/local/cpanel/3rdparty/share/clamav/ /var/lib/clamav/ /var/clamav/ /usr/share/clamav/ /usr/local/share/clamav"
+	for lp in $clamav_paths; do
+		clamav_linksigs "$lp"
+	done
+	killall -SIGUSR2 clamd 2> /dev/null
 fi
 
 if [ -d "/etc/cron.daily" ]; then
@@ -50,26 +81,67 @@ if [ -d "/etc/cron.d" ]; then
 	chmod 644 /etc/cron.d/maldet_pub
 fi
 
-	touch $logf
-	$inspath/maldet --alert-daily
-	$inspath/maldet --alert-weekly
-        echo "Linux Malware Detect v1.4.2"
-        echo "            (C) 2002-2013, R-fx Networks <proj@r-fx.org>"
-        echo "            (C) 2013, Ryan MacDonald <ryan@r-fx.org>"
-        echo "inotifywait (C) 2007, Rohan McGovern <rohan@mcgovern.id.au>"
-        echo "This program may be freely redistributed under the terms of the GNU GPL"
-	echo ""
-	echo "installation completed to $inspath"
-	echo "config file: $inspath/conf.maldet"
-	echo "exec file: $inspath/maldet"
-	echo "exec link: /usr/local/sbin/maldet"
-	echo "exec link: /usr/local/sbin/lmd"
-	echo "cron.daily: /etc/cron.daily/maldet"
-	echo ""
-	if [ -f "$cnftemp" ] && [ -f "$inspath.bk$$/conf.maldet" ]; then
-		. files/conf.maldet
-		. $inspath.bk$$/conf.maldet
-		. $cnftemp
-		echo "imported config options from $inspath.last/conf.maldet"
+if [ "$OSTYPE" != "FreeBSD" ]; then
+	if test `cat /proc/1/comm` = "systemd"
+	then
+		mkdir -p /etc/systemd/system/
+		mkdir -p /usr/lib/systemd/system/
+		cp -af ./files/service/maldet.service /usr/lib/systemd/system/
+		systemctl daemon-reload
+		systemctl enable maldet.service
+	else
+		cp -af ./files/service/maldet.sh /etc/init.d/maldet
+		chmod 755 /etc/init.d/maldet
+		if [ -f /etc/redhat-release ]; then
+			if [ ! -f "/etc/sysconfig/maldet" ]; then
+				cp -f ./files/service/maldet.sysconfig /etc/sysconfig/maldet
+			fi
+			/sbin/chkconfig maldet on
+		elif [ -f /etc/debian_version ] || [ -f /etc/lsb-release ]; then
+			update-rc.d -f maldet remove
+			update-rc.d maldet defaults 70 30
+		elif [ -f /etc/gentoo-release ]; then
+			rc-update add maldet default
+		elif [ -f /etc/slackware-version ]; then
+			ln -sf /etc/init.d/maldet /etc/rc.d/rc3.d/S70maldet
+			ln -sf /etc/init.d/maldet /etc/rc.d/rc4.d/S70maldet
+			ln -sf /etc/init.d/maldet /etc/rc.d/rc5.d/S70maldet
+		else
+			/sbin/chkconfig maldet on
+		fi
 	fi
-	$inspath/maldet --update 1
+fi
+
+mkdir -p $inspath/logs && touch $logf
+ln -fs $logf $inspath/event_log
+$inspath/maldet --alert-daily 2> /dev/null
+
+echo "Linux Malware Detect v$ver"
+echo "            (C) 2002-2015, R-fx Networks <proj@r-fx.org>"
+echo "            (C) 2015, Ryan MacDonald <ryan@r-fx.org>"
+echo "This program may be freely redistributed under the terms of the GNU GPL"
+echo ""
+echo "installation completed to $inspath"
+echo "config file: $inspath/conf.maldet"
+echo "exec file: $inspath/maldet"
+echo "exec link: /usr/local/sbin/maldet"
+echo "exec link: /usr/local/sbin/lmd"
+echo "cron.daily: /etc/cron.daily/maldet"
+if [ -f "$cnftemp" ] && [ -f "$inspath.bk$$/conf.maldet" ]; then
+	. files/conf.maldet
+	. $inspath.bk$$/conf.maldet
+	if [ "$quarantine_hits" == "0" ] && [ "$quar_hits" == "1" ]; then
+		quarantine_hits=1
+	fi
+	if [ "$quarantine_clean" == "0" ] && [ "$quar_clean" == "1" ]; then
+		quarantine_clean="1"
+	fi
+	. $cnftemp
+	echo "imported config options from $inspath.last/conf.maldet"
+fi
+$inspath/maldet --update 1
+if [ "$monmode" == "1" ]; then
+	echo "detected active monitoring mode, restarted inotify watch with '-m users'"
+	$inspath/maldet -m users >> /dev/null 2>&1 &
+fi
+echo ""
