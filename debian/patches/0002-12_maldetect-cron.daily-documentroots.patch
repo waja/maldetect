@@ -8,30 +8,22 @@ Subject: 12_maldetect-cron.daily-documentroots
 
 --- a/cron.daily
 +++ b/cron.daily
-@@ -4,6 +4,10 @@
- # sleep for random value to give upstream a bit of headroom
- sleep $(echo $RANDOM | cut -c1-3) >> /dev/null 2>&1
- 
+@@ -6,6 +6,10 @@
+ 	. /etc/maldetect/maldetect.conf.cron
+ fi
+ find=`which find 2> /dev/null`
 +if [ ! "${STDDOCROOT}" ]; then
-+	STDDOCROOT="/var/www/html /usr/local/apache/htdocs /var/www/ /srv/www/"
++	STDDOCROOT="/var/www/,/srv/www/"
 +fi
 +
- # clear quarantine/session/tmp data every 14 days
- /usr/sbin/tmpwatch 336 /tmp/maldetect >> /dev/null 2>&1
- /usr/sbin/tmpwatch 336 /var/lib/maldetect/sess >> /dev/null 2>&1
-@@ -36,10 +40,9 @@
+ if [ "$find" ]; then
+ 	# prune any quarantine/session/tmp data older than 7 days
+ 	tmpdirs="/tmp/maldetect /var/lib/maldetect/sess /var/lib/maldetect/quarantine /var/lib/maldetect/pub/"
+@@ -55,6 +59,6 @@
+ 		/usr/bin/maldet -b -r /var/www/?/data/,/home/?/data/ 1 >> /dev/null 2>&1
+ 	else
+ 		# cpanel, interworx and other standard home/user/public_html setups
+-	        /usr/bin/maldet -b -r /home?/?/public_html/,/var/www/html/,/usr/local/apache/htdocs/ 1 >> /dev/null 2>&1
++	        /usr/bin/maldet -b -r /home?/?/public_html/,/var/www/html/,${STDDOCROOT} 1 >> /dev/null 2>&1
  	fi
- 
- 	# scan default apache docroot paths
--	if [ -d "/var/www/html" ]; then
--		/usr/bin/maldet -b -r /var/www/html 2 >> /dev/null 2>&1
--	fi
--	if [ -d "/usr/local/apache/htdocs" ]; then
--		/usr/bin/maldet -b -r /usr/local/apache/htdocs 2 >> /dev/null 2>&1
--	fi
-+	for DIR in ${STDDOCROOT}; do
-+		if [ -d "${DIR}" ]; then
-+			 /usr/bin/maldet -b -r ${DIR} 2 >> /dev/null 2>&1
-+		fi
-+	done
  fi
