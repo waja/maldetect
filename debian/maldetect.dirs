@@ -6,3 +6,4 @@ var/lib/maldetect/inotify
 var/lib/maldetect/quarantine
 var/lib/maldetect/sess
 var/lib/maldetect/sigs
+var/lib/maldetect/userdirs
