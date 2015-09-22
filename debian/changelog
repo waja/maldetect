@@ -1,3 +1,18 @@
+maldetect (1.5-1~1.gbp703252) UNRELEASED; urgency=medium
+
+  ** SNAPSHOT build @70325263c72e1c3bd3555b14db8d2d292b19ff27 **
+
+  * [ccddfb7] Imported Upstream version 1.5
+  * [57e78e4] Rework patches/0001-10_maldetect-paths.patch for new upstream release
+  * [4fdde68] Rework patches/0002-12_maldetect-cron.daily-documentroots.patch for new upstream release
+  * [290322a] Rework patches/0003-13_maldetect-cron.daily-default.patch for new upstream release
+  * [5fcfd5c] Drop upstream integrated patches/0004-14_maldetect-create-tmp-dir.patch
+  * [e9b455e] Rework patches/0005-15_maldetect-no-autoupdate.patch for new upstream release
+  * [17cd012] Rework patches/0006-20_maldetect-remove-shebang.patch for new upstream release
+  * [7032526] Drop upstream integrated patches/0007-25_maldetect-use-var-instead-dirs.patch
+
+ -- Jan Wagner <waja@cyconet.org>  Tue, 22 Sep 2015 14:23:59 +0200
+
 maldetect (1.4.2+dfsg-13) unstable; urgency=medium
 
   * [7c040b9] Fixing BASERUN path for tlog in 0001-10_maldetect-paths.patch
