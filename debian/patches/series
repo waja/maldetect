@@ -3,3 +3,4 @@
 0003-13_maldetect-cron.daily-default.patch
 0005-15_maldetect-no-autoupdate.patch
 0006-20_maldetect-remove-shebang.patch
+0007-21_drop-ps-path.patch
