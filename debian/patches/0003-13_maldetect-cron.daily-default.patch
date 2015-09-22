@@ -17,5 +17,5 @@ Subject: 13_maldetect-cron.daily-default
 +fi
 +
  if [ ! "${STDDOCROOT}" ]; then
- 	STDDOCROOT="/var/www/html /usr/local/apache/htdocs /var/www/ /srv/www/"
+ 	STDDOCROOT="/var/www/,/srv/www/"
  fi
