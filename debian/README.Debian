@@ -1,9 +1,9 @@
 maldetect for Debian
 --------------------
 
-maldetect (1.4.2+dfsg-3) unstable; urgency=low
+maldetect (1.5-1) unstable; urgency=low
 
-  The modsec.sh script can be found in /usr/lib/maldetect. More information
+  The hookscan.sh script can be found in /usr/lib/maldetect. More information
   how to use this script can be found in /usr/share/doc/maldetect/README.gz.
 
- -- Jan Wagner <waja@cyconet.org>  Thu, 24 Oct 2013 12:45:23 +0200
+ -- Jan Wagner <waja@cyconet.org>  Tue, 22 Sep 2015 14:23:59 +0200
