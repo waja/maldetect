@@ -1,2 +1,3 @@
-# DocumentRoots where daily crobjob should look for documents
-STDDOCROOT="/var/www/ /srv/www/"
+# DocumentRoots where daily crobjob should look for documents,
+# seperated by comma (,)
+STDDOCROOT="/var/www/,/srv/www"
