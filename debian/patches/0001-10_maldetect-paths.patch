@@ -16,8 +16,6 @@
  install.sh                     | 10 +++++-----
  16 files changed, 68 insertions(+), 68 deletions(-)
 
-diff --git a/.ca.def b/.ca.def
-index ddd6616..8bc82c9 100644
 --- a/.ca.def
 +++ b/.ca.def
 @@ -1,4 +1,4 @@
@@ -26,7 +24,7 @@ index ddd6616..8bc82c9 100644
  #!/bin/bash
  #
  ##
-@@ -52,7 +52,7 @@ autoupdate_version="1"
+@@ -52,7 +52,7 @@
  autoupdate_version_hashed="1"
  
  # When defined, the import_config_url option allows a configuration file to be
@@ -35,7 +33,7 @@ index ddd6616..8bc82c9 100644
  # parsed followed by the imported configuration file. As such, only variables
  # defined in the imported configuration file are overridden and a full set of
  # configuration options is not explicitly required in the imported file.
-@@ -168,7 +168,7 @@ scan_find_timeout="$scan_find_timeout"
+@@ -168,7 +168,7 @@
  # user files. This 'find' operation can be especially resource intensive and it may
  # be desirable to persist the file list results so that other applications/tasks
  # may make use of the results. When scan_export_filelist is set enabled, the most
@@ -44,11 +42,9 @@ index ddd6616..8bc82c9 100644
  # [ 0 = disabled, 1 = enabled ]
  scan_export_filelist="$scan_export_filelist"
  
-diff --git a/README b/README
-index 246997c..8a46e1c 100644
 --- a/README
 +++ b/README
-@@ -193,35 +193,35 @@ project.
+@@ -193,35 +193,35 @@
  
  .: 7 [ CONFIGURATION ]
  
@@ -90,7 +86,7 @@ index 246997c..8a46e1c 100644
  A line spaced file for regexp paths that are excluded from inotify monitoring
   Sample ignore entry:
   ^/home/user$
-@@ -279,7 +279,7 @@ option gives a detailed summary of usage options:
+@@ -279,7 +279,7 @@
      -s, --restore FILE|SCANID
         Restore file from quarantine queue to orginal path or restore all items from
         a specific SCANID
@@ -99,7 +95,7 @@ index 246997c..8a46e1c 100644
         e.g: maldet --restore 050910-1534.21135
  
      -q, --quarantine SCANID
-@@ -297,7 +297,7 @@ option gives a detailed summary of usage options:
+@@ -297,7 +297,7 @@
         e.g: maldet --user nobody --restore 050910-1534.21135
  
      -co, --config-option VAR1=VALUE,VAR2=VALUE,VAR3=VALUE
@@ -108,7 +104,7 @@ index 246997c..8a46e1c 100644
         e.g: maldet --config-option email_addr=you@domain.com,quar_hits=1
  
      -p, --purge
-@@ -350,7 +350,7 @@ memory or cpu usage.
+@@ -350,7 +350,7 @@
  The scanner component of the monitor watches for notifications from the inotify
  process and batches items to be scanned, by default, every 30 seconds. If you
  need tighter control of the scanning timer, you can edit inotify_stime in
@@ -117,7 +113,7 @@ index 246997c..8a46e1c 100644
  
  The alerting of file hits under monitor mode is handled through a daily report
  instead of sending an email on every hit. The cron.daily job installed by LMD
-@@ -383,7 +383,7 @@ in single file scans by a wide margin. A single file scan using clamav takes rou
+@@ -383,7 +383,7 @@
  3sec on average while the LMD scanner engine takes 0.5sec or less.
  
  To enable upload scanning with mod_security2 you must set enable the public_scan option
@@ -126,7 +122,7 @@ index 246997c..8a46e1c 100644
  configuration. These rules are best placed in your modsec2.user.conf file on cpanel servers
  or at the top of the appropraite rules file for your setup.
  
-@@ -424,13 +424,13 @@ Given that the maldetect installation path is owned by user root, we either need
+@@ -424,13 +424,13 @@
  path world writable (777) or populate the pub path with user owned paths. It was undesirable
  to set any path world writable and as such a feature to populate path data was created. This
  feature is controlled with the --mkpubpaths flag and is executed from cron every 10 minutes,
@@ -143,7 +139,7 @@ index 246997c..8a46e1c 100644
  that exectues the scan, so user nobody would be under pub/nobody/quar/. The actual paths
  for where files are quarantined and the user which executed the scan, can be verified in the
  e-mail reports for upload hits.
-@@ -438,7 +438,7 @@ e-mail reports for upload hits.
+@@ -438,7 +438,7 @@
  To restore files quarantined under non-root users, you must pass the -U|--user option to LMD,
  for example if user nobody quarantined a file you would like to restore, it can be restored as
  follows:
@@ -152,15 +148,11 @@ index 246997c..8a46e1c 100644
  
  Or, as always the scan ID can be used to restore
  maldet --user nobody 112012-0032.13771
-diff --git a/cron.d.pub b/cron.d.pub
-index 0a80b8a..90bfe02 100644
 --- a/cron.d.pub
 +++ b/cron.d.pub
 @@ -1 +1 @@
 -*/10 * * * * root /usr/local/maldetect/maldet --mkpubpaths >> /dev/null 2>&1
 +*/10 * * * * root /usr/bin/maldet --mkpubpaths >> /dev/null 2>&1
-diff --git a/cron.daily b/cron.daily
-index 07794aa..6e02fe2 100755
 --- a/cron.daily
 +++ b/cron.daily
 @@ -1,14 +1,14 @@
@@ -182,7 +174,7 @@ index 07794aa..6e02fe2 100755
  	for dir in $tmpdirs; do
  	 if [ -d "$dir" ]; then
  	  $find $dir -type f -mtime +7 -print0 | xargs -0 rm -f >> /dev/null 2>&1
-@@ -23,38 +23,38 @@ fi
+@@ -23,38 +23,38 @@
  
  if [ "$autoupdate_version" == "1" ]; then
  	# check for new release version
@@ -231,11 +223,9 @@ index 07794aa..6e02fe2 100755
 +	        /usr/bin/maldet -b -r /home?/?/public_html/,/var/www/html/,/usr/local/apache/htdocs/ 1 >> /dev/null 2>&1
  	fi
  fi
-diff --git a/files/conf.maldet b/files/conf.maldet
-index 0303749..04dd0d9 100644
 --- a/files/conf.maldet
 +++ b/files/conf.maldet
-@@ -51,7 +51,7 @@ autoupdate_version="1"
+@@ -51,7 +51,7 @@
  autoupdate_version_hashed="1"
  
  # When defined, the import_config_url option allows a configuration file to be
@@ -244,7 +234,7 @@ index 0303749..04dd0d9 100644
  # parsed followed by the imported configuration file. As such, only variables
  # defined in the imported configuration file are overridden and a full set of
  # configuration options is not explicitly required in the imported file.
-@@ -170,7 +170,7 @@ scan_find_timeout="0"
+@@ -170,7 +170,7 @@
  # user files. This 'find' operation can be especially resource intensive and it may
  # be desirable to persist the file list results so that other applications/tasks
  # may make use of the results. When scan_export_filelist is set enabled, the most
@@ -253,7 +243,7 @@ index 0303749..04dd0d9 100644
  # [ 0 = disabled, 1 = enabled ]
  scan_export_filelist="0"
  
-@@ -204,7 +204,7 @@ quarantine_suspend_user_minuid="500"
+@@ -204,7 +204,7 @@
  # init based startup script. This value is ignored when '/etc/sysconfig/maldet'
  # is present with a defined value for $MONITOR_MODE.
  # default_monitor_mode="users"
@@ -262,21 +252,17 @@ index 0303749..04dd0d9 100644
  
  # The base number of files that can be watched under a path,
  # this ends up being a relative value per-user in user mode.
-diff --git a/files/hookscan.sh b/files/hookscan.sh
-index 2718086..f893650 100755
 --- a/files/hookscan.sh
 +++ b/files/hookscan.sh
-@@ -5,4 +5,4 @@ clamdloc=`which clamdscan 2> /dev/null`
+@@ -5,4 +5,4 @@
  if [ "$isclamd" ] && [ -f "$clamdloc" ]; then
  	clamd_scan=1
  fi
 -cd /tmp ; /usr/local/maldetect/maldet --config-option quar_hits=1,quar_clean=0,tmpdir=/var/tmp,scan_tmpdir_paths='',scan_clamscan=$clamd_scan --hook-scan -a "$file"
 +cd /tmp ; /usr/bin/maldet --config-option quar_hits=1,quar_clean=0,tmpdir=/var/tmp,scan_tmpdir_paths='',scan_clamscan=$clamd_scan --hook-scan -a "$file"
-diff --git a/files/internals/functions b/files/internals/functions
-index cfee3ea..44f8136 100644
 --- a/files/internals/functions
 +++ b/files/internals/functions
-@@ -17,7 +17,7 @@ prerun() {
+@@ -17,7 +17,7 @@
  				exit
  			fi
  			header
@@ -285,7 +271,7 @@ index cfee3ea..44f8136 100644
  			exit 1
  		fi
  		pub=1
-@@ -191,7 +191,7 @@ trap_exit() {
+@@ -191,7 +191,7 @@
  		eout "{glob} scan interrupt by user, aborting scan..." 1
  		eout "{scan} scan report saved, to view run: maldet --report $datestamp.$$" 1
  		if [ "$quarantine_hits" == "0" ] && [ ! "$tot_hits" == "0" ]; then
@@ -294,7 +280,7 @@ index cfee3ea..44f8136 100644
  		fi
  		exit
  	fi
-@@ -346,7 +346,7 @@ usage $0 [ OPTION ]
+@@ -346,7 +346,7 @@
         If FILE is specified, paths will be extracted from file, line spaced
         If PATHS are specified, must be comma spaced list, NO WILDCARDS!
         e.g: maldet --monitor users
@@ -303,7 +289,7 @@ index cfee3ea..44f8136 100644
         e.g: maldet --monitor /home/mike,/home/ashton
  
      -k, --kill-monitor
-@@ -369,7 +369,7 @@ usage $0 [ OPTION ]
+@@ -369,7 +369,7 @@
      -s, --restore FILE|SCANID
         Restore file from quarantine queue to orginal path or restore all items from
         a specific SCANID
@@ -312,7 +298,7 @@ index cfee3ea..44f8136 100644
         e.g: maldet --restore 050910-1534.21135
  
      -q, --quarantine SCANID
-@@ -387,7 +387,7 @@ usage $0 [ OPTION ]
+@@ -387,7 +387,7 @@
         e.g: maldet --user nobody --restore 050910-1534.21135
  
      -co, --config-option VAR1=VALUE,VAR2=VALUE,VAR3=VALUE
@@ -321,7 +307,7 @@ index cfee3ea..44f8136 100644
         e.g: maldet --config-option email_addr=you@domain.com,quarantine_hits=1
  
      -p, --purge
-@@ -1035,7 +1035,7 @@ scan() {
+@@ -1035,7 +1035,7 @@
  		eout "{scan} scan completed on $spath: files $tot_files, malware hits $tot_hits, cleaned hits $tot_cl, time ${scan_et}s" 1
  		eout "{scan} scan report saved, to view run: maldet --report $datestamp.$$" 1
  		if [ "$quarantine_hits" == "0" ] && [ ! "$tot_hits" == "0" ]; then
@@ -330,11 +316,9 @@ index cfee3ea..44f8136 100644
  		fi
  	fi
  	
-diff --git a/files/internals/hexfifo.pl b/files/internals/hexfifo.pl
-index 7046d44..f9f272c 100644
 --- a/files/internals/hexfifo.pl
 +++ b/files/internals/hexfifo.pl
-@@ -15,7 +15,7 @@ if ($#ARGV != "0") {
+@@ -15,7 +15,7 @@
  
  $hexfile = $ARGV[0];
  
@@ -343,12 +327,55 @@ index 7046d44..f9f272c 100644
  $timeout = "1";
  
  if (-p $named_pipe_name) {
-diff --git a/files/internals/internals.conf b/files/internals/internals.conf
-index ee51e2f..1141a2b 100644
 --- a/files/internals/internals.conf
 +++ b/files/internals/internals.conf
-@@ -82,12 +82,12 @@ inotify=`which inotifywait 2> /dev/null`
- inotify_log="$inspath/logs/inotify_log"
+@@ -8,9 +8,9 @@
+ ##
+ #
+ 
+-logdir="$inspath/logs"
+-maldet_log="$logdir/event_log"
+-clamscan_log="$logdir/clamscan_log"
++logdir="/var/log"
++maldet_log="$logdir/maldetect_event.log"
++clamscan_log="$logdir/maldetect_clamscan.log"
+ datestamp=`date +"%y%m%d-%H%M"`
+ 
+ wget_timeout="5"
+@@ -44,15 +44,15 @@
+ logger=`which logger 2> /dev/null`
+ 
+ suppress_cleanhit="$email_ignore_clean"
+-ignore_paths="$inspath/ignore_paths"
+-ignore_sigs="$inspath/ignore_sigs"
+-ignore_inotify="$inspath/ignore_inotify"
+-ignore_file_ext="$inspath/ignore_file_ext"
+-quardir="$inspath/quarantine"
+-sessdir="$inspath/sess"
+-sigdir="$inspath/sigs"
+-cldir="$inspath/clean"
+-tmpdir="$inspath/tmp"
++ignore_paths="/etc/maldetect/ignore_paths"
++ignore_sigs="/etc/maldetect/ignore_sigs"
++ignore_inotify="/etc/maldetect/ignore_inotify"
++ignore_file_ext="/etc/maldetect/ignore_file_ext"
++quardir="/var/lib/maldetect/quarantine"
++sessdir="/var/lib/maldetect/sess"
++sigdir="/var/lib/maldetect/sigs"
++cldir="/var/lib/maldetect/clean"
++tmpdir="/tmp/maldetect"
+ 
+ sig_version_file="$sigdir/maldet.sigs.ver"
+ if [ -f "$sig_version_file" ]; then
+@@ -77,17 +77,17 @@
+ lmd_version_url="http://www.rfxn.com/downloads/maldet.current.ver"
+ 
+ clamav_paths="/usr/local/cpanel/3rdparty/share/clamav/ /var/lib/clamav/ /var/clamav/ /usr/share/clamav/ /usr/local/share/clamav"
+-tlog="$inspath/internals/tlog"
++tlog="/usr/lib/maldetect/inotify/tlog"
+ inotify=`which inotifywait 2> /dev/null`
+-inotify_log="$inspath/logs/inotify_log"
++inotify_log="/var/lib/maldetect/inotify/inotify_log"
  inotify_user_instances=128
  inotify_trim=150000
 -hex_fifo_path="$inspath/internals/hexfifo"
@@ -364,11 +391,9 @@ index ee51e2f..1141a2b 100644
  email_subj="maldet alert from $(hostname)"
  
  ## backwards compatibility for pre-1.5 deprecated config options
-diff --git a/files/internals/scan.etpl b/files/internals/scan.etpl
-index edeea1a..2396d28 100644
 --- a/files/internals/scan.etpl
 +++ b/files/internals/scan.etpl
-@@ -29,7 +29,7 @@ EOF
+@@ -29,7 +29,7 @@
  if [ "$quarantine_hits" == "0" ] && [ ! "$tot_hits" == "0" ]; then
   echo "WARNING: Automatic quarantine is currently disabled, detected threats are still accessible to users!" >> $tmpf
   echo "To enable, set quarantine_hits=1 and/or to quarantine hits from this scan run:" >> $tmpf
@@ -377,11 +402,9 @@ index edeea1a..2396d28 100644
  fi
  if [ "$quarantine_clean" == "1" ]; then
    if [ "$type" == "scan" ] && [ -f "$sessdir/clean.$$" ] && [ ! -z "$(cat $sessdir/clean.$$)" ]; then
-diff --git a/files/internals/tlog b/files/internals/tlog
-index e55c0f5..0606480 100755
 --- a/files/internals/tlog
 +++ b/files/internals/tlog
-@@ -24,7 +24,7 @@ PATH=/sbin:/usr/sbin:/usr/bin:/usr/local/bin:/usr/local/sbin:$PATH ; export PATH
+@@ -24,7 +24,7 @@
  
  
  # Base run path; no trailing slash
@@ -390,8 +413,6 @@ index e55c0f5..0606480 100755
  
  if [ "$1" == "" ] && [ "$2" == "" ]; then
  	echo "$0 usage: [file] [tlog]"
-diff --git a/files/maldet b/files/maldet
-index df5f2ee..a8978c6 100755
 --- a/files/maldet
 +++ b/files/maldet
 @@ -10,10 +10,10 @@
@@ -409,7 +430,7 @@ index df5f2ee..a8978c6 100755
  
  header() {
  	echo "Linux Malware Detect v$ver"
-@@ -83,7 +83,7 @@ else
+@@ -83,7 +83,7 @@
  					exit
  				else
  					header
@@ -418,11 +439,9 @@ index df5f2ee..a8978c6 100755
  					exit
  				fi
  			;;
-diff --git a/files/service/maldet.service b/files/service/maldet.service
-index e9e2fad..a23f263 100644
 --- a/files/service/maldet.service
 +++ b/files/service/maldet.service
-@@ -3,9 +3,9 @@ Description=Linux Malware Detect monitoring - maldet
+@@ -3,9 +3,9 @@
  After=network.target
  
  [Service]
@@ -435,8 +454,6 @@ index e9e2fad..a23f263 100644
 +PIDFile=/tmp/maldetect/inotifywait.pid
  [Install]
  WantedBy=multi-user.target
-diff --git a/files/service/maldet.sh b/files/service/maldet.sh
-index 0612a48..ee86328 100644
 --- a/files/service/maldet.sh
 +++ b/files/service/maldet.sh
 @@ -10,8 +10,8 @@
@@ -450,7 +467,7 @@ index 0612a48..ee86328 100644
  	if [ "$default_monitor_mode" ]; then
  		MONITOR_MODE="$default_monitor_mode"
  	fi
-@@ -21,13 +21,13 @@ prog="maldet"
+@@ -21,13 +21,13 @@
  LOCKFILE=/var/lock/subsys/$prog
  
  if [ -z "$MONITOR_MODE" ]; then
@@ -466,7 +483,7 @@ index 0612a48..ee86328 100644
          RETVAL=$? [ $RETVAL -eq 0 ] && touch $LOCKFILE
          echo
          return $RETVAL
-@@ -35,7 +35,7 @@ start() {
+@@ -35,7 +35,7 @@
  
  stop() {
          echo -n "Shutting down $prog: "
@@ -475,8 +492,6 @@ index 0612a48..ee86328 100644
          RETVAL=$? [ $RETVAL -eq 0 ] && rm -f $LOCKFILE
          echo
          return $RETVAL
-diff --git a/files/service/maldet.sysconfig b/files/service/maldet.sysconfig
-index 2613544..0b455f7 100644
 --- a/files/service/maldet.sysconfig
 +++ b/files/service/maldet.sysconfig
 @@ -9,4 +9,4 @@
@@ -485,11 +500,9 @@ index 2613544..0b455f7 100644
  #MONITOR_MODE="users"
 -#MONITOR_MODE="/usr/local/maldetect/monitor_paths"
 +#MONITOR_MODE="/etc/maldetect/monitor_paths"
-diff --git a/install.sh b/install.sh
-index eea6dde..313d498 100755
 --- a/install.sh
 +++ b/install.sh
-@@ -122,14 +122,14 @@ echo "            (C) 2015, Ryan MacDonald <ryan@r-fx.org>"
+@@ -122,14 +122,14 @@
  echo "This program may be freely redistributed under the terms of the GNU GPL"
  echo ""
  echo "installation completed to $inspath"
@@ -508,7 +521,7 @@ index eea6dde..313d498 100755
  	if [ "$quarantine_hits" == "0" ] && [ "$quar_hits" == "1" ]; then
  		quarantine_hits=1
  	fi
-@@ -137,7 +137,7 @@ if [ -f "$cnftemp" ] && [ -f "$inspath.bk$$/conf.maldet" ]; then
+@@ -137,7 +137,7 @@
  		quarantine_clean="1"
  	fi
  	. $cnftemp
