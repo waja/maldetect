@@ -1,15 +1,37 @@
-maldetect (1.5-1~1.gbp703252) UNRELEASED; urgency=medium
+maldetect (1.5-1~2.gbpda1a05) UNRELEASED; urgency=medium
 
-  ** SNAPSHOT build @70325263c72e1c3bd3555b14db8d2d292b19ff27 **
+  ** SNAPSHOT build @da1a0583e7f6757a92ecc6bd8f1e56b0387427e0 **
 
   * [ccddfb7] Imported Upstream version 1.5
-  * [57e78e4] Rework patches/0001-10_maldetect-paths.patch for new upstream release
-  * [4fdde68] Rework patches/0002-12_maldetect-cron.daily-documentroots.patch for new upstream release
-  * [290322a] Rework patches/0003-13_maldetect-cron.daily-default.patch for new upstream release
-  * [5fcfd5c] Drop upstream integrated patches/0004-14_maldetect-create-tmp-dir.patch
-  * [e9b455e] Rework patches/0005-15_maldetect-no-autoupdate.patch for new upstream release
-  * [17cd012] Rework patches/0006-20_maldetect-remove-shebang.patch for new upstream release
-  * [7032526] Drop upstream integrated patches/0007-25_maldetect-use-var-instead-dirs.patch
+  * [57e78e4] Rework patches/0001-10_maldetect-paths.patch for new upstream
+    release
+  * [4fdde68] Rework patches/0002-12_maldetect-cron.daily-documentroots.patch
+    for new upstream release
+  * [290322a] Rework patches/0003-13_maldetect-cron.daily-default.patch for new
+    upstream release
+  * [5fcfd5c] Drop upstream integrated
+    patches/0004-14_maldetect-create-tmp-dir.patch
+  * [e9b455e] Rework patches/0005-15_maldetect-no-autoupdate.patch for new
+    upstream release
+  * [17cd012] Rework patches/0006-20_maldetect-remove-shebang.patch for new
+    upstream release
+  * [7032526] Drop upstream integrated
+    patches/0007-25_maldetect-use-var-instead-dirs.patch
+  * [f9e5974] Updating debian/changelog
+  * [fc1a7b4] Unfuzzing patches/0003-13_maldetect-cron.daily-default.patch
+  * [a8da03f] Update installation pathes for new upstream release
+  * [25fc72c] travis-ci: grab actual used upstream version
+  * [852a5cd] Updating definition of standard DocumentRoot to new syntax in
+    default configuration
+  * [789295d] Removing shebang from scan.etpl and functions via
+    patches/0006-20_maldetect-remove-shebang.patch
+  * [baf4300] Updating README.Debian, the script is now called hookscan.sh
+  * [a1f3f97] Make internal perl scripts executable
+  * [9626b4b] Adding 0007-21_drop-ps-path.patch from upstream branch
+  * [4984623] Adding 0008-16_userbasedir-variable.patch to be able to split out
+    varibale parts into /var/lib/maldetect/userdirs
+  * [da1a058] Add /var/lib/maldetect/userdirs to dirs to be created by the
+    package
 
  -- Jan Wagner <waja@cyconet.org>  Tue, 22 Sep 2015 14:23:59 +0200
 
