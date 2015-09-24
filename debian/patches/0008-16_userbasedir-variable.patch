@@ -12,11 +12,9 @@ needs to be in /usr. So the user dirs have to go seperated from the programs.
  files/maldet                   | 24 ++++++++++++------------
  3 files changed, 17 insertions(+), 16 deletions(-)
 
-diff --git a/files/internals/functions b/files/internals/functions
-index cfee3ea..26616b0 100644
 --- a/files/internals/functions
 +++ b/files/internals/functions
-@@ -22,10 +22,10 @@ prerun() {
+@@ -22,10 +22,10 @@
  		fi
  		pub=1
  		user=`whoami`
@@ -31,23 +29,19 @@ index cfee3ea..26616b0 100644
  		mkdir -p $quardir >> /dev/null 2>&1
  		mkdir -p $sessdir >> /dev/null 2>&1
  		mkdir -p $tmpdir >> /dev/null 2>&1
-diff --git a/files/internals/internals.conf b/files/internals/internals.conf
-index ee51e2f..71ac823 100644
 --- a/files/internals/internals.conf
 +++ b/files/internals/internals.conf
-@@ -53,6 +53,7 @@ sessdir="$inspath/sess"
- sigdir="$inspath/sigs"
- cldir="$inspath/clean"
- tmpdir="$inspath/tmp"
+@@ -53,6 +53,7 @@
+ sigdir="/var/lib/maldetect/sigs"
+ cldir="/var/lib/maldetect/clean"
+ tmpdir="/tmp/maldetect"
 +userbasedir="/var/lib/maldetect/userdirs"
  
  sig_version_file="$sigdir/maldet.sigs.ver"
  if [ -f "$sig_version_file" ]; then
-diff --git a/files/maldet b/files/maldet
-index df5f2ee..8785943 100755
 --- a/files/maldet
 +++ b/files/maldet
-@@ -61,7 +61,7 @@ else
+@@ -61,7 +61,7 @@
  		case "$1" in
  			--mkpubpaths)
  				if [ "$scan_user_access" == "1" ]; then
@@ -56,7 +50,7 @@ index df5f2ee..8785943 100755
  					for user in `cat /etc/passwd | cut -d ':' -f1`; do
  						uid=`id --user $user`
  						if [ -z "$uid" ]; then
-@@ -70,12 +70,12 @@ else
+@@ -70,12 +70,12 @@
  						if [ -z "$scan_user_access_minuid" ]; then
  							scan_user_access_minuid=10
  						fi
@@ -75,7 +69,7 @@ index df5f2ee..8785943 100755
  							eout "{glob} created public scanning paths for user $user"
  						fi
  						unset uid user
-@@ -93,16 +93,16 @@ else
+@@ -93,16 +93,16 @@
  			-U|--user)
  				shift
  				user="$1"
