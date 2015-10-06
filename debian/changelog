@@ -1,6 +1,6 @@
-maldetect (1.5-1~2.gbpda1a05) UNRELEASED; urgency=medium
+maldetect (1.5-1~2.gbpf64c83) UNRELEASED; urgency=medium
 
-  ** SNAPSHOT build @da1a0583e7f6757a92ecc6bd8f1e56b0387427e0 **
+  ** SNAPSHOT build @f64c83cc4d7cb249f8b37338bfa9363ae4a0438c **
 
   * [ccddfb7] Imported Upstream version 1.5
   * [57e78e4] Rework patches/0001-10_maldetect-paths.patch for new upstream
@@ -32,6 +32,13 @@ maldetect (1.5-1~2.gbpda1a05) UNRELEASED; urgency=medium
     varibale parts into /var/lib/maldetect/userdirs
   * [da1a058] Add /var/lib/maldetect/userdirs to dirs to be created by the
     package
+  * [8d50982] Updating debian/changelog
+  * [f981822] Add missing changes for internal.conf to
+    patches/0001-10_maldetect-paths.patch
+  * [7439b52] Refresh patches/0008-16_userbasedir-variable.patch
+  * [8142761] Adding patches/0009-17_fix_tmpdir.patch
+  * [492d7dc] Adding patches/0010-18_fix_sigdir.patch
+  * [f64c83c] Updating manpage for 1.5
 
  -- Jan Wagner <waja@cyconet.org>  Tue, 22 Sep 2015 14:23:59 +0200
 
