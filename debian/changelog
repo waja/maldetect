@@ -1,6 +1,4 @@
-maldetect (1.5-1~2.gbpf64c83) UNRELEASED; urgency=medium
-
-  ** SNAPSHOT build @f64c83cc4d7cb249f8b37338bfa9363ae4a0438c **
+maldetect (1.5-1~beta1) unstable; urgency=medium
 
   * [ccddfb7] Imported Upstream version 1.5
   * [57e78e4] Rework patches/0001-10_maldetect-paths.patch for new upstream
@@ -40,7 +38,7 @@ maldetect (1.5-1~2.gbpf64c83) UNRELEASED; urgency=medium
   * [492d7dc] Adding patches/0010-18_fix_sigdir.patch
   * [f64c83c] Updating manpage for 1.5
 
- -- Jan Wagner <waja@cyconet.org>  Tue, 22 Sep 2015 14:23:59 +0200
+ -- Jan Wagner <waja@cyconet.org>  Tue, 06 Oct 2015 17:27:15 +0200
 
 maldetect (1.4.2+dfsg-13) unstable; urgency=medium
 
