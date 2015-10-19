@@ -10,7 +10,7 @@ install:
     # install packages needed for mk-build-deps
     - sudo apt-get install -qq --no-install-recommends devscripts equivs
     # pull build deps from debian/control
-    - sudo mk-build-deps -ir
+    - sudo mk-build-deps -ir -t "apt-get --yes --no-install-recommends"
     # remove packages needed for mk-build-deps
     - sudo apt-get purge -qq equivs
     - sudo apt-get autoremove -qq
