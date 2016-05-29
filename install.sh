@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 ##
 # Linux Malware Detect v1.5
@@ -43,7 +43,7 @@ else
 		$inspath/maldet -k >> /dev/null 2>&1
 		monmode=1
 	fi
-	$find $inspath.* -maxdepth 0 -type d -mtime +30 | xargs rm -rf
+	$find ${inspath}.* -maxdepth 0 -type d -mtime +30 | xargs rm -rf
 	mv $inspath $inspath.bk$$
 	ln -fs $inspath.bk$$ $inspath.last
 	mkdir -p $inspath
@@ -52,6 +52,9 @@ else
 	chmod 755 $inspath/maldet
 	ln -fs $inspath/maldet /usr/local/sbin/maldet
 	ln -fs $inspath/maldet /usr/local/sbin/lmd
+	mkdir -p /usr/local/share/man/man1/
+	gzip -9 $inspath/maldet.1
+	ln -fs $inspath/maldet.1.gz /usr/local/share/man/man1/maldet.1.gz
 	cp -f $inspath.bk$$/ignore_* $inspath/  >> /dev/null 2>&1
 	if [ "$ver" == "1.5" ]; then
 		cp -f $inspath.bk$$/sess/* $inspath/sess/ >> /dev/null 2>&1
@@ -98,6 +101,9 @@ if [ "$OSTYPE" != "FreeBSD" ]; then
 			fi
 			/sbin/chkconfig maldet on
 		elif [ -f /etc/debian_version ] || [ -f /etc/lsb-release ]; then
+			if [ ! -f "/etc/default/maldet" ]; then
+				cp -f ./files/service/maldet.sysconfig /etc/default/maldet
+			fi
 			update-rc.d -f maldet remove
 			update-rc.d maldet defaults 70 30
 		elif [ -f /etc/gentoo-release ]; then

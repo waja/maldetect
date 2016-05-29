@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # maldet    Linux Malware Detect monitoring
 #
@@ -6,10 +6,27 @@
 # description: Linux Malware Detect file monitoring
 # processname: maldet
 
+### BEGIN INIT INFO
+# Provides:          maldet
+# Required-Start:    $local_fs $remote_fs $network $syslog $named
+# Required-Stop:     $local_fs $remote_fs $network $syslog $named
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# X-Interactive:     true
+# Short-Description: Start/stop maldet in monitor mode
+### END INIT INFO
+
+
 # Source function library.
-. /etc/init.d/functions
+if [ -f /etc/init.d/functions ]; then
+        . /etc/init.d/functions
+elif [ -f /lib/lsb/init-functions ]; then
+        . /lib/lsb/init-functions
+fi
 if [ -f "/etc/sysconfig/maldet" ]; then
 	. /etc/sysconfig/maldet
+elif [ -f "/etc/default/maldet" ]; then
+    . /etc/default/maldet
 elif [ "$(egrep ^default_monitor_mode /usr/local/maldetect/conf.maldet 2> /dev/null)" ]; then
 	. /usr/local/maldetect/conf.maldet
 	if [ "$default_monitor_mode" ]; then
@@ -18,10 +35,20 @@ elif [ "$(egrep ^default_monitor_mode /usr/local/maldetect/conf.maldet 2> /dev/n
 fi
 RETVAL=0
 prog="maldet"
-LOCKFILE=/var/lock/subsys/$prog
+if [ -d /var/lock/subsys ]; then
+        LOCKFILE=/var/lock/subsys/$prog
+else
+        LOCKFILE=/var/lock/$prog
+fi
 
 if [ -z "$MONITOR_MODE" ]; then
-	echo "error no default monitor mode defined, set \$MONITOR_MODE in /etc/sysconfig/maldet or \$default_monitor_mode in /usr/local/maldetect/conf.maldet"
+    if [ -f /etc/redhat-release ]; then
+        echo "error no default monitor mode defined, set \$MONITOR_MODE in /etc/sysconfig/maldet, or \$default_monitor_mode in /usr/local/maldetect/conf.maldet"
+    elif [ -f /etc/debian_version ]; then
+        echo "error no default monitor mode defined, set \$MONITOR_MODE in /etc/default/maldet, or \$default_monitor_mode in /usr/local/maldetect/conf.maldet"
+    else
+        echo "error no default monitor mode defined, set \$MONITOR_MODE in /etc/sysconfig/maldet, or \$default_monitor_mode in /usr/local/maldetect/conf.maldet"
+    fi
 	exit 1
 fi
 
@@ -35,7 +62,13 @@ start() {
 
 stop() {
         echo -n "Shutting down $prog: "
-        /usr/local/maldetect/maldet --kill-monitor && success || failure
+        if [ -f /etc/redhat-release ]; then
+            /usr/local/maldetect/maldet --kill-monitor && success || failure
+        elif [ -f /etc/debian_version ]; then
+            /usr/local/maldetect/maldet --kill-monitor && log_success_msg || log_failure_msg
+        else
+            /usr/local/maldetect/maldet --kill-monitor && success || failure
+        fi
         RETVAL=$? [ $RETVAL -eq 0 ] && rm -f $LOCKFILE
         echo
         return $RETVAL

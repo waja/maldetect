@@ -1,5 +1,4 @@
 #!/bin/bash
-#
 ##
 # Linux Malware Detect v1.5
 #             (C) 2002-2015, R-fx Networks <proj@r-fx.org>
@@ -22,10 +21,10 @@ prerun() {
 		fi
 		pub=1
 		user=`whoami`
-		quardir="$inspath/pub/$user/quar"
-		sessdir="$inspath/pub/$user/sess"
-		tmpdir="$inspath/pub/$user/tmp"
-		maldet_log="$inspath/pub/$user/event_log"
+		quardir="$userbasedir/$user/quar"
+		sessdir="$userbasedir/$user/sess"
+		tmpdir="$userbasedir/$user/tmp"
+		maldet_log="$userbasedir/$user/event_log"
 		mkdir -p $quardir >> /dev/null 2>&1
 		mkdir -p $sessdir >> /dev/null 2>&1
 		mkdir -p $tmpdir >> /dev/null 2>&1
@@ -134,7 +133,7 @@ prerun() {
 	if [ -f "$nice" ]; then
 		nice_command="$nice -n $scan_cpunice"
 	fi
-	if [ -f "$ionice" ]; then
+	if [ -f "$ionice" ] && [ ! -d "/proc/vz" ]; then
 		nice_command="$nice_command $ionice -c2 -n $scan_ionice"
 	fi
 	if [ -f "$cpulimit" ] && [ "$scan_cpulimit" -gt 2> /dev/null "0" ]; then
@@ -286,8 +285,8 @@ import_conf() {
 clamav_linksigs() {
 	cpath="$1"
 	if [ -d "$cpath" ]; then
-		rm -f $cpath/rfxn.* ; cp -f $inspath/sigs/rfxn.ndb $inspath/sigs/rfxn.hdb $cpath/ 2> /dev/null
-		rm -f $cpath/lmd.user.* ; cp -f $inspath/sigs/lmd.user.ndb $inspath/sigs/lmd.user.hdb $cpath/ 2> /dev/null
+		rm -f $cpath/rfxn.* ; cp -f $sigdir/rfxn.ndb $sigdir/rfxn.hdb $cpath/ 2> /dev/null
+		rm -f $cpath/lmd.user.* ; cp -f $sigdir/lmd.user.ndb $sigdir/lmd.user.hdb $cpath/ 2> /dev/null
 	fi
 }
 
@@ -627,7 +626,7 @@ record_hit() {
 			md5_hash=`$md5sum $file | awk '{print$1}'`
 		fi
 		eout "{hit} malware hit $hitname found for $file"
-		echo "${hostid}:${hitname}:${md5_hash}:${file_size}:${file_owner}.${file_group}:${file}" >> $sessdir/.hits.hist
+		echo "${utime}:${hostid}:${hitname}:${md5_hash}:${file_size}:${file_owner}.${file_group}:${file}" >> $hits_history
 	fi
 }
 
@@ -652,7 +651,7 @@ quarantine() {
 			fi
 			echo -e "# owner group mode size(b) md5 path atime(epoch) mtime(epoch) ctime(epoch)\n$file_owner $file_group $file_mode $file_size $md5_hash $file $file_times" > $quardir/$file_name.$rnd.info
 			eout "{quar} malware quarantined from '$file' to '$quardir/$file_name.$rnd'"
-			echo "$file => $quardir/$file_name.$rnd" >> $sessdir/.quar.hist
+			echo "$utime:$hitname:$file:$file_owner:$file_group:$md5_hash:$file_size:$quardir/$file_name.$rnd" >> $quar_history
 			if [ ! -z "$scan_session" ]; then
 				echo "$hitname : $file => $quardir/$file_name.$rnd" >> $scan_session
 			fi
@@ -695,7 +694,7 @@ quar_hitlist() {
 				mv "$file" "$quardir/$file_name.$rnd"
 				echo -e "# owner group mode size(b) md5 path atime(epoch) mtime(epoch) ctime(epoch)\n$file_owner $file_group $file_mode $file_size $md5_hash $file $file_times" > $quardir/$file_name.$rnd.info
 				eout "{quar} malware quarantined from '$file' to '$quardir/$file_name.$rnd'" 1
-				echo "$file => $quardir/$file_name.$rnd" >> $sessdir/.quar.hist
+				echo "$utime:$hitname:$file:$file_owner:$file_group:$md5_hash:$file_size:$quardir/$file_name.$rnd" >> $quar_history
 				if [ "$quarantine_suspend_user" == "1" ]; then
 					quarantine_suspend_user "$file"
 				fi
@@ -726,8 +725,8 @@ scan() {
 		single_filescan=1
 	fi
 	if [ "$scan_clamscan" == "1" ]; then
-		isclamd=`pidof clamd 2> /dev/null`
-		isclamd_root=`pgrep -u root clamd 2> /dev/null`
+		isclamd=`pgrep -x clamd 2> /dev/null`
+		isclamd_root=`pgrep -x -u root clamd 2> /dev/null`
 		if [ "$isclamd" ] && [ "$isclamd_root" ]; then
 			clambin="clamdscan"
 		else
@@ -735,10 +734,8 @@ scan() {
 		fi
 		if [ -f "/usr/local/cpanel/3rdparty/bin/$clambin" ]; then
 			clamscan="/usr/local/cpanel/3rdparty/bin/$clambin"
-			elif [ -f "$(which clamdscan 2> /dev/null)" ]; then
-			clamscan=`which clamdscan 2> /dev/null`
-			elif [ -f "$(which clamscan 2> /dev/null)" ]; then
-			clamscan=`which clamscan 2> /dev/null`
+		elif [ -f "$(which $clambin 2> /dev/null)" ]; then
+			clamscan=`which $clambin 2> /dev/null`
 		else
 			scan_clamscan="0"
 		fi
@@ -776,6 +773,11 @@ scan() {
 			eout "{scan} days value must be numeric value in the range of 1 - 60, reverting to default (7)." 1
 			days=7
 		fi
+	fi
+	
+	if [ ! "${spath:0:1}" = "/" ]; then
+		eout "{scan} must use absolute path, provided relative path $spath" 1
+		exit
 	fi
 	
 	if [ ! -d $(echo $spath | tr '*' ' ' | awk '{print$1}') ] && [ ! -f $(echo $spath | tr '*' ' ' | awk '{print$1}') ]; then
@@ -1195,7 +1197,6 @@ genalert() {
 			tot_susp=`$wc -l $tmpdir/.digest.susp.hits | awk '{print$1}'`
 			trim_log $sessdir/.monitor.scanned.hist 50000
 			trim_log $sessdir/.clean.hist 50000
-			trim_log $sessdir/.quar.hist 50000
 			trim_log $sessdir/.susp.hist 50000
 			$tlog $sessdir/session.hits.$datestamp.$$ digest.alert >> /dev/null 2>&1
 			$tlog $sessdir/.clean.hist digest.clean.alert >> /dev/null 2>&1
@@ -1233,14 +1234,20 @@ monitor_kill() {
 	else
 		exit_code="1"
 	fi
-	kill -9 $inotify_pid $monitor_pid >> /dev/null 2>&1
+	monitor_pgid=`ps -p "$monitor_pid" -o pgid= | tr -d ' '`
+	kill -9 -- $inotify_pid -$monitor_pgid >> /dev/null 2>&1
 	killall -9 inotifywait >> /dev/null 2>&1
 	exit $exit_code
 }
 
 monitor_cycle() {
-	pgrep maldet > $tmpdir/monitor.pid
-	if [ ! -f "$tmpdir/stop_monitor" ]; then
+        if [ "$BASHPID" ]; then
+                echo "$BASHPID" > $tmpdir/monitor.pid
+        else
+                pgrep maldet > $tmpdir/monitor.pid
+        fi
+	inotify_cycle_runtime=0
+	while [ ! -f "$tmpdir/stop_monitor" ]; do
 		inotify_pid=`$pidof inotifywait`
 		if [ -z "$inotify_pid" ]; then
 			eout "{mon} no inotify process found, exiting (are we a zombie process?)" 1
@@ -1297,8 +1304,8 @@ monitor_cycle() {
 		sleep $inotify_sleep
 		inotify_cycle_runtime=$[inotify_sleep+inotify_cycle_runtime]
 		if [ "$scan_clamscan" == "1" ]; then
-        	        isclamd=`pidof clamd 2> /dev/null`
-	                isclamd_root=`pgrep -u root clamd 2> /dev/null`
+        	        isclamd=`pidof -x clamd 2> /dev/null`
+	                isclamd_root=`pgrep -x -u root clamd 2> /dev/null`
                 	if [ "$isclamd" ] && [ "$isclamd_root" ]; then
                 	        clamopts=""
        	                	clambin="clamdscan"
@@ -1310,10 +1317,8 @@ monitor_cycle() {
 	                fi
 	                if [ -f "/usr/local/cpanel/3rdparty/bin/$clambin" ]; then
         	                clamscan="/usr/local/cpanel/3rdparty/bin/$clambin"
-            		elif [ -f "$(which clamdscan 2> /dev/null)" ]; then
-                        	clamscan=`which clamdscan 2> /dev/null`
-                       	elif [ -f "$(which clamscan 2> /dev/null)" ]; then
-                        	clamscan=`which clamscan 2> /dev/null`
+            		elif [ -f "$(which $clambin 2> /dev/null)" ]; then
+                        	clamscan=`which $clambin 2> /dev/null`
                 	else
                        		scan_clamscan="0"
                 	fi
@@ -1340,11 +1345,10 @@ monitor_cycle() {
 		sigignore 1
 		gensigs
 		monitor_check
-	else
+	done
 		rm -f $tmpdir/stop_monitor
 		eout "{mon} monitoring terminated by user, inotify killed."
 		exit
-	fi
 }
 
 monitor_check() {
@@ -1393,7 +1397,6 @@ monitor_check() {
 			eout "{mon} scanned ${scanned_count} new/changed files with native engine"
 			rm -f $clamscan_results $monitor_scanlist
 		fi
-		monitor_cycle
 }
 
 monitor_init() {
@@ -1560,7 +1563,7 @@ monitor_init() {
                 fi
         fi
 
-	$nice_command $inotify -d -r -o $inotify_log --fromfile $inotify_fpaths $exclude --timefmt "%d %b %H:%M:%S" --format "%w%f %e %T" -m -e create,move,modify >> /dev/null 2>&1 &
+	$nice_command $inotify -r --fromfile $inotify_fpaths $exclude --timefmt "%d %b %H:%M:%S" --format "%w%f %e %T" -m -e create,move,modify >> $inotify_log 2>&1 &
 	sleep 2
 	inotify_pid=`$pidof inotifywait`
 	if [ -z "$inotify_pid" ]; then
@@ -1642,11 +1645,11 @@ EOT
 }
 
 gensigs() {
-	runtime_ndb="$inspath/tmp/.runtime.user.$$.ndb"
-	runtime_hdb="$inspath/tmp/.runtime.user.$$.hdb"
-	ln -fs $runtime_ndb $inspath/sigs/lmd.user.ndb
-	ln -fs $runtime_hdb $inspath/sigs/lmd.user.hdb
-	runtime_hexstrings="$inspath/tmp/.runtime.hexsigs.$$"
+	runtime_ndb="$tmpdir/.runtime.user.$$.ndb"
+	runtime_hdb="$tmpdir/.runtime.user.$$.hdb"
+	ln -fs $runtime_ndb $sigdir/lmd.user.ndb
+	ln -fs $runtime_hdb $sigdir/lmd.user.hdb
+	runtime_hexstrings="$tmpdir/.runtime.hexsigs.$$"
 	if [ -s "$sig_cust_hex_file" ]; then
 		cat "$sig_hex_file" "$sig_cust_hex_file" > $runtime_hexstrings
 	else
@@ -1768,7 +1771,7 @@ lmdup() {
 			cd maldetect-*
 			chmod 750 install.sh
 			sh -c './install.sh' >> /dev/null 2>&1
-			cp -f $inspath.last/sigs/custom.* $inspath/sigs/ 2> /dev/null
+			cp -f $inspath.last/sigs/custom.* $sigdir/ 2> /dev/null
 			cp -f $inspath.last/clean/custom.* $inspath/clean/ 2> /dev/null
 			eout "{update} completed update v$ver => v$upstreamver_readable, running signature updates..." 1
 			$inspath/maldet --update 1
