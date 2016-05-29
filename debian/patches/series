@@ -1,4 +1,5 @@
 0001-10_maldetect-paths.patch
 0002-12_maldetect-cron.daily-documentroots.patch
 0003-13_maldetect-cron.daily-default.patch
+0004-14_maldetect-manpage.patch
 0005-15_maldetect-no-autoupdate.patch
