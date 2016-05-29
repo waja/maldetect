@@ -2,8 +2,3 @@
 0002-12_maldetect-cron.daily-documentroots.patch
 0003-13_maldetect-cron.daily-default.patch
 0005-15_maldetect-no-autoupdate.patch
-0008-16_userbasedir-variable.patch
-0009-17_fix_tmpdir.patch
-0010-18_fix_sigdir.patch
-0006-20_maldetect-remove-shebang.patch
-0007-21_drop-ps-path.patch
