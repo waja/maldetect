@@ -1,3 +1,14 @@
+maldetect (1.5-1) unstable; urgency=medium
+
+  * [7dd86a6] d/changelog: Fix wording
+  * [bb31e54] travis-ci: Adding required arguments for trusty
+  * [9aae357] travis-ci: automatically install dependencies
+  * [c79a7a5] d/control: Add the perl:Depends macro dependency
+  * [fde31a1] d/control: Bump Standards-Version to 3.9.8, no changes needed
+  * [eede284] d/control: Drop shlibs:Depends depends macro
+
+ -- Jan Wagner <waja@cyconet.org>  Sun, 29 May 2016 17:11:04 +0200
+
 maldetect (1.5-1~beta1) unstable; urgency=medium
 
   * [ccddfb7] Imported Upstream version 1.5
