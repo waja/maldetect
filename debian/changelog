@@ -17,7 +17,7 @@ maldetect (1.5-1~beta1) unstable; urgency=medium
     patches/0007-25_maldetect-use-var-instead-dirs.patch
   * [f9e5974] Updating debian/changelog
   * [fc1a7b4] Unfuzzing patches/0003-13_maldetect-cron.daily-default.patch
-  * [a8da03f] Update installation pathes for new upstream release
+  * [a8da03f] Update installation paths for new upstream release
   * [25fc72c] travis-ci: grab actual used upstream version
   * [852a5cd] Updating definition of standard DocumentRoot to new syntax in
     default configuration
@@ -27,7 +27,7 @@ maldetect (1.5-1~beta1) unstable; urgency=medium
   * [a1f3f97] Make internal perl scripts executable
   * [9626b4b] Adding 0007-21_drop-ps-path.patch from upstream branch
   * [4984623] Adding 0008-16_userbasedir-variable.patch to be able to split out
-    varibale parts into /var/lib/maldetect/userdirs
+    variable parts into /var/lib/maldetect/userdirs
   * [da1a058] Add /var/lib/maldetect/userdirs to dirs to be created by the
     package
   * [8d50982] Updating debian/changelog
