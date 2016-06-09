@@ -8,9 +8,9 @@ Subject: 13_maldetect-cron.daily-default
 
 --- a/cron.daily
 +++ b/cron.daily
-@@ -6,6 +6,10 @@
- 	. /etc/maldetect/maldetect.conf.cron
+@@ -23,6 +23,10 @@
  fi
+ 
  find=`which find 2> /dev/null`
 +if [ -r "/etc/default/maldetect" ]; then
 +	source /etc/default/maldetect
