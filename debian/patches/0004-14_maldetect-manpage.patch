@@ -1,5 +1,5 @@
---- files/maldet.1	2016-05-29 17:28:55.167807923 +0200
-+++ files/maldet.1	2015-10-06 17:05:27.000000000 +0200
+--- a/files/maldet.1
++++ b/files/maldet.1
 @@ -163,7 +163,7 @@
  If FILE is specified, paths will be extracted from file, line spaced
  If PATHS are specified, must be comma spaced list, NO WILDCARDS!
