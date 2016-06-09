@@ -21,7 +21,7 @@ Subject: 15_maldetect-no-autoupdate
  				if [ ! "$1" == "1" ]; then
 --- a/files/internals/functions
 +++ b/files/internals/functions
-@@ -298,7 +298,7 @@
+@@ -297,7 +297,7 @@
        [-f|--file-list PATH] [-i|--include-regex] [-x|--exclude-regex]
        [-b|--background] [-m|--monitor] [-k|--kill-monitor] [-c|--checkout]
        [-q|--quarantine] [-s|--restore] [-n|--clean] [-l|--log] [-e|--report]
@@ -30,7 +30,7 @@ Subject: 15_maldetect-no-autoupdate
  EOF
  }
  
-@@ -313,9 +313,6 @@
+@@ -312,9 +312,6 @@
      -u, --update-sigs
         Update malware detection signatures from rfxn.com
  
@@ -40,7 +40,7 @@ Subject: 15_maldetect-no-autoupdate
      -f, --file-list
         Scan files or paths defined in line spaced file
         e.g: maldet -f /root/scan_file_list
-@@ -1694,95 +1691,6 @@
+@@ -1697,95 +1694,6 @@
  	fi
  }
  
@@ -118,7 +118,7 @@ Subject: 15_maldetect-no-autoupdate
 -			cd maldetect-*
 -			chmod 750 install.sh
 -			sh -c './install.sh' >> /dev/null 2>&1
--			cp -f $inspath.last/sigs/custom.* $inspath/sigs/ 2> /dev/null
+-			cp -f $inspath.last/sigs/custom.* $sigdir/ 2> /dev/null
 -			cp -f $inspath.last/clean/custom.* $inspath/clean/ 2> /dev/null
 -			eout "{update} completed update v$ver => v$upstreamver_readable, running signature updates..." 1
 -			$inspath/maldet --update 1
