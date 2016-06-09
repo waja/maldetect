@@ -1,3 +1,13 @@
+maldetect (1.5.1-1~beta1) unstable; urgency=medium
+
+  * [c2d71fa] Imported Upstream version 1.5.1
+  * [6dda529] Droping patches caught by upstream
+  * [10fa657] Adding 0004-14_maldetect-manpage.patch fixing paths in manpage
+  * [f023741] d/maldetect.manpages: Fixing manpage source path
+  * [c33ab66] Refreshing patches against upstream
+
+ -- Jan Wagner <waja@cyconet.org>  Thu, 09 Jun 2016 21:58:06 +0200
+
 maldetect (1.5-1) unstable; urgency=medium
 
   * [7dd86a6] d/changelog: Fix wording
