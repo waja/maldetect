@@ -8,14 +8,14 @@ Subject: 13_maldetect-cron.daily-default
 
 --- a/cron.daily
 +++ b/cron.daily
-@@ -23,6 +23,10 @@
+@@ -19,8 +19,8 @@
+ 
+ if [ -f "/etc/sysconfig/maldet" ]; then
+ 	. /etc/sysconfig/maldet
+-elif [ -f "/etc/default/maldet" ]; then
+-	. /etc/default/maldet
++elif [ -f "/etc/default/maldetect" ]; then
++	. /etc/default/maldetect
  fi
  
- find=`which find 2> /dev/null`
-+if [ -r "/etc/default/maldetect" ]; then
-+	source /etc/default/maldetect
-+fi
-+
- if [ ! "${STDDOCROOT}" ]; then
- 	STDDOCROOT="/var/www/,/srv/www/"
- fi
+ if [ -f "$cron_custom_conf" ]; then

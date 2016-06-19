@@ -8,23 +8,23 @@ Subject: 12_maldetect-cron.daily-documentroots
 
 --- a/cron.daily
 +++ b/cron.daily
-@@ -23,6 +23,10 @@
+@@ -31,6 +31,10 @@
+ 	scan_days=1
  fi
  
- find=`which find 2> /dev/null`
 +if [ ! "${STDDOCROOT}" ]; then
 +	STDDOCROOT="/var/www/,/srv/www/"
 +fi
 +
  if [ "$find" ]; then
  	# prune any quarantine/session/tmp data older than 7 days
- 	tmpdirs="/tmp/maldetect $var_path/sess $var_path/quarantine $var_path/pub"
-@@ -78,7 +82,7 @@
-                 $install_path/maldet -b -r /home/?/web/?/public_html/,/home/?/web/?/public_shtml/,/home/?/tmp/,/home/?/web/?/private/ $scan_days >> /dev/null 2>&1
+ 	tmpdirs="$tmpdir $varlibpath/sess $varlibpath/quarantine $varlibpath/pub"
+@@ -86,7 +90,7 @@
+                 $inspath/maldet -b -r /home/?/web/?/public_html/,/home/?/web/?/public_shtml/,/home/?/tmp/,/home/?/web/?/private/ $scan_days >> /dev/null 2>&1
  	else
  		# cpanel, interworx and other standard home/user/public_html setups
--	        $install_path/maldet -b -r /home?/?/public_html/,/var/www/html/,/usr/local/apache/htdocs/ $scan_days >> /dev/null 2>&1
-+	        $install_path/maldet -b -r /home?/?/public_html/,/var/www/html/,${STDDOCROOT} $scan_days >> /dev/null 2>&1
+-	        $inspath/maldet -b -r /home?/?/public_html/,/var/www/html/,/usr/local/apache/htdocs/ $scan_days >> /dev/null 2>&1
++	        $inspath/maldet -b -r /home?/?/public_html/,/var/www/html/,${STDDOCROOT} $scan_days >> /dev/null 2>&1
  	fi
  fi
  

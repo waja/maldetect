@@ -8,7 +8,7 @@ Subject: 15_maldetect-no-autoupdate
 
 --- a/files/maldet
 +++ b/files/maldet
-@@ -239,10 +239,6 @@
+@@ -236,10 +236,6 @@
  				header
  				purge
  			;;
@@ -21,7 +21,7 @@ Subject: 15_maldetect-no-autoupdate
  				if [ ! "$1" == "1" ]; then
 --- a/files/internals/functions
 +++ b/files/internals/functions
-@@ -297,7 +297,7 @@
+@@ -296,7 +296,7 @@
        [-f|--file-list PATH] [-i|--include-regex] [-x|--exclude-regex]
        [-b|--background] [-m|--monitor] [-k|--kill-monitor] [-c|--checkout]
        [-q|--quarantine] [-s|--restore] [-n|--clean] [-l|--log] [-e|--report]
@@ -30,7 +30,7 @@ Subject: 15_maldetect-no-autoupdate
  EOF
  }
  
-@@ -312,9 +312,6 @@
+@@ -311,9 +311,6 @@
      -u, --update-sigs
         Update malware detection signatures from rfxn.com
  
@@ -40,7 +40,7 @@ Subject: 15_maldetect-no-autoupdate
      -f, --file-list
         Scan files or paths defined in line spaced file
         e.g: maldet -f /root/scan_file_list
-@@ -1697,95 +1694,6 @@
+@@ -1696,95 +1693,6 @@
  	fi
  }
  
@@ -65,7 +65,7 @@ Subject: 15_maldetect-no-autoupdate
 -			doupdate=1
 -			elif [ "$autoupdate_version_hashed" == "1" ]; then
 -			eout "{update} hashing install files and checking against server..." 1
--			$md5sum $inspath/maldet $inspath/internals/functions | awk '{print$1}' | tr '\n' ' ' | tr -d ' ' > $lmd_hash_file
+-			$md5sum $inspath/maldet $intfunc | awk '{print$1}' | tr '\n' ' ' | tr -d ' ' > $lmd_hash_file
 -			upstreamhash="$tmpwd/.lmdup_hashcheck$$"
 -			$wget --referer="$lmd_referer" -q -T$wget_timeout -t$wget_retries "$lmd_hash_url" -O $upstreamhash >> /dev/null 2>&1
 -			if [ -s "$upstreamhash" ]; then
