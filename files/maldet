@@ -2,8 +2,8 @@
 #
 ##
 # Linux Malware Detect v1.5
-#             (C) 2002-2015, R-fx Networks <proj@rfxn.com>
-#             (C) 2015, Ryan MacDonald <ryan@rfxn.com>
+#             (C) 2002-2016, R-fx Networks <proj@rfxn.com>
+#             (C) 2016, Ryan MacDonald <ryan@rfxn.com>
 # This program may be freely redistributed under the terms of the GNU GPL v2
 ##
 #
@@ -11,31 +11,29 @@ PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 ver=1.5
 
 inspath=/usr/local/maldetect
-cnf="$inspath/conf.maldet"
 intcnf="$inspath/internals/internals.conf"
-intfunc="$inspath/internals/functions"
 
 header() {
 	echo "Linux Malware Detect v$ver"
-	echo "            (C) 2002-2015, R-fx Networks <proj@rfxn.com>"
-	echo "            (C) 2015, Ryan MacDonald <ryan@rfxn.com>"
+	echo "            (C) 2002-2016, R-fx Networks <proj@rfxn.com>"
+	echo "            (C) 2016, Ryan MacDonald <ryan@rfxn.com>"
 	echo "This program may be freely redistributed under the terms of the GNU GPL v2"
 	echo ""
 }
-
-if [ -f "$cnf" ]; then
-	source $cnf
-else
-	header
-	echo "maldet($$): {glob} $cnf not found, aborting."
-	exit 1
-fi
 
 if [ -f "$intcnf" ]; then
 	source $intcnf
 else
 	header
 	echo "maldet($$): {glob} $intcnf not found, aborting."
+	exit 1
+fi
+
+if [ -f "$cnf" ]; then
+	source $cnf
+else
+	header
+	echo "maldet($$): {glob} $cnf not found, aborting."
 	exit 1
 fi
 
@@ -83,7 +81,7 @@ else
 					exit
 				else
 					header
-					echo "public scanning support not enabled in conf.maldet, aborting."
+					echo "public scanning support not enabled in $cnf, aborting."
 					exit
 				fi
 			;;

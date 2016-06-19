@@ -2,8 +2,8 @@
 #
 ##
 # Linux Malware Detect v1.5
-#             (C) 2002-2015, R-fx Networks <proj@r-fx.org>
-#             (C) 2015, Ryan MacDonald <ryan@r-fx.org>
+#             (C) 2002-2016, R-fx Networks <proj@r-fx.org>
+#             (C) 2016, Ryan MacDonald <ryan@r-fx.org>
 # This program may be freely redistributed under the terms of the GNU GPL v2
 ##
 #
@@ -60,6 +60,7 @@ else
 		cp -f $inspath.bk$$/sess/* $inspath/sess/ >> /dev/null 2>&1
 		cp -f $inspath.bk$$/tmp/* $inspath/tmp/ >> /dev/null 2>&1
 		cp -f $inspath.bk$$/quarantine/* $inspath/quarantine/ >> /dev/null 2>&1
+                cp -f $inspath.bk$$/cron/* $inspath/cron/
 	fi
 	cp -f $inspath.bk$$/sigs/custom.* $inspath/sigs/ >> /dev/null 2>&1
 	cp -f $inspath.bk$$/monitor_paths $inspath/ >> /dev/null 2>&1
@@ -123,8 +124,8 @@ ln -fs $logf $inspath/event_log
 $inspath/maldet --alert-daily 2> /dev/null
 
 echo "Linux Malware Detect v$ver"
-echo "            (C) 2002-2015, R-fx Networks <proj@r-fx.org>"
-echo "            (C) 2015, Ryan MacDonald <ryan@r-fx.org>"
+echo "            (C) 2002-2016, R-fx Networks <proj@r-fx.org>"
+echo "            (C) 2016, Ryan MacDonald <ryan@r-fx.org>"
 echo "This program may be freely redistributed under the terms of the GNU GPL"
 echo ""
 echo "installation completed to $inspath"
