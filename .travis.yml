@@ -17,7 +17,7 @@ install:
 
 before_script:
     # download original
-    - sudo apt-get install -qq --no-install-recommends devscripts libwww-perl libcrypt-ssleay-perl && UVERSION=$(dpkg-parsechangelog | grep ^Version | cut -d' ' -f2 | cut -d'-' -f1); uscan --verbose --download-version ${UVERSION} --force-download && sudo apt-get purge -qq libwww-perl libcrypt-ssleay-perl && sudo apt-get autoremove -qq
+    - sudo apt-get install -qq --no-install-recommends devscripts libwww-perl libcrypt-ssleay-perl && UVERSION=$(dpkg-parsechangelog | grep ^Version | cut -d' ' -f2 | rev | cut -d'-' -f2- | rev); uscan --verbose --download-version ${UVERSION} --force-download && sudo apt-get purge -qq libwww-perl libcrypt-ssleay-perl && sudo apt-get autoremove -qq
 
 script:
     # build the debian package
