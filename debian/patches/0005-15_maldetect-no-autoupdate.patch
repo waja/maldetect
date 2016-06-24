@@ -8,7 +8,7 @@ Subject: 15_maldetect-no-autoupdate
 
 --- a/files/maldet
 +++ b/files/maldet
-@@ -236,10 +236,6 @@
+@@ -235,10 +235,6 @@
  				header
  				purge
  			;;

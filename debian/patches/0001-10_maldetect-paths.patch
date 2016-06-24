@@ -155,10 +155,11 @@
 +*/10 * * * * root /usr/bin/maldet --mkpubpaths >> /dev/null 2>&1
 --- a/cron.daily
 +++ b/cron.daily
-@@ -1,7 +1,7 @@
+@@ -1,8 +1,7 @@
  #!/usr/bin/env bash
  export PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:$PATH
  export LMDCRON=1
+-inspath='/usr/local/maldetect'
 -intcnf="$inspath/internals/internals.conf"
 +intcnf="/etc/maldetect/internals.conf"
  
@@ -195,9 +196,10 @@
  # this ends up being a relative value per-user in user mode.
 --- a/files/hookscan.sh
 +++ b/files/hookscan.sh
-@@ -1,6 +1,6 @@
+@@ -1,7 +1,6 @@
  #!/usr/bin/env bash
  file="$1"
+-inspath='/usr/local/maldetect'
 -intcnf="$inspath/internals/internals.conf"
 +intcnf="/etc/maldetect/internals.conf"
  
@@ -315,10 +317,11 @@
  	echo "$0 usage: [file] [tlog]"
 --- a/files/maldet
 +++ b/files/maldet
-@@ -10,7 +10,7 @@
+@@ -9,8 +9,7 @@
+ #
  PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
  ver=1.5
- 
+-inspath='/usr/local/maldetect'
 -intcnf="$inspath/internals/internals.conf"
 +intcnf="/etc/maldetect/internals.conf"
  
@@ -341,10 +344,11 @@
  WantedBy=multi-user.target
 --- a/files/service/maldet.sh
 +++ b/files/service/maldet.sh
-@@ -16,7 +16,7 @@
+@@ -15,8 +15,7 @@
+ # X-Interactive:     true
  # Short-Description: Start/stop maldet in monitor mode
  ### END INIT INFO
- 
+-inspath='/usr/local/maldetect'
 -intcnf="$inspath/internals/internals.conf"
 +intcnf="/etc/maldetect/internals.conf"
  
