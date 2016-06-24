@@ -22,6 +22,12 @@ before_script:
 script:
     # build the debian package
     - dpkg-buildpackage -uc -us
+    # install gdebi binary
+    - sudo apt-get install -qq --no-install-recommends gdebi-core
+    # install the package
+    - sudo gdebi --n --q ../*.deb
+    # running maldet
+    - TEMPDIR=$(mktemp -d); sudo maldet -a $TEMPDIR
 
 after_script:
     # run lintian after build
