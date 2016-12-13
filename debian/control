@@ -15,7 +15,7 @@ Depends: bsd-mailx | mailx,
          gawk | mawk,
          wget,
          ${misc:Depends},
-         ${perl:Depends}
+         ${perl:Depends} | perl
 Recommends: clamav, inotify-tools
 Description: Linux malware detector
  Linux Malware Detect (LMD) is a malware scanner for Linux released under the
