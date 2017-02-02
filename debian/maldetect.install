@@ -4,6 +4,7 @@ files/internals/*.pl	usr/lib/maldetect
 files/internals/tlog	usr/lib/maldetect/inotify
 files/internals/functions	usr/lib/maldetect
 files/internals/scan.etpl	usr/lib/maldetect
+files/internals/compat.conf	usr/lib/maldetect
 files/internals/internals.conf	etc/maldetect
 files/hookscan.sh	usr/lib/maldetect
 files/ignore*	etc/maldetect
