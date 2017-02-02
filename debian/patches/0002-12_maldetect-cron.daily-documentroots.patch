@@ -8,7 +8,7 @@ Subject: 12_maldetect-cron.daily-documentroots
 
 --- a/cron.daily
 +++ b/cron.daily
-@@ -31,6 +31,10 @@
+@@ -33,6 +33,10 @@
  	scan_days=1
  fi
  
@@ -19,7 +19,7 @@ Subject: 12_maldetect-cron.daily-documentroots
  if [ "$find" ]; then
  	# prune any quarantine/session/tmp data older than 7 days
  	tmpdirs="$tmpdir $varlibpath/sess $varlibpath/quarantine $varlibpath/pub"
-@@ -92,7 +96,7 @@
+@@ -94,7 +98,7 @@
                  $inspath/maldet -b -r ${conf_hosting_path:-/var/www/sites}/?/?/subdomains/?/html/ $scan_days >> /dev/null 2>&1
  	else
  		# cpanel, interworx and other standard home/user/public_html setups

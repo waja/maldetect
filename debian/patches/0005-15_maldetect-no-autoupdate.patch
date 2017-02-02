@@ -8,7 +8,7 @@ Subject: 15_maldetect-no-autoupdate
 
 --- a/files/maldet
 +++ b/files/maldet
-@@ -235,10 +235,6 @@
+@@ -239,10 +239,6 @@
  				header
  				purge
  			;;
@@ -21,7 +21,7 @@ Subject: 15_maldetect-no-autoupdate
  				if [ ! "$1" == "1" ]; then
 --- a/files/internals/functions
 +++ b/files/internals/functions
-@@ -296,7 +296,7 @@
+@@ -321,7 +321,7 @@
        [-f|--file-list PATH] [-i|--include-regex] [-x|--exclude-regex]
        [-b|--background] [-m|--monitor] [-k|--kill-monitor] [-c|--checkout]
        [-q|--quarantine] [-s|--restore] [-n|--clean] [-l|--log] [-e|--report]
@@ -30,7 +30,7 @@ Subject: 15_maldetect-no-autoupdate
  EOF
  }
  
-@@ -311,9 +311,6 @@
+@@ -336,9 +336,6 @@
      -u, --update-sigs
         Update malware detection signatures from rfxn.com
  
@@ -40,7 +40,7 @@ Subject: 15_maldetect-no-autoupdate
      -f, --file-list
         Scan files or paths defined in line spaced file
         e.g: maldet -f /root/scan_file_list
-@@ -1696,95 +1693,6 @@
+@@ -1752,95 +1749,6 @@
  	fi
  }
  
@@ -63,7 +63,7 @@ Subject: 15_maldetect-no-autoupdate
 -		if [ "$upstreamver" -gt "$installedver" ]; then
 -			eout "{update} new version $upstreamver_readable found, updating..." 1
 -			doupdate=1
--			elif [ "$autoupdate_version_hashed" == "1" ]; then
+-		elif [ "$autoupdate_version_hashed" == "1" ]; then
 -			eout "{update} hashing install files and checking against server..." 1
 -			$md5sum $inspath/maldet $intfunc | awk '{print$1}' | tr '\n' ' ' | tr -d ' ' > $lmd_hash_file
 -			upstreamhash="$tmpwd/.lmdup_hashcheck$$"
@@ -94,37 +94,37 @@ Subject: 15_maldetect-no-autoupdate
 -	fi
 -	if [ "$doupdate" ]; then
 -		cd $tmpwd/
--		$wget --referer="$lmd_referer" -q -T$wget_timeout -t$wget_retries "http://cdn.rfxn.com/downloads/maldetect-current.tar.gz" -O "$tmpwd/maldetect-current.tar.gz"
--		$wget --referer="$lmd_referer" -q -T$wget_timeout -t$wget_retries "http://cdn.rfxn.com/downloads/maldetect-current.tar.gz.md5" -O "$tmpwd/maldetect-current.tar.gz.md5"
--		if [ -s "$tmpwd/maldetect-current.tar.gz.md5" ] && [ -s "$tmpwd/maldetect-current.tar.gz" ]; then
--			upstream_md5=`cat $tmpwd/maldetect-current.tar.gz.md5 | awk '{print$1}'`
--			local_md5=`$md5sum $tmpwd/maldetect-current.tar.gz | awk '{print$1}'`
+-		$wget --referer="$lmd_referer" -q -T$wget_timeout -t$wget_retries "${lmd_current_tgzbase_url}/${lmd_current_tgzfile}" -O "$tmpwd/${lmd_current_tgzfile}"
+-		$wget --referer="$lmd_referer" -q -T$wget_timeout -t$wget_retries "${lmd_current_tgzbase_url}/${lmd_current_tgzfile}.md5" -O "$tmpwd/${lmd_current_tgzfile}.md5"
+-		if [ -s "$tmpwd/${lmd_current_tgzfile}.md5" ] && [ -s "$tmpwd/${lmd_current_tgzfile}" ]; then
+-			upstream_md5=`cat $tmpwd/${lmd_current_tgzfile}.md5 | awk '{print$1}'`
+-			local_md5=`$md5sum $tmpwd/${lmd_current_tgzfile} | awk '{print$1}'`
 -			if [ ! "$upstream_md5" == "$local_md5" ]; then
--				eout "{update} unable to verify md5sum of maldetect-current.tar.gz, update failed!" 1
+-				eout "{update} unable to verify md5sum of ${lmd_current_tgzfile}, update failed!" 1
 -				cd $inspath ; rm -rf $tmpwd
 -				clean_exit
 -				exit 1
 -			else
--				eout "{update} verified md5sum of maldetect-current.tar.gz" 1
+-				eout "{update} verified md5sum of ${lmd_current_tgzfile}" 1
 -			fi
 -		else
--			eout "{update} could not download maldetect-current.tar.gz or .md5, please try again later." 1
+-			eout "{update} could not download ${lmd_current_tgzfile} or .md5, please try again later." 1
 -			cd $inspath ; rm -rf $tmpwd
 -			clean_exit
 -			exit 1
 -		fi
--		if [ -s "$tmpwd/maldetect-current.tar.gz" ]; then
--			tar xfz maldetect-current.tar.gz
+-		if [ -s "$tmpwd/${lmd_current_tgzfile}" ]; then
+-			tar xfz ${lmd_current_tgzfile}
 -			cd maldetect-*
 -			chmod 750 install.sh
 -			sh -c './install.sh' >> /dev/null 2>&1
 -			cp -f $inspath.last/sigs/custom.* $sigdir/ 2> /dev/null
 -			cp -f $inspath.last/clean/custom.* $inspath/clean/ 2> /dev/null
--			eout "{update} completed update v$ver => v$upstreamver_readable, running signature updates..." 1
+-			eout "{update} completed update v$ver ${installed_hash:0:6} => v$upstreamver_readable ${upstream_md5:0:6}, running signature updates..." 1
 -			$inspath/maldet --update 1
 -			eout "{update} update and config import completed" 1
 -		else
--			eout "{update} could not download maldetect-current.tar.gz, please try again later." 1
+-			eout "{update} could not download ${lmd_current_tgzfile}, please try again later." 1
 -			cd $inspath ; rm -rf $tmpwd
 -			clean_exit
 -			exit 1

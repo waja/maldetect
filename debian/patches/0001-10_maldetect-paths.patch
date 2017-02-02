@@ -16,14 +16,14 @@
  install.sh                     | 10 +++++-----
  16 files changed, 68 insertions(+), 68 deletions(-)
 
---- a/.ca.def
-+++ b/.ca.def
+--- a/files/internals/importconf
++++ b/files/internals/importconf
 @@ -1,4 +1,4 @@
 -cat > /usr/local/maldetect/conf.maldet <<EOF
 +cat > /etc/maldetect/maldetect.conf <<EOF
  #
  ##
- # Linux Malware Detect v1.5
+ # Linux Malware Detect v1.6
 @@ -51,7 +51,7 @@
  autoupdate_version_hashed="1"
  
@@ -122,7 +122,7 @@
  configuration. These rules are best placed in your modsec2.user.conf file on cpanel servers
  or at the top of the appropraite rules file for your setup.
  
-@@ -427,13 +427,13 @@
+@@ -430,13 +430,13 @@
  path world writable (777) or populate the pub path with user owned paths. It was undesirable
  to set any path world writable and as such a feature to populate path data was created. This
  feature is controlled with the --mkpubpaths flag and is executed from cron every 10 minutes,
@@ -139,7 +139,7 @@
  that exectues the scan, so user nobody would be under pub/nobody/quar/. The actual paths
  for where files are quarantined and the user which executed the scan, can be verified in the
  e-mail reports for upload hits.
-@@ -441,7 +441,7 @@
+@@ -444,7 +444,7 @@
  To restore files quarantined under non-root users, you must pass the -U|--user option to LMD,
  for example if user nobody quarantined a file you would like to restore, it can be restored as
  follows:
@@ -151,8 +151,8 @@
 --- a/cron.d.pub
 +++ b/cron.d.pub
 @@ -1 +1 @@
--*/10 * * * * root /usr/local/maldetect/maldet --mkpubpaths >> /dev/null 2>&1
-+*/10 * * * * root /usr/bin/maldet --mkpubpaths >> /dev/null 2>&1
+-*/5 * * * * root /usr/local/maldetect/maldet --mkpubpaths >> /dev/null 2>&1
++*/5 * * * * root /usr/bin/maldet --mkpubpaths >> /dev/null 2>&1
 --- a/cron.daily
 +++ b/cron.daily
 @@ -1,8 +1,7 @@
@@ -196,18 +196,19 @@
  # this ends up being a relative value per-user in user mode.
 --- a/files/hookscan.sh
 +++ b/files/hookscan.sh
-@@ -1,7 +1,6 @@
+@@ -1,8 +1,7 @@
  #!/usr/bin/env bash
  file="$1"
+ 
 -inspath='/usr/local/maldetect'
 -intcnf="$inspath/internals/internals.conf"
 +intcnf="/etc/maldetect/internals.conf"
- 
  if [ -f "$intcnf" ]; then
  	source $intcnf
+ fi
 --- a/files/internals/functions
 +++ b/files/internals/functions
-@@ -344,7 +344,7 @@
+@@ -369,7 +369,7 @@
         If FILE is specified, paths will be extracted from file, line spaced
         If PATHS are specified, must be comma spaced list, NO WILDCARDS!
         e.g: maldet --monitor users
@@ -256,7 +257,7 @@
 +clamscan_log="$logdir/maldetect_clamscan.log"
  datestamp=`date +"%y%m%d-%H%M"`
  utime=`date +"%s"`
- 
+ user=`whoami`
 @@ -61,7 +61,7 @@
  sessdir="$varlibpath/sess"
  sigdir="$varlibpath/sigs"
@@ -266,8 +267,8 @@
  userbasedir="$varlibpath/pub"
  hits_history="$sessdir/hits.hist"
  quar_history="$sessdir/quarantine.hist"
-@@ -89,12 +89,12 @@
- lmd_version_url="http://www.rfxn.com/downloads/maldet.current.ver"
+@@ -95,18 +95,18 @@
+ lmd_current_tgzfile="maldetect-1.6.tar.gz"
  
  clamav_paths="/usr/local/cpanel/3rdparty/share/clamav/ /var/lib/clamav/ /var/clamav/ /usr/share/clamav/ /usr/local/share/clamav"
 -tlog="$libpath/tlog"
@@ -282,17 +283,14 @@
  hex_fifo_script="$libpath/hexfifo.pl"
  hex_string_script="$libpath/hexstring.pl"
  scan_user_access_minuid=40
-@@ -102,8 +102,8 @@
+ find_opts="-regextype posix-egrep"
  email_template="$libpath/scan.etpl"
  email_subj="maldet alert from $(hostname)"
- 
 -cron_custom_exec="$confpath/cron/custom.cron"
 -cron_custom_conf="$confpath/cron/conf.maldet.cron"
 +cron_custom_exec="$confpath/custom.cron.sh"
 +cron_custom_conf="$confpath/maldetect.conf.cron"
- 
- ## backwards compatibility for pre-1.5 deprecated config options
- if [ ! "$quarantine_hits" ] && [ "$quar_hits" ]; then
+ compatcnf="$libpath/compat.conf"
 --- a/files/internals/scan.etpl
 +++ b/files/internals/scan.etpl
 @@ -28,7 +28,7 @@
@@ -320,7 +318,7 @@
 @@ -9,8 +9,7 @@
  #
  PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
- ver=1.5
+ ver=1.6
 -inspath='/usr/local/maldetect'
 -intcnf="$inspath/internals/internals.conf"
 +intcnf="/etc/maldetect/internals.conf"
@@ -362,36 +360,6 @@
  #MONITOR_MODE="users"
 -#MONITOR_MODE="/usr/local/maldetect/monitor_paths"
 +#MONITOR_MODE="/etc/maldetect/monitor_paths"
---- a/install.sh
-+++ b/install.sh
-@@ -129,14 +129,14 @@
- echo "This program may be freely redistributed under the terms of the GNU GPL"
- echo ""
- echo "installation completed to $inspath"
--echo "config file: $inspath/conf.maldet"
-+echo "config file: $inspath/maldetect.conf"
- echo "exec file: $inspath/maldet"
- echo "exec link: /usr/local/sbin/maldet"
- echo "exec link: /usr/local/sbin/lmd"
- echo "cron.daily: /etc/cron.daily/maldet"
--if [ -f "$cnftemp" ] && [ -f "$inspath.bk$$/conf.maldet" ]; then
--	. files/conf.maldet
--	. $inspath.bk$$/conf.maldet
-+if [ -f "$cnftemp" ] && [ -f "$inspath.bk$$/maldetect.conf" ]; then
-+	. files/maldetect.conf
-+	. $inspath.bk$$/maldetect.conf
- 	if [ "$quarantine_hits" == "0" ] && [ "$quar_hits" == "1" ]; then
- 		quarantine_hits=1
- 	fi
-@@ -144,7 +144,7 @@
- 		quarantine_clean="1"
- 	fi
- 	. $cnftemp
--	echo "imported config options from $inspath.last/conf.maldet"
-+	echo "imported config options from $inspath.last/maldetect.conf"
- fi
- $inspath/maldet --update 1
- if [ "$monmode" == "1" ]; then
 --- a/files/cron/conf.maldet.cron
 +++ b/files/cron/conf.maldet.cron
 @@ -1,4 +1,5 @@

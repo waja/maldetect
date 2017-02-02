@@ -8,7 +8,7 @@ Subject: 13_maldetect-cron.daily-default
 
 --- a/cron.daily
 +++ b/cron.daily
-@@ -19,8 +19,8 @@
+@@ -21,8 +21,8 @@
  
  if [ -f "/etc/sysconfig/maldet" ]; then
  	. /etc/sysconfig/maldet
