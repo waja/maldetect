@@ -7,14 +7,16 @@ intcnf="$inspath/internals/internals.conf"
 if [ -f "$intcnf" ]; then
 	source $intcnf
 else
-	echo "$intcnf not found."
+	echo "\$intcnf not found."
 	exit 1
 fi
-
 if [ -f "$cnf" ]; then
-	. $cnf
+	source $cnf
+	if [ -f "$compatcnf" ]; then
+	        source $compatcnf
+	fi
 else
-	echo "could not find $cnf, fatal error, bye."
+	echo "could not find \$cnf, fatal error, bye."
 	exit 1
 fi
 
@@ -88,7 +90,7 @@ else
         elif [ -d "/usr/share/dtc" ]; then
                 # DTC
                 if [ -f /var/lib/dtc/saved_install_config ]; then
-                    . /var/lib/dtc/saved_install_config ]
+                    . /var/lib/dtc/saved_install_config
                 fi
                 $inspath/maldet -b -r ${conf_hosting_path:-/var/www/sites}/?/?/subdomains/?/html/ $scan_days >> /dev/null 2>&1
 	else

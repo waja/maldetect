@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
 #
 ##
-# Linux Malware Detect v1.5
-#             (C) 2002-2016, R-fx Networks <proj@rfxn.com>
-#             (C) 2016, Ryan MacDonald <ryan@rfxn.com>
+# Linux Malware Detect v1.6
+#             (C) 2002-2017, R-fx Networks <proj@rfxn.com>
+#             (C) 2017, Ryan MacDonald <ryan@rfxn.com>
 # This program may be freely redistributed under the terms of the GNU GPL v2
 ##
 #
 PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
-ver=1.5
+ver=1.6
 inspath='/usr/local/maldetect'
 intcnf="$inspath/internals/internals.conf"
 
 header() {
 	echo "Linux Malware Detect v$ver"
-	echo "            (C) 2002-2016, R-fx Networks <proj@rfxn.com>"
-	echo "            (C) 2016, Ryan MacDonald <ryan@rfxn.com>"
+	echo "            (C) 2002-2017, R-fx Networks <proj@rfxn.com>"
+	echo "            (C) 2017, Ryan MacDonald <ryan@rfxn.com>"
 	echo "This program may be freely redistributed under the terms of the GNU GPL v2"
 	echo ""
 }
@@ -24,7 +24,7 @@ if [ -f "$intcnf" ]; then
 	source $intcnf
 else
 	header
-	echo "maldet($$): {glob} $intcnf not found, aborting."
+	echo "maldet($$): {glob} \$intcnf not found, aborting."
 	exit 1
 fi
 
@@ -32,7 +32,7 @@ if [ -f "$cnf" ]; then
 	source $cnf
 else
 	header
-	echo "maldet($$): {glob} $cnf not found, aborting."
+	echo "maldet($$): {glob} \$cnf not found, aborting."
 	exit 1
 fi
 
@@ -40,8 +40,12 @@ if [ -f "$intfunc" ]; then
 	source $intfunc
 else
 	header
-	echo "maldet($$): {glob} $intfunct not found, aborting."
+	echo "maldet($$): {glob} \$intfunct not found, aborting."
 	exit 1
+fi
+
+if [ -f "$compatcnf" ]; then
+	source $compatcnf
 fi
 
 # prerun operations
@@ -68,11 +72,11 @@ else
 							scan_user_access_minuid=10
 						fi
 						if [ "$uid" -ge "$scan_user_access_minuid" ] && [ ! -d "$userbasedir/$user" ]; then
-							mkdir -p $userbasedir/$user/quar $userbasedir/$user/sess $userbasedir/$user/tmp >> /dev/null 2>&1
-							touch $userbasedir/$user/event_log >> /dev/null 2>&1
-							chown -R $user.$user $userbasedir/$user >> /dev/null 2>&1
-							chmod 750 $userbasedir/$user $userbasedir/$user/quar $userbasedir/$user/sess $userbasedir/$user/tmp >> /dev/null 2>&1
-							chmod 640 $userbasedir/$user/event_log >> /dev/null 2>&1
+							mkdir -p $userbasedir/$user/quar $userbasedir/$user/sess $userbasedir/$user/tmp
+							touch $userbasedir/$user/event_log
+							chown -R $user $userbasedir/$user
+							chmod 750 $userbasedir/$user $userbasedir/$user/quar $userbasedir/$user/sess $userbasedir/$user/tmp
+							chmod 640 $userbasedir/$user/event_log
 							eout "{glob} created public scanning paths for user $user"
 						fi
 						unset uid user
@@ -126,13 +130,13 @@ else
 			-x|--exclude-regex)
 				shift
 				if [ "$1" ]; then
-					exclude_regex="$1"
+					exclude_regex="-not -regex \"$1\""
 				fi
 			;;
 			-i|--include-regex)
 				shift
 				if [ "$1" ]; then
-					include_regex="-regex $1"
+					include_regex="-regex \"$1\""
 				fi
 			;;
 			--alert-daily|--monitor-report)
