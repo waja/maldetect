@@ -1,8 +1,22 @@
-maldetect (1.5.1-rc4-1~1) UNRELEASED; urgency=medium
+maldetect (1.6-rc5-1~1.gbp05b0c5) UNRELEASED; urgency=medium
 
-  * 
+  * [1856a90] Imported Upstream version 1.5.1-pre1
+  * [6b5e20c] Droping patches caught by upstream
+  * [a67c01c] Adding 0004-14_maldetect-manpage.patch fixing paths in manpage
+  * [884ad86] d/maldetect.manpages: Fixing manpage source path
+  * [2f30f90] Refreshing patches against upstream
+  * [d62ace0] Imported Upstream version 1.5.1-pre2
+  * [64bd256] Imported Upstream version 1.5.1-rc3
+  * [5956058] Refreshing patches against upstream
+  * [29281a4] d/watch: Also match pre-releases
+  * [e062989] travis-ci: Fixing upstream version detection
+  * [73d726c] Imported Upstream version 1.5.1-rc4
+  * [1158c87] Refreshing patches against upstream
+  * [8b6cb28] New upstream version 1.6-rc5
+  * [c3aac31] Refreshing patches against latest upstream
+  * [05b0c55] Install compat.conf into usr/lib/maldetect
 
- -- Jan Wagner <waja@cyconet.org>  Sun, 19 Jun 2016 23:02:39 +0200
+ -- Jan Wagner <waja@cyconet.org>  Thu, 02 Feb 2017 17:30:57 +0100
 
 maldetect (1.5-1) unstable; urgency=medium
 
