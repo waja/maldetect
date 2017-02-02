@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 #
 ##
-# Linux Malware Detect v1.5
-#             (C) 2002-2016, R-fx Networks <proj@r-fx.org>
-#             (C) 2016, Ryan MacDonald <ryan@r-fx.org>
+# Linux Malware Detect v1.6
+#             (C) 2002-2017, R-fx Networks <proj@r-fx.org>
+#             (C) 2017, Ryan MacDonald <ryan@r-fx.org>
 # This program may be freely redistributed under the terms of the GNU GPL v2
 ##
 #
 PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
-ver=1.5
+ver=1.6
 inspath=/usr/local/maldetect
 logf=$inspath/logs/event_log
-cnftemp=.ca.def
+conftemp="$inspath/internals/importconf"
 find=`which find 2> /dev/null`
 
 
@@ -56,7 +56,7 @@ else
 	gzip -9 $inspath/maldet.1
 	ln -fs $inspath/maldet.1.gz /usr/local/share/man/man1/maldet.1.gz
 	cp -f $inspath.bk$$/ignore_* $inspath/  >> /dev/null 2>&1
-	if [ "$ver" == "1.5" ]; then
+	if [ "$ver" == "1.5" ] || [ "$ver" == "1.6" ]; then
 		cp -f $inspath.bk$$/sess/* $inspath/sess/ >> /dev/null 2>&1
 		cp -f $inspath.bk$$/tmp/* $inspath/tmp/ >> /dev/null 2>&1
 		cp -f $inspath.bk$$/quarantine/* $inspath/quarantine/ >> /dev/null 2>&1
@@ -85,7 +85,7 @@ if [ -d "/etc/cron.d" ]; then
 	chmod 644 /etc/cron.d/maldet_pub
 fi
 
-if [ "$OSTYPE" != "FreeBSD" ]; then
+if [ "$(uname -s)" != "FreeBSD" ]; then
 	if test `cat /proc/1/comm` = "systemd"
 	then
 		mkdir -p /etc/systemd/system/
@@ -124,8 +124,8 @@ ln -fs $logf $inspath/event_log
 $inspath/maldet --alert-daily 2> /dev/null
 
 echo "Linux Malware Detect v$ver"
-echo "            (C) 2002-2016, R-fx Networks <proj@r-fx.org>"
-echo "            (C) 2016, Ryan MacDonald <ryan@r-fx.org>"
+echo "            (C) 2002-2017, R-fx Networks <proj@r-fx.org>"
+echo "            (C) 2017, Ryan MacDonald <ryan@r-fx.org>"
 echo "This program may be freely redistributed under the terms of the GNU GPL"
 echo ""
 echo "installation completed to $inspath"
@@ -134,16 +134,19 @@ echo "exec file: $inspath/maldet"
 echo "exec link: /usr/local/sbin/maldet"
 echo "exec link: /usr/local/sbin/lmd"
 echo "cron.daily: /etc/cron.daily/maldet"
-if [ -f "$cnftemp" ] && [ -f "$inspath.bk$$/conf.maldet" ]; then
+if [ -f "$conftemp" ] && [ -f "${inspath}.last/conf.maldet" ]; then
 	. files/conf.maldet
-	. $inspath.bk$$/conf.maldet
+	. ${inspath}.last/conf.maldet
 	if [ "$quarantine_hits" == "0" ] && [ "$quar_hits" == "1" ]; then
 		quarantine_hits=1
 	fi
 	if [ "$quarantine_clean" == "0" ] && [ "$quar_clean" == "1" ]; then
 		quarantine_clean="1"
 	fi
-	. $cnftemp
+	if [ -f "files/internals/compat.conf" ]; then
+		source files/internals/compat.conf
+	fi
+	source $conftemp
 	echo "imported config options from $inspath.last/conf.maldet"
 fi
 $inspath/maldet --update 1
