@@ -42,6 +42,15 @@
  # [ 0 = disabled, 1 = enabled ]
  scan_export_filelist="$scan_export_filelist"
  
+@@ -199,7 +199,7 @@
+ # The default startup option for monitor mode, either 'users' or path to line
+ # spaced file containing local paths to monitor. This option is used for the
+ # init based startup script. This value is ignored when '/etc/sysconfig/maldet'
+-# or '/etc/default/maldet' is present with a defined value for $MONITOR_MODE.
++# or '/etc/default/maldetect' is present with a defined value for $MONITOR_MODE.
+ default_monitor_mode="$default_monitor_mode"
+ 
+ # The base number of files that can be watched under a path
 --- a/README
 +++ b/README
 @@ -193,35 +193,35 @@
@@ -185,9 +194,12 @@
  # [ 0 = disabled, 1 = enabled ]
  scan_export_filelist="0"
  
-@@ -202,7 +202,7 @@
+@@ -200,9 +200,9 @@
+ # The default startup option for monitor mode, either 'users' or path to line
+ # spaced file containing local paths to monitor. This option is used for the
  # init based startup script. This value is ignored when '/etc/sysconfig/maldet'
- # or '/etc/default/maldet' is present with a defined value for $MONITOR_MODE.
+-# or '/etc/default/maldet' is present with a defined value for $MONITOR_MODE.
++# or '/etc/default/maldetect' is present with a defined value for $MONITOR_MODE.
  # default_monitor_mode="users"
 -# default_monitor_mode="/usr/local/maldetect/monitor_paths"
 +# default_monitor_mode="/etc/maldetect/monitor_paths"
@@ -258,7 +270,7 @@
  datestamp=`date +"%y%m%d-%H%M"`
  utime=`date +"%s"`
  user=`whoami`
-@@ -61,7 +61,7 @@
+@@ -65,7 +65,7 @@
  sessdir="$varlibpath/sess"
  sigdir="$varlibpath/sigs"
  cldir="$varlibpath/clean"
@@ -267,7 +279,7 @@
  userbasedir="$varlibpath/pub"
  hits_history="$sessdir/hits.hist"
  quar_history="$sessdir/quarantine.hist"
-@@ -95,18 +95,18 @@
+@@ -99,18 +99,18 @@
  lmd_current_tgzfile="maldetect-1.6.tar.gz"
  
  clamav_paths="/usr/local/cpanel/3rdparty/share/clamav/ /var/lib/clamav/ /var/clamav/ /usr/share/clamav/ /usr/local/share/clamav"
@@ -282,7 +294,7 @@
 +hex_fifo_path="$varlibpath/hexfifo"
  hex_fifo_script="$libpath/hexfifo.pl"
  hex_string_script="$libpath/hexstring.pl"
- scan_user_access_minuid=40
+ scan_user_access_minuid=30
  find_opts="-regextype posix-egrep"
  email_template="$libpath/scan.etpl"
  email_subj="maldet alert from $(hostname)"
@@ -315,16 +327,22 @@
  	echo "$0 usage: [file] [tlog]"
 --- a/files/maldet
 +++ b/files/maldet
-@@ -9,8 +9,7 @@
+@@ -9,12 +9,11 @@
  #
  PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
  ver=1.6
 -inspath='/usr/local/maldetect'
 -intcnf="$inspath/internals/internals.conf"
 +intcnf="/etc/maldetect/internals.conf"
+ if [ -f "/etc/sysconfig/maldet" ]; then
+         syscnf=/etc/sysconfig/maldet
+-elif [ -f "/etc/default/maldet" ]; then
+-        syscnf=/etc/default/maldet
++elif [ -f "/etc/default/maldetect" ]; then
++        syscnf=/etc/default/maldetect
+ fi
  
  header() {
- 	echo "Linux Malware Detect v$ver"
 --- a/files/service/maldet.service
 +++ b/files/service/maldet.service
 @@ -3,9 +3,9 @@
@@ -352,6 +370,26 @@
  
  if [ -f "$intcnf" ]; then
  	source $intcnf
+@@ -33,8 +32,8 @@
+ fi
+ if [ -f "/etc/sysconfig/maldet" ]; then
+ 	. /etc/sysconfig/maldet
+-elif [ -f "/etc/default/maldet" ]; then
+-	. /etc/default/maldet
++elif [ -f "/etc/default/maldetect" ]; then
++	. /etc/default/maldetect
+ elif [ "$(egrep ^default_monitor_mode $cnf 2> /dev/null)" ]; then
+ 	. $cnf
+ 	if [ "$default_monitor_mode" ]; then
+@@ -53,7 +52,7 @@
+     if [ -f /etc/redhat-release ]; then
+         echo "error no default monitor mode defined, set \$MONITOR_MODE in /etc/sysconfig/maldet, or \$default_monitor_mode in $cnf"
+     elif [ -f /etc/debian_version ]; then
+-        echo "error no default monitor mode defined, set \$MONITOR_MODE in /etc/default/maldet, or \$default_monitor_mode in $cnf"
++        echo "error no default monitor mode defined, set \$MONITOR_MODE in /etc/default/maldetect, or \$default_monitor_mode in $cnf"
+     else
+         echo "error no default monitor mode defined, set \$MONITOR_MODE in /etc/sysconfig/maldet, or \$default_monitor_mode in $cnf"
+     fi
 --- a/files/service/maldet.sysconfig
 +++ b/files/service/maldet.sysconfig
 @@ -9,4 +9,4 @@
