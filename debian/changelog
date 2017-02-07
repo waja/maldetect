@@ -1,4 +1,4 @@
-maldetect (1.6-rc5-1~1.gbp05b0c5) UNRELEASED; urgency=medium
+maldetect (1.6-rc6-1~i1.gbpe9c532) UNRELEASED; urgency=medium
 
   * [1856a90] Imported Upstream version 1.5.1-pre1
   * [6b5e20c] Droping patches caught by upstream
@@ -15,8 +15,10 @@ maldetect (1.6-rc5-1~1.gbp05b0c5) UNRELEASED; urgency=medium
   * [8b6cb28] New upstream version 1.6-rc5
   * [c3aac31] Refreshing patches against latest upstream
   * [05b0c55] Install compat.conf into usr/lib/maldetect
+  * [ea6270f] New upstream version 1.6-rc6
+  * [e9c532c] Refreshing patches against upstream
 
- -- Jan Wagner <waja@cyconet.org>  Thu, 02 Feb 2017 17:30:57 +0100
+ -- Jan Wagner <waja@cyconet.org>  Tue, 07 Feb 2017 08:37:57 +0100
 
 maldetect (1.5-1) unstable; urgency=medium
 
