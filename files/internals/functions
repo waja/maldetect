@@ -134,7 +134,7 @@ prerun() {
 	fi
 	
 	if [ "$user" == "root" ]; then
-		sed -E -i -e '/^$/d' $ignore_paths $ignore_sigs $ignore_inotify $ignore_file_ext
+		$sed -i -e '/^$/d' $ignore_paths $ignore_sigs $ignore_inotify $ignore_file_ext
 	fi
 
 	if [ -z "$EDITOR" ]; then
@@ -232,6 +232,9 @@ get_remote_file() {
 	doid="$3"
 	verbose="$4"
 	unset return_file
+	if [ "$hscan" ]; then
+		unset verbose
+	fi
 	if [ -z "$get_uri" ]; then
 		eout "{internal} missing or invalid URI passed to get_remote_files" 1
 		break
@@ -254,7 +257,7 @@ get_remote_file() {
 		eout "{$svc} could not download $get_uri, please try again later." $verbose
 		unset return_file
 	else
-		eout "{$svc} downloaded $get_uri" $verbose
+		eout "{$svc} downloaded $get_uri"
 		return_file="$tmpf"
 	fi
 }
@@ -278,6 +281,9 @@ import_user_sigs() {
 
 import_conf() {
 	current_utime=`date +"%s"`
+	if [ -z "$import_config_expire" ]; then
+		import_config_expire=43200
+	fi
 	if [ -f "$sessdir/.import_conf.utime" ]; then
 		import_utime=`cat $sessdir/.import_conf.utime`
 		if [ -z "$import_utime" ]; then
@@ -287,6 +293,7 @@ import_conf() {
 		if [ "$import_diff" -lt "$import_config_expire" ]; then
 			import_config_skip="1"
 			eout "{importconf} configuration expire value has not lapsed (${import_diff}/${import_config_expire}), using cache."
+			import_conf_cached=1
 		fi
 	fi
 	if [ "$import_config_url" ]; then
@@ -301,7 +308,11 @@ import_conf() {
 			source $cnf
 			source $intcnf
 			source $sessdir/.import_conf.cache
-			eout "{importconf} imported configuration from $import_config_url"
+			if [ "$import_conf_cached" ]; then
+				eout "{importconf} imported configuration from $import_config_url (cached)"
+			else
+				eout "{importconf} imported configuration from $import_config_url"
+			fi
 		fi
 	fi
 }
@@ -565,22 +576,27 @@ view_report() {
 	if [ "$rid" == "list" ]; then
 		tmpf="$tmpdir/.areps$$"
 		for file in `ls $sessdir/session.[0-9]* 2> /dev/null`; do
-			SCANID=`cat $file | grep "SCAN ID"`
+			SCANID=`cat $file | grep "SCAN ID" | sed 's/SCAN ID/SCANID/'`
 			FILES=`cat $file | grep "TOTAL FILES" | sed 's/TOTAL //'`
 			HITS=`cat $file | grep "TOTAL HITS" | sed 's/TOTAL //'`
 			CLEAN=`cat $file | grep "TOTAL CLEANED" | sed 's/TOTAL //'`
 			TIME=`cat $file | grep -iE "TIME|STARTED" | sed -e 's/TIME: //' -e 's/STARTED: //' | awk '{print$1,$2,$3,$4}'`
 			TIME_U=`date -d "$TIME" "+%s" 2> /dev/null`
+                        ETIME=`cat $file | grep "ELAPSED" | awk '{print$1,$2}' | sed 's/ELAPSED/RUNTIME/'`
 			if [ ! -z "$SCANID" ] && [ ! -z "$TIME" ]; then
 				clean_zero=`echo $CLEAN | awk '{print$2}'`
 				if [ -z "$clean_zero" ]; then
 					CLEAN="CLEANED:  0"
 				fi
-				echo "$TIME_U | $TIME | $SCANID | $FILES | $HITS | $CLEAN" >> $tmpf
+				echo "$TIME_U | $TIME | $SCANID | $ETIME | $FILES | $HITS | $CLEAN" >> $tmpf
 			fi
 		done
 		if [ -f "$tmpf" ]; then
-			cat $tmpf | sort -k1 -n | tac | cut -d'|' -f2-6 | column -t | more
+			if [ "$OSTYPE" == "FreeBSD" ]; then
+				cat $tmpf | sort -k1 -n | cut -d'|' -f2-7 | column -t | more
+			else
+				cat $tmpf | sort -k1 -n | tac | cut -d'|' -f2-7 | column -t | more
+			fi
 			rm -f $tmpf 2> /dev/null
 			exit 0
 		else
@@ -618,7 +634,8 @@ purge() {
 
 quarantine_suspend_user() {
 	file="$1"
-	user=`$stat -c "%U" "$file"`
+	file_stat "$file"
+	user="$file_owner"
 	user_id=`id -u $user`
 	if [ ! "$user" == "" ] && [ "$user_id" -ge "$quarantine_suspend_user_minuid" ]; then
 		if [ -f "/scripts/suspendacct" ]; then
@@ -639,19 +656,38 @@ quarantine_suspend_user() {
 	fi
 }
 
+file_stat() {
+	file="$1"
+	times="$2"
+	if [ "$OSTYPE" == "FreeBSD" ]; then
+		file_owner=`$stat -f '%Su' "$file"`
+		file_group=`$stat -f '%Sg' "$file"`
+		file_mode=`$stat -f '%p' "$file" | sed 's/^.//'`
+		file_size=`$stat -f '%Z' "$file"`
+		if [ "$times" ]; then
+			# atime mtime ctime (since epoch)
+			file_times=`$stat -f '%a:%m:%c' "$file"`
+		fi
+	else
+		file_owner=`$stat -c '%U' "$file"`
+		file_group=`$stat -c '%G' "$file"`
+		file_mode=`$stat -c '%a' "$file"`
+		file_size=`$stat -c '%s' "$file"`
+		if [ "$times" ]; then
+			# atime mtime ctime (since epoch)
+			file_times=`$stat -c '%X:%Y:%Z' "$file"`
+		fi
+	fi
+}
+
 record_hit() {
 	file="$1"
 	hitname="$2"
 	if [ -f "$file" ]; then
-		file_owner=`$stat -c "%U" "$file"`
-		file_group=`$stat -c "%G" "$file"`
-		file_mode=`$stat -c "%a" "$file"`
-		file_size=`$stat -c "%s" "$file"`
-		# atime mtime ctime (since epoch)
-		file_times=`$stat -c "%X:%Y:%Z" "$file"`
+		file_stat "$file" 1
 		file_name=`basename "$file" 2> /dev/null`
 		if [ ! "$md5_hash" ]; then
-			md5_hash=`$md5sum "$file" | awk '{print$1}'`
+			md5_hash=`eval $md5sum "$file" | awk '{print$1}'`
 		fi
 		eout "{hit} malware hit $hitname found for $file"
 		echo "${utime}:${hostid}:${hitname}:${md5_hash}:${file_size}:${file_owner}.${file_group}:${file_mode}:${file_times}:${file}" >> $hits_history
@@ -703,15 +739,11 @@ quar_hitlist() {
 		lbreakifs set
 		for file in `cat $hitlist | cut -d':' -f2 | sed 's/.//'`; do
 			if [ -f "$file" ]; then
-				file_owner=`$stat -c "%U" "$file"`
-				file_group=`$stat -c "%G" "$file"`
-				file_mode=`$stat -c "%a" "$file"`
-				file_size=`$stat -c "%s" "$file"`
-		                file_times=`$stat -c "%X:%Y:%Z" "$file"`
+				file_stat "$file" 1
 				file_name=`basename "$file"`
 				file_namewc=`echo "$file_name" | $wc -m`
 				if [ ! "$md5_hash" ]; then
-					md5_hash=`$md5sum "$file" | awk '{print$1}'`
+					md5_hash=`eval $md5sum "$file" | awk '{print$1}'`
 				fi
 				if [ "$pub" == "1" ]; then
 					chattr -ia "$file" >> /dev/null 2>&1
@@ -812,7 +844,7 @@ scan() {
 	scan_start_hr=`date +"%b %e %Y %H:%M:%S %z"`
 	scan_start=`date +"%s"`
 	lbreakifs set
-	spath=$(for i in `echo "$1" | tr '?' '*' | tr ',' '\n'`; do echo "\"$i\""; done | tr '\n' ' ' | sed 's/.$//')
+	spath=$(for i in `echo "$1" | tr '?' '*' | tr ',' '\n'`; do echo "\"$(printf %q $i)\""; done | tr '\n' ' ' | sed 's/.$//')
 	lbreakifs unset
 	days="$2"
 	scanid="$datestamp.$$"
@@ -1050,7 +1082,6 @@ scan() {
 			unset ignore_hit
 		done
 		lbreakifs unset
-		echo
 		echo "$(date +"%b %d %H:%M:%S") $(hostname -s) clamscan end"  >> $clamscan_log
 	else
 		if [ -z "$hscan" ]; then
@@ -1098,6 +1129,9 @@ scan() {
 			eout "{scan.hook} results returned OK on $spath (id: $datestamp.$$)"
 		fi
 	else
+		if [ -z "$hscan" ]; then
+			echo
+		fi
 		eout "{scan} scan completed on $hrspath: files $tot_files, malware hits $tot_hits, cleaned hits $tot_cl, time ${scan_et}s" 1
 		eout "{scan} scan report saved, to view run: maldet --report $datestamp.$$" 1
 		if [ "$quarantine_hits" == "0" ] && [ ! "$tot_hits" == "0" ]; then
@@ -1128,7 +1162,7 @@ scan_strlen() {
 	elif [ "$string_length_scan" == "1" ] && [ "$type" == "list" ]; then
 		list="$tmpdir/.strlen.flist.$$"
 		cp $file $list
-		sed -E -i -e "s/'/\\\\'/g" $list
+		sed -i -e "s/'/\\\\'/g" $list
 		cat $list | xargs wc -L 2> /dev/null | grep -vw total >> $list.strlen
 		awk "{if (\$1>=$string_length) print\$2}" $list.strlen >> $list.hits
 		for i in `cat $list.hits`; do
@@ -1144,7 +1178,7 @@ scan_strlen() {
 scan_stage1() {
 	file="$1"
 	clchk="$2"
-	hash=`$md5sum "$file" | awk '{print$1}'`
+	hash=`eval $md5sum "$file" | awk '{print$1}'`
 	if  [ ! -z "$hash" ]; then
 		val_hash=`grep -m1 $hash $sig_cust_md5_file $sig_md5_file`
 		if [ ! -z "$val_hash" ]; then
@@ -1757,7 +1791,7 @@ lmdup() {
 			doupdate=1
 		elif [ "$autoupdate_version_hashed" == "1" ]; then
 			eout "{update} hashing install files and checking against server..." 1
-			$md5sum $inspath/maldet $intfunc | awk '{print$1}' | tr '\n' ' ' | tr -d ' ' > $lmd_hash_file
+			eval $md5sum $inspath/maldet $intfunc | awk '{print$1}' | tr '\n' ' ' | tr -d ' ' > $lmd_hash_file
 			upstreamhash="$tmpwd/.lmdup_hashcheck$$"
 			$wget --referer="$lmd_referer" -q -e http_proxy="$wget_proxy" -e https_proxy="$wget_proxy" -T$wget_timeout -t$wget_retries "$lmd_hash_url" -O $upstreamhash >> /dev/null 2>&1
 			if [ -s "$upstreamhash" ]; then
@@ -1790,7 +1824,7 @@ lmdup() {
 		$wget --referer="$lmd_referer" -q -e http_proxy="$wget_proxy" -e https_proxy="$wget_proxy" -T$wget_timeout -t$wget_retries "${lmd_current_tgzbase_url}/${lmd_current_tgzfile}.md5" -O "$tmpwd/${lmd_current_tgzfile}.md5"
 		if [ -s "$tmpwd/${lmd_current_tgzfile}.md5" ] && [ -s "$tmpwd/${lmd_current_tgzfile}" ]; then
 			upstream_md5=`cat $tmpwd/${lmd_current_tgzfile}.md5 | awk '{print$1}'`
-			local_md5=`$md5sum $tmpwd/${lmd_current_tgzfile} | awk '{print$1}'`
+			local_md5=`eval $md5sum $tmpwd/${lmd_current_tgzfile} | awk '{print$1}'`
 			if [ ! "$upstream_md5" == "$local_md5" ]; then
 				eout "{update} unable to verify md5sum of ${lmd_current_tgzfile}, update failed!" 1
 				cd $inspath ; rm -rf $tmpwd
@@ -1890,7 +1924,7 @@ sigup() {
 		$wget --referer="$lmd_referer" -e http_proxy="$wget_proxy" -e https_proxy="$wget_proxy" -T$wget_timeout -t$wget_retries -q ${sig_clpack_url}.md5 -O $tmpwd/maldet-clean.tgz.md5
 		
 		if [ -f "$tmpwd/maldet-sigpack.tgz.md5" ]; then
-			sigpack_md5=`$md5sum maldet-sigpack.tgz | awk '{print$1}'`
+			sigpack_md5=`eval $md5sum maldet-sigpack.tgz | awk '{print$1}'`
 			sigpack_goodmd5=`cat maldet-sigpack.tgz.md5 | awk '{print$1}'`
 			if [ ! "$sigpack_md5" == "$sigpack_goodmd5" ]; then
 				eout "{sigup} unable to verify md5sum of maldet-sigpack.tgz, please try again or contact proj@rfxn.com" 1
@@ -1924,7 +1958,7 @@ sigup() {
 		fi
 		
 		if [ -f "$tmpwd/maldet-clean.tgz.md5" ]; then
-			clpack_md5=`$md5sum maldet-clean.tgz | awk '{print$1}'`
+			clpack_md5=`eval $md5sum maldet-clean.tgz | awk '{print$1}'`
 			clpack_goodmd5=`cat maldet-clean.tgz.md5 | awk '{print$1}'`
 			if [ ! "$clpack_md5" == "$clpack_goodmd5" ]; then
 				eout "{sigup} unable to verify md5sum of maldet-clean.tgz, please try again or contact proj@rfxn.com" 1
