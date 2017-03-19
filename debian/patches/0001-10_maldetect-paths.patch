@@ -33,7 +33,7 @@
  # parsed followed by the imported configuration file. As such, only variables
  # defined in the imported configuration file are overridden and a full set of
  # configuration options is not explicitly required in the imported file.
-@@ -167,7 +167,7 @@
+@@ -170,7 +170,7 @@
  # user files. This 'find' operation can be especially resource intensive and it may
  # be desirable to persist the file list results so that other applications/tasks
  # may make use of the results. When scan_export_filelist is set enabled, the most
@@ -42,7 +42,7 @@
  # [ 0 = disabled, 1 = enabled ]
  scan_export_filelist="$scan_export_filelist"
  
-@@ -199,7 +199,7 @@
+@@ -202,7 +202,7 @@
  # The default startup option for monitor mode, either 'users' or path to line
  # spaced file containing local paths to monitor. This option is used for the
  # init based startup script. This value is ignored when '/etc/sysconfig/maldet'
@@ -220,7 +220,7 @@
  fi
 --- a/files/internals/functions
 +++ b/files/internals/functions
-@@ -369,7 +369,7 @@
+@@ -380,7 +380,7 @@
         If FILE is specified, paths will be extracted from file, line spaced
         If PATHS are specified, must be comma spaced list, NO WILDCARDS!
         e.g: maldet --monitor users
@@ -270,7 +270,7 @@
  datestamp=`date +"%y%m%d-%H%M"`
  utime=`date +"%s"`
  user=`whoami`
-@@ -65,7 +65,7 @@
+@@ -66,7 +66,7 @@
  sessdir="$varlibpath/sess"
  sigdir="$varlibpath/sigs"
  cldir="$varlibpath/clean"
@@ -279,8 +279,8 @@
  userbasedir="$varlibpath/pub"
  hits_history="$sessdir/hits.hist"
  quar_history="$sessdir/quarantine.hist"
-@@ -99,18 +99,18 @@
- lmd_current_tgzfile="maldetect-1.6.tar.gz"
+@@ -100,20 +100,20 @@
+ lmd_current_tgzfile="maldetect-current.tar.gz"
  
  clamav_paths="/usr/local/cpanel/3rdparty/share/clamav/ /var/lib/clamav/ /var/clamav/ /usr/share/clamav/ /usr/local/share/clamav"
 -tlog="$libpath/tlog"
@@ -303,6 +303,8 @@
 +cron_custom_exec="$confpath/custom.cron.sh"
 +cron_custom_conf="$confpath/maldetect.conf.cron"
  compatcnf="$libpath/compat.conf"
+ 
+ if [ "$OSTYPE" == "FreeBSD" ]; then
 --- a/files/internals/scan.etpl
 +++ b/files/internals/scan.etpl
 @@ -28,7 +28,7 @@

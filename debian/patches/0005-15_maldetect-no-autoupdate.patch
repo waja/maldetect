@@ -8,7 +8,7 @@ Subject: 15_maldetect-no-autoupdate
 
 --- a/files/maldet
 +++ b/files/maldet
-@@ -260,10 +260,6 @@
+@@ -257,10 +257,6 @@
  				header
  				purge
  			;;
@@ -21,7 +21,7 @@ Subject: 15_maldetect-no-autoupdate
  				if [ ! "$1" == "1" ]; then
 --- a/files/internals/functions
 +++ b/files/internals/functions
-@@ -321,7 +321,7 @@
+@@ -332,7 +332,7 @@
        [-f|--file-list PATH] [-i|--include-regex] [-x|--exclude-regex]
        [-b|--background] [-m|--monitor] [-k|--kill-monitor] [-c|--checkout]
        [-q|--quarantine] [-s|--restore] [-n|--clean] [-l|--log] [-e|--report]
@@ -30,7 +30,7 @@ Subject: 15_maldetect-no-autoupdate
  EOF
  }
  
-@@ -336,9 +336,6 @@
+@@ -347,9 +347,6 @@
      -u, --update-sigs
         Update malware detection signatures from rfxn.com
  
@@ -40,7 +40,7 @@ Subject: 15_maldetect-no-autoupdate
      -f, --file-list
         Scan files or paths defined in line spaced file
         e.g: maldet -f /root/scan_file_list
-@@ -1736,95 +1733,6 @@
+@@ -1770,95 +1767,6 @@
  	fi
  }
  
@@ -65,7 +65,7 @@ Subject: 15_maldetect-no-autoupdate
 -			doupdate=1
 -		elif [ "$autoupdate_version_hashed" == "1" ]; then
 -			eout "{update} hashing install files and checking against server..." 1
--			$md5sum $inspath/maldet $intfunc | awk '{print$1}' | tr '\n' ' ' | tr -d ' ' > $lmd_hash_file
+-			eval $md5sum $inspath/maldet $intfunc | awk '{print$1}' | tr '\n' ' ' | tr -d ' ' > $lmd_hash_file
 -			upstreamhash="$tmpwd/.lmdup_hashcheck$$"
 -			$wget --referer="$lmd_referer" -q -e http_proxy="$wget_proxy" -e https_proxy="$wget_proxy" -T$wget_timeout -t$wget_retries "$lmd_hash_url" -O $upstreamhash >> /dev/null 2>&1
 -			if [ -s "$upstreamhash" ]; then
@@ -98,7 +98,7 @@ Subject: 15_maldetect-no-autoupdate
 -		$wget --referer="$lmd_referer" -q -e http_proxy="$wget_proxy" -e https_proxy="$wget_proxy" -T$wget_timeout -t$wget_retries "${lmd_current_tgzbase_url}/${lmd_current_tgzfile}.md5" -O "$tmpwd/${lmd_current_tgzfile}.md5"
 -		if [ -s "$tmpwd/${lmd_current_tgzfile}.md5" ] && [ -s "$tmpwd/${lmd_current_tgzfile}" ]; then
 -			upstream_md5=`cat $tmpwd/${lmd_current_tgzfile}.md5 | awk '{print$1}'`
--			local_md5=`$md5sum $tmpwd/${lmd_current_tgzfile} | awk '{print$1}'`
+-			local_md5=`eval $md5sum $tmpwd/${lmd_current_tgzfile} | awk '{print$1}'`
 -			if [ ! "$upstream_md5" == "$local_md5" ]; then
 -				eout "{update} unable to verify md5sum of ${lmd_current_tgzfile}, update failed!" 1
 -				cd $inspath ; rm -rf $tmpwd
