@@ -1,4 +1,4 @@
-maldetect (1.6-1~1.gbp3e1de4) UNRELEASED; urgency=medium
+maldetect (1.6-1) unstable; urgency=medium
 
   * [1856a90] Imported Upstream version 1.5.1-pre1
   * [6b5e20c] Droping patches caught by upstream
