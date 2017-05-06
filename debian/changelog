@@ -1,3 +1,10 @@
+maldetect (1.6-1+squeeze01) squeeze-backports; urgency=medium
+ 
+  * Rebuild on squeeze
+  * d/control: Preventing depend on perl:any
+
+ -- Jan Wagner <waja@cyconet.org>  Sat, 06 May 2017 13:23:09 +0200
+
 maldetect (1.6-1) unstable; urgency=medium
 
   * [1856a90] Imported Upstream version 1.5.1-pre1
