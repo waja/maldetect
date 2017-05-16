@@ -1,8 +1,8 @@
-maldetect (1.6-2) UNRELEASED; urgency=medium
+maldetect (1.6.1~rc1-1) UNRELEASED; urgency=medium
 
-  * 
+  * [7f87234] New upstream version 1.6.1~rc1
 
- -- Jan Wagner <waja@cyconet.org>  Sat, 06 May 2017 12:44:19 +0200
+ -- Jan Wagner <waja@cyconet.org>  Tue, 16 May 2017 16:26:11 +0200
 
 maldetect (1.6-1) unstable; urgency=medium
 
