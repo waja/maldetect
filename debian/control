@@ -13,7 +13,7 @@ Architecture: all
 Depends: bsd-mailx | mailx,
          ed,
          gawk | mawk,
-         wget,
+         curl | wget (>= 1.16~),
          ${misc:Depends},
          ${perl:Depends} | perl
 Recommends: clamav, inotify-tools
