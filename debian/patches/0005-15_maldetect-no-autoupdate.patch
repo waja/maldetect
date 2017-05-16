@@ -6,22 +6,9 @@ Subject: 15_maldetect-no-autoupdate
  files/maldet | 81 +-----------------------------------------------------------
  1 file changed, 1 insertion(+), 80 deletions(-)
 
---- a/files/maldet
-+++ b/files/maldet
-@@ -257,10 +257,6 @@
- 				header
- 				purge
- 			;;
--			-d|--update-ver|--update-version)
--				header
--				lmdup
--			;;
- 			-u|--update|--update-sigs)
- 				shift
- 				if [ ! "$1" == "1" ]; then
 --- a/files/internals/functions
 +++ b/files/internals/functions
-@@ -332,7 +332,7 @@
+@@ -371,7 +371,7 @@
        [-f|--file-list PATH] [-i|--include-regex] [-x|--exclude-regex]
        [-b|--background] [-m|--monitor] [-k|--kill-monitor] [-c|--checkout]
        [-q|--quarantine] [-s|--restore] [-n|--clean] [-l|--log] [-e|--report]
@@ -30,7 +17,7 @@ Subject: 15_maldetect-no-autoupdate
  EOF
  }
  
-@@ -347,9 +347,6 @@
+@@ -386,9 +386,6 @@
      -u, --update-sigs
         Update malware detection signatures from rfxn.com
  
@@ -40,7 +27,7 @@ Subject: 15_maldetect-no-autoupdate
      -f, --file-list
         Scan files or paths defined in line spaced file
         e.g: maldet -f /root/scan_file_list
-@@ -1770,95 +1767,6 @@
+@@ -1809,104 +1806,6 @@
  	fi
  }
  
@@ -51,8 +38,8 @@ Subject: 15_maldetect-no-autoupdate
 -	mkdir -p $tmpwd ; chmod 700 $tmpwd
 -	
 -	eout "{update} checking for available updates..." 1
--	
--	$wget --referer="$lmd_referer" -q -e http_proxy="$wget_proxy" -e https_proxy="$wget_proxy" -T$wget_timeout -t$wget_retries "$lmd_version_url" -O $upstreamver >> /dev/null 2>&1
+-        get_remote_file "$lmd_version_url" "update" "1"
+-	upstreamver="$return_file"	
 -	if [ -s "$upstreamver" ]; then
 -		installedver=`echo $ver | tr -d '.'`
 -		if [ "$(echo $installedver | wc -L)" -eq "2" ]; then
@@ -60,14 +47,21 @@ Subject: 15_maldetect-no-autoupdate
 -		fi
 -		upstreamver_readable=`cat $upstreamver`
 -		upstreamver=`cat $upstreamver | tr -d '.'`
+-		if [ "$(echo $upstreamver | wc -L)" -eq "2" ]; then
+-			upstreamver="${upstreamver}0"
+-		fi
 -		if [ "$upstreamver" -gt "$installedver" ]; then
 -			eout "{update} new version $upstreamver_readable found, updating..." 1
+-			doupdate=1
+-		elif [ "$lmdup_force" ]; then
+-			eout "{update} version update with --force requested, updating..." 1
 -			doupdate=1
 -		elif [ "$autoupdate_version_hashed" == "1" ]; then
 -			eout "{update} hashing install files and checking against server..." 1
 -			eval $md5sum $inspath/maldet $intfunc | awk '{print$1}' | tr '\n' ' ' | tr -d ' ' > $lmd_hash_file
 -			upstreamhash="$tmpwd/.lmdup_hashcheck$$"
--			$wget --referer="$lmd_referer" -q -e http_proxy="$wget_proxy" -e https_proxy="$wget_proxy" -T$wget_timeout -t$wget_retries "$lmd_hash_url" -O $upstreamhash >> /dev/null 2>&1
+-		        get_remote_file "$lmd_hash_url" "update" "1"
+-			upstreamhash="$return_file"
 -			if [ -s "$upstreamhash" ]; then
 -				installed_hash=`cat $lmd_hash_file`
 -				current_hash=`cat $upstreamhash`
@@ -94,8 +88,10 @@ Subject: 15_maldetect-no-autoupdate
 -	fi
 -	if [ "$doupdate" ]; then
 -		cd $tmpwd/
--		$wget --referer="$lmd_referer" -q -e http_proxy="$wget_proxy" -e https_proxy="$wget_proxy" -T$wget_timeout -t$wget_retries "${lmd_current_tgzbase_url}/${lmd_current_tgzfile}" -O "$tmpwd/${lmd_current_tgzfile}"
--		$wget --referer="$lmd_referer" -q -e http_proxy="$wget_proxy" -e https_proxy="$wget_proxy" -T$wget_timeout -t$wget_retries "${lmd_current_tgzbase_url}/${lmd_current_tgzfile}.md5" -O "$tmpwd/${lmd_current_tgzfile}.md5"
+-
+-                get_remote_file "${lmd_current_tgzbase_url}/${lmd_current_tgzfile}" "update" "1" "$tmpwd/${lmd_current_tgzfile}"
+-                get_remote_file "${lmd_current_tgzbase_url}/${lmd_current_tgzfile}.md5" "update" "1" "$tmpwd/${lmd_current_tgzfile}.md5"
+-
 -		if [ -s "$tmpwd/${lmd_current_tgzfile}.md5" ] && [ -s "$tmpwd/${lmd_current_tgzfile}" ]; then
 -			upstream_md5=`cat $tmpwd/${lmd_current_tgzfile}.md5 | awk '{print$1}'`
 -			local_md5=`eval $md5sum $tmpwd/${lmd_current_tgzfile} | awk '{print$1}'`

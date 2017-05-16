@@ -220,7 +220,7 @@
  fi
 --- a/files/internals/functions
 +++ b/files/internals/functions
-@@ -380,7 +380,7 @@
+@@ -419,7 +419,7 @@
         If FILE is specified, paths will be extracted from file, line spaced
         If PATHS are specified, must be comma spaced list, NO WILDCARDS!
         e.g: maldet --monitor users
@@ -270,7 +270,7 @@
  datestamp=`date +"%y%m%d-%H%M"`
  utime=`date +"%s"`
  user=`whoami`
-@@ -66,7 +66,7 @@
+@@ -60,7 +60,7 @@
  sessdir="$varlibpath/sess"
  sigdir="$varlibpath/sigs"
  cldir="$varlibpath/clean"
@@ -279,9 +279,9 @@
  userbasedir="$varlibpath/pub"
  hits_history="$sessdir/hits.hist"
  quar_history="$sessdir/quarantine.hist"
-@@ -100,20 +100,20 @@
- lmd_current_tgzfile="maldetect-current.tar.gz"
- 
+@@ -96,20 +96,20 @@
+ remote_uri_timeout="10"
+ remote_uri_retries="3"
  clamav_paths="/usr/local/cpanel/3rdparty/share/clamav/ /var/lib/clamav/ /var/clamav/ /usr/share/clamav/ /usr/local/share/clamav"
 -tlog="$libpath/tlog"
 +tlog="$libpath/inotify/tlog"
@@ -380,7 +380,7 @@
 -	. /etc/default/maldet
 +elif [ -f "/etc/default/maldetect" ]; then
 +	. /etc/default/maldetect
- elif [ "$(egrep ^default_monitor_mode $cnf 2> /dev/null)" ]; then
+ elif [ "$(grep -E ^default_monitor_mode $cnf 2> /dev/null)" ]; then
  	. $cnf
  	if [ "$default_monitor_mode" ]; then
 @@ -53,7 +52,7 @@
