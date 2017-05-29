@@ -1,8 +1,12 @@
-maldetect (1.6.1~rc1-1) UNRELEASED; urgency=medium
+maldetect (1.6.1-1) unstable; urgency=medium
 
   * [7f87234] New upstream version 1.6.1~rc1
+  * [b1d2500] Refreshing patches against upstream
+  * [33b7336] d/control: Depend on curl or wget (>= 1.16~)
+  * [77b0f54] New upstream version 1.6.1
+  * [a474575] Refreshing patches against upstream
 
- -- Jan Wagner <waja@cyconet.org>  Tue, 16 May 2017 16:26:11 +0200
+ -- Jan Wagner <waja@cyconet.org>  Mon, 19 Jun 2017 08:49:35 +0200
 
 maldetect (1.6-1) unstable; urgency=medium
 
