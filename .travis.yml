@@ -1,0 +1,48 @@
+sudo: required
+dist: trusty
+language: c
+
+before_install:
+    # update package list
+    - sudo apt-get update -qq
+
+install:
+    # install packages needed for mk-build-deps
+    - sudo apt-get install -qq --no-install-recommends devscripts equivs
+    # pull build deps from debian/control
+    - sudo mk-build-deps -ir -t "apt-get --yes --no-install-recommends"
+    # remove packages needed for mk-build-deps
+    - sudo apt-get purge -qq equivs
+    - sudo apt-get autoremove -qq
+
+before_script:
+    # download original
+    - sudo apt-get install -qq --no-install-recommends devscripts libwww-perl libcrypt-ssleay-perl && UVERSION=$(dpkg-parsechangelog | grep ^Version | cut -d' ' -f2 | rev | cut -d'-' -f2- | rev); uscan --verbose --download-version ${UVERSION} --force-download && sudo apt-get purge -qq libwww-perl libcrypt-ssleay-perl && sudo apt-get autoremove -qq
+
+script:
+    # build the debian package
+    - dpkg-buildpackage -uc -us
+    # install gdebi binary
+    - sudo apt-get install -qq --no-install-recommends gdebi-core
+    # install the package
+    - sudo gdebi --n --q ../*.deb
+    # running maldet
+    - TEMPDIR=$(mktemp -d); sudo maldet -a $TEMPDIR
+
+after_script:
+    # run lintian after build
+    - sudo apt-get install -qq --no-install-recommends lintian
+    - lintian --info --display-info --display-experimental --pedantic --show-overrides ../*.deb && lintian --info --display-info --display-experimental --pedantic --show-overrides ../*.dsc
+
+env:
+  global:
+    # travis encrypt -r waja/maldetect GITHUBTOKEN=XXXXXX (https://help.github.com/articles/creating-an-access-token-for-command-line-use / http://docs.travis-ci.com/user/encryption-keys/)
+    secure: "sEPL9Q6apSnNbW1p6GPRxtZj39i4eDEQp8aQ5WTTBbOCwZinNL8bLkPkioGXlp21tC7bAYN7Wxrzl1CwH4HYNACpQtJvUv6+AMbT4OkOibsellzWf7SvRYAofxjKq8AoU3WQP3+K/sN35LBX2yM685x1e4lqYX0onn5ffn56MVY="
+
+after_success:
+    - mkdir -p debian/build/release/
+    - for FILE in $(dcmd ../*.changes); do cp ../$(basename $FILE) debian/build/release/; done
+    - debian/bin/github-release.sh "$TRAVIS_REPO_SLUG" "debian/`head -1 debian/changelog | awk -F'[()]' '{print $2}'`" debian/build/release/*
+
+#notifications:
+#  email: false
