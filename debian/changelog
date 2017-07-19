@@ -1,3 +1,11 @@
+maldetect (1.6.2-1) unstable; urgency=medium
+
+  * [e0b771f] New upstream version 1.6.2
+  * [5b1ae4b] Refreshing patches against upstream
+  * [7d7c030] travis-ci: Readd .travis-ci.yml
+
+ -- Jan Wagner <waja@cyconet.org>  Wed, 19 Jul 2017 13:14:05 +0200
+
 maldetect (1.6.1-1) unstable; urgency=medium
 
   * [7f87234] New upstream version 1.6.1~rc1
