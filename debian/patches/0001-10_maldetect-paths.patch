@@ -23,7 +23,7 @@
 +cat > /etc/maldetect/maldetect.conf <<EOF
  #
  ##
- # Linux Malware Detect v1.6.1.1
+ # Linux Malware Detect v1.6.2.1
 @@ -56,7 +56,7 @@
  cron_prune_days="$cron_prune_days"
  
@@ -220,7 +220,7 @@
  fi
 --- a/files/internals/functions
 +++ b/files/internals/functions
-@@ -419,7 +419,7 @@
+@@ -423,7 +423,7 @@
         If FILE is specified, paths will be extracted from file, line spaced
         If PATHS are specified, must be comma spaced list, NO WILDCARDS!
         e.g: maldet --monitor users
@@ -270,7 +270,7 @@
  datestamp=`date +"%y%m%d-%H%M"`
  utime=`date +"%s"`
  user=`whoami`
-@@ -60,7 +60,7 @@
+@@ -63,7 +63,7 @@
  sessdir="$varlibpath/sess"
  sigdir="$varlibpath/sigs"
  cldir="$varlibpath/clean"
@@ -279,7 +279,7 @@
  userbasedir="$varlibpath/pub"
  hits_history="$sessdir/hits.hist"
  quar_history="$sessdir/quarantine.hist"
-@@ -96,20 +96,20 @@
+@@ -108,20 +108,20 @@
  remote_uri_timeout="10"
  remote_uri_retries="3"
  clamav_paths="/usr/local/cpanel/3rdparty/share/clamav/ /var/lib/clamav/ /var/clamav/ /usr/share/clamav/ /usr/local/share/clamav"
@@ -332,7 +332,7 @@
 @@ -9,12 +9,11 @@
  #
  PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
- ver=1.6.1
+ ver=1.6.2
 -inspath='/usr/local/maldetect'
 -intcnf="$inspath/internals/internals.conf"
 +intcnf="/etc/maldetect/internals.conf"
