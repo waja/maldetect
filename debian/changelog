@@ -1,3 +1,9 @@
+maldetect (1.6.4-1) unstable; urgency=medium
+
+  * New upstream version 1.6.4
+
+ -- Brice Lopez <brice.lopez@alterway.fr>  Tue, 27 Oct 2020 17:41:01 +0100
+
 maldetect (1.6.2-2) UNRELEASED; urgency=medium
 
   * 

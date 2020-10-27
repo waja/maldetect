@@ -1,7 +1,7 @@
 ##
-# Linux Malware Detect v1.6.2
-#             (C) 2002-2017, R-fx Networks <proj@r-fx.org>
-#             (C) 2017, Ryan MacDonald <ryan@r-fx.org>
+# Linux Malware Detect v1.6.4
+#             (C) 2002-2019, R-fx Networks <proj@r-fx.org>
+#             (C) 2019, Ryan MacDonald <ryan@r-fx.org>
 # This program may be freely redistributed under the terms of the GNU GPL v2
 ##
 #
@@ -25,6 +25,23 @@ email_addr="you@domain.com"
 # [0 = disabled, 1 = enabled]
 email_ignore_clean="1"
 
+# Enable or disable slack alerts, this will upload the scan report as a file
+# into one or more slack channels
+# [0 = disabled, 1 = enabled]
+slack_alert="0"
+
+# The file name of the file that will be uploaded to slack channel(s)
+slack_subj="maldet alert from $(hostname)"
+
+# Slack authentication token.
+# Requires scope: files:write:user
+# more information https://api.slack.com/methods/files.upload
+slack_token="AUTH_TOKEN"
+
+# Comma-separated list of channel names or IDs
+# where the scan report will be shared.
+slack_channels="maldetreports"
+
 # This controls the daily automatic updates of LMD signature files
 # and cleaner rules. The signature update process preserves any
 # custom signature or cleaner files. It is highly recommended that this
@@ -42,7 +59,7 @@ autoupdate_version="1"
 
 # This controls validating the LMD executable MD5 hash with known
 # good upstream hash value. This allows LMD to replace the the
-# executable / force a reinstalltion in the event the LMD executable
+# executable / force a reinstallation in the event the LMD executable
 # is tampered with or corrupted. If you intend to make customizations
 # to the LMD executable, you should disable this feature.
 # [0 = disabled, 1 = enabled]
@@ -52,6 +69,11 @@ autoupdate_version_hashed="1"
 # session information should be retained. Data older than this value is deleted
 # with the daily cron execution.
 cron_prune_days="21"
+
+# This controls whether or not daily automatic scanning of standard web
+# directories is performed via cron.
+# [0 = disabled, 1 = enabled]
+cron_daily_scan="1"
 
 # When defined, the import_config_url option allows a configuration file to be
 # downloaded from a remote URL. The local conf.maldet and internals.conf are
@@ -125,7 +147,7 @@ scan_tmpdir_paths="/tmp /var/tmp /dev/shm /var/fcgi_ipc"
 # Allows non-root users to perform scans. This must be enabled when
 # using mod_security2 upload scanning or if you want to allow users
 # to perform scans. When enabled, this will populate 'pub/' with user
-# owned quarantine, session and temporary paths to faciliate scans.
+# owned quarantine, session and temporary paths to facilitate scans.
 # [ 0 = disabled, 1 = enabled, disabled by default ]
 scan_user_access="0"
 
@@ -199,14 +221,28 @@ quarantine_suspend_user="0"
 # [ default = 500 ]
 quarantine_suspend_user_minuid="500"
 
+# When using an external scan engine, such as ClamAV, should files be
+# quarantined if an error from the scanner engine is received?
+# This is defaulted to 1, always quarantine, as ClamAV generates an
+# error exit code for trivial errors such as file not found. As such, a
+# large percentage of scans will have ClamAV exiting with error code 2.
+# [ 0 = do not quarantine, 1 = always quarantine ]
+quarantine_on_error="1"
+
 ##
 # [ MONITORING OPTIONS ]
 ##
 # The default startup option for monitor mode, either 'users' or path to line
-# spaced file containing local paths to monitor. This option is used for the
-# init based startup script. This value is ignored when '/etc/sysconfig/maldet'
-# or '/etc/default/maldet' is present with a defined value for $MONITOR_MODE.
-# default_monitor_mode="users"
+# spaced file containing local paths to monitor.
+#
+# This option is optional for the init based startup script, maldet.sh. This
+# value is ignored when '/etc/sysconfig/maldet' or '/etc/default/maldet' is
+# present with a defined value for $MONITOR_MODE.
+#
+# This option is REQUIRED for the systemd maldet.service script. That script
+# only checks for the value of $default_monitor_mode. The service will fail to
+# start if a value is not provided.
+default_monitor_mode="users"
 # default_monitor_mode="/usr/local/maldetect/monitor_paths"
 
 # The base number of files that can be watched under a path,

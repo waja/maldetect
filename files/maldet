@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 #
 ##
-# Linux Malware Detect v1.6.2
-#             (C) 2002-2017, R-fx Networks <proj@rfxn.com>
-#             (C) 2017, Ryan MacDonald <ryan@rfxn.com>
+# Linux Malware Detect v1.6.4
+#             (C) 2002-2019, R-fx Networks <proj@rfxn.com>
+#             (C) 2019, Ryan MacDonald <ryan@rfxn.com>
 # This program may be freely redistributed under the terms of the GNU GPL v2
 ##
 #
 PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
-ver=1.6.2
+ver=1.6.4
 inspath='/usr/local/maldetect'
 intcnf="$inspath/internals/internals.conf"
 if [ -f "/etc/sysconfig/maldet" ]; then
@@ -19,8 +19,8 @@ fi
 
 header() {
 	echo "Linux Malware Detect v$ver"
-	echo "            (C) 2002-2017, R-fx Networks <proj@rfxn.com>"
-	echo "            (C) 2017, Ryan MacDonald <ryan@rfxn.com>"
+	echo "            (C) 2002-2019, R-fx Networks <proj@rfxn.com>"
+	echo "            (C) 2019, Ryan MacDonald <ryan@rfxn.com>"
 	echo "This program may be freely redistributed under the terms of the GNU GPL v2"
 	echo ""
 }
@@ -114,9 +114,12 @@ else
 				tmpco=$tmpdir/config.cli
 				rm -f $tmpco
 				touch $tmpco
-				echo $1 | sed -e 's/--config-option //' -e 's/-co //' | tr -d ' ' | tr ',' '\n' > $tmpco
+				echo ,$1 | sed -e 's/-\(-config-option\|co\) //' -e 's/\(, *[a-zA-Z0-9_][a-zA-Z0-9_]*=\)/\n\1\n/g' | sed -e '1d' -e 's/^\([^,].*\|.*[^=]\)$/"\1"/' | sed -e '$!N;s/\n//' -e 's/^, *//' | grep -v "^ *compatcnf" > $tmpco
 				. $tmpco
 				rm -f $tmpco
+				if [ -f "$compatcnf" ]; then
+					source $compatcnf
+				fi
 			;;
 			-qd)
 				shift
@@ -265,7 +268,9 @@ else
 				fi
 				if [ "$1" == "--force" ]; then
 					lmdup_force=1
-                                fi
+                                elif [ "$1" == "--beta" ]; then
+					lmdup_beta=1
+				fi
                                 lmdup
                         ;;
                         -u|--update|--update-sigs)
