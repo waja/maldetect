@@ -1,0 +1,23 @@
+## application version detection rules
+## this feature is still in development
+app_name="WordPress"
+app_minver="4.9.6"
+
+## regex used to find app installation paths
+## all regex path searches must be within the same relative path structure
+## for example /wp-includes/version.php and wp-includes/wp-db.php
+## you CAN NOT define regexes in different paths such as wp-admin/ and wp-includes/
+app_pathregex="^.*/wp-includes/version.php$"
+
+## version file is relative to app_pathregex hits less file names
+## if you regex wp-includes/wp-db.php, version check against wp-includes/version.php
+## e.g: if your version file sits above the pathregex by one level then set app_verfile to
+## "../version.php"
+app_verfile="version.php"
+
+## comma spaced list of URL's where upgrade information can be found for the application
+app_upgradeurl="http://wordpress.org/download/,http://codex.wordpress.org/Updating_WordPress"
+
+## move into conf.maldet as global alert option and create alert template
+app_alertuser="0"
+app_alertmsg="The below noted installed version(s) of $app_name are known to be out of date and insecure. It is strongly encouraged that you take action to update the software to the latest available version. The maintenance of installed applications is your responsibility and failure to adequately manage software versions can result in the abuse of your hosting account or suspension if your account is used for malicious activity."

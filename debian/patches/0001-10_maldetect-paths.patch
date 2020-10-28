@@ -1,59 +1,8 @@
- .ca.def                        |  6 +++---
- README                         | 28 ++++++++++++++--------------
- cron.d.pub                     |  2 +-
- cron.daily                     | 28 ++++++++++++++--------------
- files/conf.maldet              |  6 +++---
- files/hookscan.sh              |  2 +-
- files/internals/functions      | 12 ++++++------
- files/internals/hexfifo.pl     |  2 +-
- files/internals/internals.conf |  8 ++++----
- files/internals/scan.etpl      |  2 +-
- files/internals/tlog           |  2 +-
- files/maldet                   | 10 +++++-----
- files/service/maldet.service   |  6 +++---
- files/service/maldet.sh        | 10 +++++-----
- files/service/maldet.sysconfig |  2 +-
- install.sh                     | 10 +++++-----
- 16 files changed, 68 insertions(+), 68 deletions(-)
-
---- a/files/internals/importconf
-+++ b/files/internals/importconf
-@@ -1,4 +1,4 @@
--cat > /usr/local/maldetect/conf.maldet <<EOF
-+cat > /etc/maldetect/maldetect.conf <<EOF
- #
- ##
- # Linux Malware Detect v1.6.2.1
-@@ -56,7 +56,7 @@
- cron_prune_days="$cron_prune_days"
- 
- # When defined, the import_config_url option allows a configuration file to be
--# downloaded from a remote URL. The local conf.maldet and internals.conf are
-+# downloaded from a remote URL. The local maldetect.conf and internals.conf are
- # parsed followed by the imported configuration file. As such, only variables
- # defined in the imported configuration file are overridden and a full set of
- # configuration options is not explicitly required in the imported file.
-@@ -175,7 +175,7 @@
- # user files. This 'find' operation can be especially resource intensive and it may
- # be desirable to persist the file list results so that other applications/tasks
- # may make use of the results. When scan_export_filelist is set enabled, the most
--# recent result set will be saved to '/usr/local/maldetect/tmp/find_results.last'
-+# recent result set will be saved to '/tmp/maldetect/find_results.last'
- # [ 0 = disabled, 1 = enabled ]
- scan_export_filelist="$scan_export_filelist"
- 
-@@ -207,7 +207,7 @@
- # The default startup option for monitor mode, either 'users' or path to line
- # spaced file containing local paths to monitor. This option is used for the
- # init based startup script. This value is ignored when '/etc/sysconfig/maldet'
--# or '/etc/default/maldet' is present with a defined value for $MONITOR_MODE.
-+# or '/etc/default/maldetect' is present with a defined value for $MONITOR_MODE.
- default_monitor_mode="$default_monitor_mode"
- 
- # The base number of files that can be watched under a path
---- a/README
-+++ b/README
-@@ -193,35 +193,35 @@
+Index: maldetect-1.6.4/README
+===================================================================
+--- maldetect-1.6.4.orig/README
++++ maldetect-1.6.4/README
+@@ -193,35 +193,35 @@ project.
  
  .: 7 [ CONFIGURATION ]
  
@@ -61,7 +10,7 @@
 +The configuration of LMD is handled through /etc/maldetect/maldetect.conf
  and all options are well commented for ease of configuration.
  
- By default LMD has the auto-qurantine of files disabled, this will mean that
+ By default LMD has the auto-quarantine of files disabled, this will mean that
  YOU WILL NEED TO ACT on any threats detected or pass the SCANID to the '-q'
  option to batch quarantine the results. To change this please set quar_hits=1
 -in conf.maldet.
@@ -73,7 +22,7 @@
  
 -/usr/local/maldetect/ignore_paths
 +/etc/maldetect/ignore_paths
- A line spaced file for paths that are to be execluded from search results
+ A line spaced file for paths that are to be excluded from search results
   Sample ignore entry:
   /home/user/public_html/cgi-bin
  
@@ -95,7 +44,7 @@
  A line spaced file for regexp paths that are excluded from inotify monitoring
   Sample ignore entry:
   ^/home/user$
-@@ -279,7 +279,7 @@
+@@ -279,7 +279,7 @@ option gives a detailed summary of usage
      -s, --restore FILE|SCANID
         Restore file from quarantine queue to orginal path or restore all items from
         a specific SCANID
@@ -104,7 +53,7 @@
         e.g: maldet --restore 050910-1534.21135
  
      -q, --quarantine SCANID
-@@ -297,7 +297,7 @@
+@@ -297,7 +297,7 @@ option gives a detailed summary of usage
         e.g: maldet --user nobody --restore 050910-1534.21135
  
      -co, --config-option VAR1=VALUE,VAR2=VALUE,VAR3=VALUE
@@ -113,7 +62,21 @@
         e.g: maldet --config-option email_addr=you@domain.com,quar_hits=1
  
      -p, --purge
-@@ -353,7 +353,7 @@
+@@ -316,10 +316,10 @@ If you are running monitor mode, the dai
+ daily report will be issued for all monitoring events. 
+ 
+ If you need to scan additional paths, you should review the cronjob and use one
+-of the customization hook files, such as '/usr/local/maldetect/cron/custom.cron',
++of the customization hook files, such as '/etc/maldetect/cron/custom.cron',
+ to write in custom scanning execution. For configuration based cron changes, you
+-can redefine any conf.maldet variables at '/etc/sysconfig/maldet' or 
+-'/usr/local/maldetect/cron/conf.maldet.cron'.
++can redefine any maldetect.conf variables at '/etc/sysconfig/maldet' or 
++'/etc/maldetect/cron/maldetect.conf.cron'.
+ 
+ .: 11 [ INOTIFY MONITORING ]
+ 
+@@ -353,7 +353,7 @@ memory or cpu usage.
  The scanner component of the monitor watches for notifications from the inotify
  process and batches items to be scanned, by default, every 30 seconds. If you
  need tighter control of the scanning timer, you can edit inotify_stime in
@@ -122,16 +85,32 @@
  
  The alerting of file hits under monitor mode is handled through a daily report
  instead of sending an email on every hit. The cron.daily job installed by LMD
-@@ -386,7 +386,7 @@
+@@ -386,13 +386,13 @@ in single file scans by a wide margin. A
  3sec on average while the LMD scanner engine takes 0.5sec or less.
  
  To enable upload scanning with mod_security2 you must set enable the public_scan option
 -in conf.maldet (public_scan=1) then add the following rules to your mod_security2 
 +in maldetect.conf (public_scan=1) then add the following rules to your mod_security2 
  configuration. These rules are best placed in your modsec2.user.conf file on cpanel servers
- or at the top of the appropraite rules file for your setup.
+ or at the top of the appropriate rules file for your setup.
  
-@@ -430,13 +430,13 @@
+ /usr/local/apache/conf/modsec2.user.conf (or similar mod_security2 rules file):
+ SecRequestBodyAccess On
+-SecRule FILES_TMPNAMES "@inspectFile /usr/local/maldetect/hookscan.sh" \
++SecRule FILES_TMPNAMES "@inspectFile /etc/maldetect/hookscan.sh" \
+                 "id:'999999',log,auditlog,deny,severity:2,phase:2,t:none"
+ 
+ If using ModSecurity >=2.9, you should set 'SecTmpSaveUploadedFiles On' before the
+@@ -407,7 +407,7 @@ configurations this is the modsec_audit.
+ 
+ The log entry will appear similar to the following:
+ Message: Access denied with code 406 (phase 2). File "/tmp/20121120-....-file" rejected by
+-the approver script "/usr/local/maldetect/hookscan.sh": 0 maldet: {HEX}php.cmdshell.r57.317
++the approver script "/etc/maldetect/hookscan.sh": 0 maldet: {HEX}php.cmdshell.r57.317
+ /tmp/20121120-....-file [file "/usr/local/apache/conf/modsec2.user.conf"] [line "3"]
+ [severity "CRITICAL"]
+ 
+@@ -430,13 +430,13 @@ Given that the maldetect installation pa
  path world writable (777) or populate the pub path with user owned paths. It was undesirable
  to set any path world writable and as such a feature to populate path data was created. This
  feature is controlled with the --mkpubpaths flag and is executed from cron every 10 minutes,
@@ -145,10 +124,10 @@
  All non-root scans, such as those performed under mod_security2, will be stored under the
 -/usr/local/maldetect/pub/username directory tree. The quarantine paths are relative to the user
 +/var/lib/maldetect/pub/username directory tree. The quarantine paths are relative to the user
- that exectues the scan, so user nobody would be under pub/nobody/quar/. The actual paths
+ that executes the scan, so user nobody would be under pub/nobody/quar/. The actual paths
  for where files are quarantined and the user which executed the scan, can be verified in the
  e-mail reports for upload hits.
-@@ -444,7 +444,7 @@
+@@ -444,7 +444,7 @@ e-mail reports for upload hits.
  To restore files quarantined under non-root users, you must pass the -U|--user option to LMD,
  for example if user nobody quarantined a file you would like to restore, it can be restored as
  follows:
@@ -157,13 +136,17 @@
  
  Or, as always the scan ID can be used to restore
  maldet --user nobody 112012-0032.13771
---- a/cron.d.pub
-+++ b/cron.d.pub
+Index: maldetect-1.6.4/cron.d.pub
+===================================================================
+--- maldetect-1.6.4.orig/cron.d.pub
++++ maldetect-1.6.4/cron.d.pub
 @@ -1 +1 @@
 -*/5 * * * * root /usr/local/maldetect/maldet --mkpubpaths >> /dev/null 2>&1
 +*/5 * * * * root /usr/bin/maldet --mkpubpaths >> /dev/null 2>&1
---- a/cron.daily
-+++ b/cron.daily
+Index: maldetect-1.6.4/cron.daily
+===================================================================
+--- maldetect-1.6.4.orig/cron.daily
++++ maldetect-1.6.4/cron.daily
 @@ -1,8 +1,7 @@
  #!/usr/bin/env bash
  export PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:$PATH
@@ -174,10 +157,12 @@
  
  if [ -f "$intcnf" ]; then
  	source $intcnf
---- a/files/conf.maldet
-+++ b/files/conf.maldet
-@@ -54,7 +54,7 @@
- cron_prune_days="21"
+Index: maldetect-1.6.4/files/conf.maldet
+===================================================================
+--- maldetect-1.6.4.orig/files/conf.maldet
++++ maldetect-1.6.4/files/conf.maldet
+@@ -76,7 +76,7 @@ cron_prune_days="21"
+ cron_daily_scan="1"
  
  # When defined, the import_config_url option allows a configuration file to be
 -# downloaded from a remote URL. The local conf.maldet and internals.conf are
@@ -185,7 +170,7 @@
  # parsed followed by the imported configuration file. As such, only variables
  # defined in the imported configuration file are overridden and a full set of
  # configuration options is not explicitly required in the imported file.
-@@ -173,7 +173,7 @@
+@@ -195,7 +195,7 @@ scan_find_timeout="0"
  # user files. This 'find' operation can be especially resource intensive and it may
  # be desirable to persist the file list results so that other applications/tasks
  # may make use of the results. When scan_export_filelist is set enabled, the most
@@ -194,20 +179,19 @@
  # [ 0 = disabled, 1 = enabled ]
  scan_export_filelist="0"
  
-@@ -205,9 +205,9 @@
- # The default startup option for monitor mode, either 'users' or path to line
- # spaced file containing local paths to monitor. This option is used for the
- # init based startup script. This value is ignored when '/etc/sysconfig/maldet'
--# or '/etc/default/maldet' is present with a defined value for $MONITOR_MODE.
-+# or '/etc/default/maldetect' is present with a defined value for $MONITOR_MODE.
- # default_monitor_mode="users"
--# default_monitor_mode="/usr/local/maldetect/monitor_paths"
-+# default_monitor_mode="/etc/maldetect/monitor_paths"
- 
- # The base number of files that can be watched under a path,
- # this ends up being a relative value per-user in user mode.
---- a/files/hookscan.sh
-+++ b/files/hookscan.sh
+@@ -236,7 +236,7 @@ quarantine_on_error="1"
+ # spaced file containing local paths to monitor.
+ #
+ # This option is optional for the init based startup script, maldet.sh. This
+-# value is ignored when '/etc/sysconfig/maldet' or '/etc/default/maldet' is
++# value is ignored when '/etc/sysconfig/maldet' or '/etc/default/maldetect' is
+ # present with a defined value for $MONITOR_MODE.
+ #
+ # This option is REQUIRED for the systemd maldet.service script. That script
+Index: maldetect-1.6.4/files/hookscan.sh
+===================================================================
+--- maldetect-1.6.4.orig/files/hookscan.sh
++++ maldetect-1.6.4/files/hookscan.sh
 @@ -1,8 +1,7 @@
  #!/usr/bin/env bash
  file="$1"
@@ -218,9 +202,11 @@
  if [ -f "$intcnf" ]; then
  	source $intcnf
  fi
---- a/files/internals/functions
-+++ b/files/internals/functions
-@@ -423,7 +423,7 @@
+Index: maldetect-1.6.4/files/internals/functions
+===================================================================
+--- maldetect-1.6.4.orig/files/internals/functions
++++ maldetect-1.6.4/files/internals/functions
+@@ -422,7 +422,7 @@ usage $0 [ OPTION ]
         If FILE is specified, paths will be extracted from file, line spaced
         If PATHS are specified, must be comma spaced list, NO WILDCARDS!
         e.g: maldet --monitor users
@@ -229,9 +215,11 @@
         e.g: maldet --monitor /home/mike,/home/ashton
  
      -k, --kill-monitor
---- a/files/internals/hexfifo.pl
-+++ b/files/internals/hexfifo.pl
-@@ -15,7 +15,7 @@
+Index: maldetect-1.6.4/files/internals/hexfifo.pl
+===================================================================
+--- maldetect-1.6.4.orig/files/internals/hexfifo.pl
++++ maldetect-1.6.4/files/internals/hexfifo.pl
+@@ -15,7 +15,7 @@ if ($#ARGV != "0") {
  
  $hexfile = $ARGV[0];
  
@@ -240,8 +228,10 @@
  $timeout = "1";
  
  if (-p $named_pipe_name) {
---- a/files/internals/internals.conf
-+++ b/files/internals/internals.conf
+Index: maldetect-1.6.4/files/internals/internals.conf
+===================================================================
+--- maldetect-1.6.4.orig/files/internals/internals.conf
++++ maldetect-1.6.4/files/internals/internals.conf
 @@ -6,18 +6,18 @@
  ##
  #
@@ -270,7 +260,7 @@
  datestamp=`date +"%y%m%d-%H%M"`
  utime=`date +"%s"`
  user=`whoami`
-@@ -63,7 +63,7 @@
+@@ -64,7 +64,7 @@ quardir="$varlibpath/quarantine"
  sessdir="$varlibpath/sess"
  sigdir="$varlibpath/sigs"
  cldir="$varlibpath/clean"
@@ -279,9 +269,9 @@
  userbasedir="$varlibpath/pub"
  hits_history="$sessdir/hits.hist"
  quar_history="$sessdir/quarantine.hist"
-@@ -108,20 +108,20 @@
- remote_uri_timeout="10"
- remote_uri_retries="3"
+@@ -111,20 +111,20 @@ fi
+ remote_uri_timeout="30"
+ remote_uri_retries="4"
  clamav_paths="/usr/local/cpanel/3rdparty/share/clamav/ /var/lib/clamav/ /var/clamav/ /usr/share/clamav/ /usr/local/share/clamav"
 -tlog="$libpath/tlog"
 +tlog="$libpath/inotify/tlog"
@@ -305,9 +295,11 @@
  compatcnf="$libpath/compat.conf"
  
  if [ "$OSTYPE" == "FreeBSD" ]; then
---- a/files/internals/scan.etpl
-+++ b/files/internals/scan.etpl
-@@ -28,7 +28,7 @@
+Index: maldetect-1.6.4/files/internals/scan.etpl
+===================================================================
+--- maldetect-1.6.4.orig/files/internals/scan.etpl
++++ maldetect-1.6.4/files/internals/scan.etpl
+@@ -33,7 +33,7 @@ EOF
  if [ "$quarantine_hits" == "0" ] && [ ! "$tot_hits" == "0" ]; then
   echo "WARNING: Automatic quarantine is currently disabled, detected threats are still accessible to users!" >> $tmpf
   echo "To enable, set quarantine_hits=1 and/or to quarantine hits from this scan run:" >> $tmpf
@@ -316,9 +308,11 @@
  fi
  if [ "$quarantine_clean" == "1" ]; then
    if [ "$type" == "scan" ] && [ -f "$sessdir/clean.$$" ] && [ ! -z "$(cat $sessdir/clean.$$)" ]; then
---- a/files/internals/tlog
-+++ b/files/internals/tlog
-@@ -24,7 +24,7 @@
+Index: maldetect-1.6.4/files/internals/tlog
+===================================================================
+--- maldetect-1.6.4.orig/files/internals/tlog
++++ maldetect-1.6.4/files/internals/tlog
+@@ -24,7 +24,7 @@ PATH=/sbin:/usr/sbin:/usr/bin:/usr/local
  
  
  # Base run path; no trailing slash
@@ -327,12 +321,14 @@
  
  if [ "$1" == "" ] && [ "$2" == "" ]; then
  	echo "$0 usage: [file] [tlog]"
---- a/files/maldet
-+++ b/files/maldet
+Index: maldetect-1.6.4/files/maldet
+===================================================================
+--- maldetect-1.6.4.orig/files/maldet
++++ maldetect-1.6.4/files/maldet
 @@ -9,12 +9,11 @@
  #
  PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
- ver=1.6.2
+ ver=1.6.4
 -inspath='/usr/local/maldetect'
 -intcnf="$inspath/internals/internals.conf"
 +intcnf="/etc/maldetect/internals.conf"
@@ -345,13 +341,15 @@
  fi
  
  header() {
---- a/files/service/maldet.service
-+++ b/files/service/maldet.service
-@@ -3,9 +3,9 @@
- After=network.target
+Index: maldetect-1.6.4/files/service/maldet.service
+===================================================================
+--- maldetect-1.6.4.orig/files/service/maldet.service
++++ maldetect-1.6.4/files/service/maldet.service
+@@ -4,9 +4,9 @@ After=network.target
  
  [Service]
--ExecStart=/usr/local/maldetect/maldet --monitor /usr/local/maldetect/monitor_paths
+ EnvironmentFile=/usr/local/maldetect/conf.maldet
+-ExecStart=/usr/local/maldetect/maldet --monitor $default_monitor_mode
 -ExecStop=/usr/local/maldetect/maldet --kill-monitor
 +ExecStart=/usr/bin/maldet --monitor /etc/maldetect/monitor_paths
 +ExecStop=/usr/bin/maldet --kill-monitor
@@ -360,8 +358,10 @@
 +PIDFile=/tmp/maldetect/inotifywait.pid
  [Install]
  WantedBy=multi-user.target
---- a/files/service/maldet.sh
-+++ b/files/service/maldet.sh
+Index: maldetect-1.6.4/files/service/maldet.sh
+===================================================================
+--- maldetect-1.6.4.orig/files/service/maldet.sh
++++ maldetect-1.6.4/files/service/maldet.sh
 @@ -15,8 +15,7 @@
  # X-Interactive:     true
  # Short-Description: Start/stop maldet in monitor mode
@@ -372,7 +372,7 @@
  
  if [ -f "$intcnf" ]; then
  	source $intcnf
-@@ -35,8 +34,8 @@
+@@ -35,8 +34,8 @@ fi
  
  if [ -f "/etc/sysconfig/maldet" ]; then
  	. /etc/sysconfig/maldet
@@ -383,7 +383,7 @@
  fi
  
  if [ "$default_monitor_mode" ]; then
-@@ -55,7 +54,7 @@
+@@ -55,7 +54,7 @@ if [ -z "$MONITOR_MODE" ]; then
      if [ -f /etc/redhat-release ]; then
          echo "error no default monitor mode defined, set \$MONITOR_MODE in /etc/sysconfig/maldet, or \$default_monitor_mode in $cnf"
      elif [ -f /etc/debian_version ]; then
@@ -392,16 +392,57 @@
      else
          echo "error no default monitor mode defined, set \$MONITOR_MODE in /etc/sysconfig/maldet, or \$default_monitor_mode in $cnf"
      fi
---- a/files/service/maldet.sysconfig
-+++ b/files/service/maldet.sysconfig
+Index: maldetect-1.6.4/files/service/maldet.sysconfig
+===================================================================
+--- maldetect-1.6.4.orig/files/service/maldet.sysconfig
++++ maldetect-1.6.4/files/service/maldet.sysconfig
 @@ -9,4 +9,4 @@
  # PATH FILE  | read path file, line spaced, for local paths to monitor
  
  #MONITOR_MODE="users"
 -#MONITOR_MODE="/usr/local/maldetect/monitor_paths"
 +#MONITOR_MODE="/etc/maldetect/monitor_paths"
---- a/files/cron/conf.maldet.cron
-+++ b/files/cron/conf.maldet.cron
+Index: maldetect-1.6.4/files/internals/importconf
+===================================================================
+--- maldetect-1.6.4.orig/files/internals/importconf
++++ maldetect-1.6.4/files/internals/importconf
+@@ -1,4 +1,4 @@
+-cat > /usr/local/maldetect/conf.maldet <<EOF
++cat > /etc/maldetect/maldetect.conf <<EOF
+ #
+ ##
+ # Linux Malware Detect v1.6.4
+@@ -61,7 +61,7 @@ cron_prune_days="$cron_prune_days"
+ cron_daily_scan="1"
+ 
+ # When defined, the import_config_url option allows a configuration file to be
+-# downloaded from a remote URL. The local conf.maldet and internals.conf are
++# downloaded from a remote URL. The local maldetect.conf and internals.conf are
+ # parsed followed by the imported configuration file. As such, only variables
+ # defined in the imported configuration file are overridden and a full set of
+ # configuration options is not explicitly required in the imported file.
+@@ -180,7 +180,7 @@ scan_find_timeout="$scan_find_timeout"
+ # user files. This 'find' operation can be especially resource intensive and it may
+ # be desirable to persist the file list results so that other applications/tasks
+ # may make use of the results. When scan_export_filelist is set enabled, the most
+-# recent result set will be saved to '/usr/local/maldetect/tmp/find_results.last'
++# recent result set will be saved to '/tmp/maldetect/find_results.last'
+ # [ 0 = disabled, 1 = enabled ]
+ scan_export_filelist="$scan_export_filelist"
+ 
+@@ -221,7 +221,7 @@ quarantine_on_error="$quarantine_on_erro
+ # spaced file containing local paths to monitor.
+ #
+ # This option is optional for the init based startup script, maldet.sh. This
+-# value is ignored when '/etc/sysconfig/maldet' or '/etc/default/maldet' is
++# value is ignored when '/etc/sysconfig/maldet' or '/etc/default/maldetect' is
+ # present with a defined value for $MONITOR_MODE.
+ #
+ # This option is REQUIRED for the systemd maldet.service script. That script
+Index: maldetect-1.6.4/files/cron/conf.maldet.cron
+===================================================================
+--- maldetect-1.6.4.orig/files/cron/conf.maldet.cron
++++ maldetect-1.6.4/files/cron/conf.maldet.cron
 @@ -1,4 +1,5 @@
  ##
  # Place custom variables in this file for execution with the daily cronjob.
