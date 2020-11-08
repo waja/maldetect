@@ -1,0 +1,70 @@
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'debian/*' # Push events to matching debian/*, i.e. debian/1.0-2, debian/20.15.10, debian/23.20020326
+
+name: Release Process
+
+env:
+  SOURCE_DIR: ./
+  ARTIFACTS_DIR: debian/build/release/
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      release-id: ${{ steps.create_release.outputs.id }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install needed packages
+        run: |
+          if [ $(dpkg -l | grep -c dpkg-dev) -ne 1 ]; then sudo apt-get update && sudo apt-get install -y dpkg-dev; fi
+      - name: Gather changelog
+        run: |
+          ls -la
+          dpkg-parsechangelog | tail -n +9 > debian.changelog
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body_path: debian.changelog
+          draft: false
+          prerelease: false
+
+  build:
+    name: Build and upload packages
+    needs: create-release
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      env:
+        DEBIAN_FRONTEND: "noninteractive"
+    - name: Remove github artefacts
+      run: |
+        rm -rf .git*
+    - name: Adjust distibution in changelog file
+      run: |
+        sed -i '0,/restricted/s//stable/' debian/changelog
+    - name: Build Debian package
+      uses: dawidd6/action-debian-package@v1
+      with:
+        artifacts_directory: debian/build/release/
+#    - name: Build Debian package
+#      uses: pi-top/action-debian-package@v0.2.0
+#      with:
+#        artifacts_directory: debian/build/release/
+#        target_architectures: "amd64,i386"
+    - name: Upload the artifacts
+      uses: skx/github-action-publish-binaries@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        releaseId: ${{ needs.create-release.outputs.release-id }}
+        args: debian/build/release/*
