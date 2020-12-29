@@ -3,7 +3,7 @@ Section: utils
 Priority: optional
 Maintainer: Jan Wagner <waja@cyconet.org>
 Build-Depends: debhelper-compat (= 12)
-Standards-Version: 3.9.8
+Standards-Version: 4.5.1
 Vcs-Git: git://git@github.com:waja/maldetect.git
 Vcs-Browser: https://github.com/waja/maldetect
 Homepage: http://www.rfxn.com/projects/linux-malware-detect/
