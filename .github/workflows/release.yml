@@ -46,9 +46,6 @@ jobs:
     - uses: actions/checkout@v2
       env:
         DEBIAN_FRONTEND: "noninteractive"
-    - name: Remove github artefacts
-      run: |
-        rm -rf .git*
     - name: Adjust distibution in changelog file
       run: |
         sed -i '0,/restricted/s//stable/' debian/changelog
