@@ -24,7 +24,7 @@ jobs:
       run: |
         sed -i '0,/restricted/s//stable/' debian/changelog
     - name: Build Debian package
-      uses: dawidd6/action-debian-package@v1
+      uses: dawidd6/action-debian-package@v1.4.0
       with:
         artifacts_directory: debian/build/release/
     - name: Debug

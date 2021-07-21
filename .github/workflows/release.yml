@@ -50,7 +50,7 @@ jobs:
       run: |
         sed -i '0,/restricted/s//stable/' debian/changelog
     - name: Build Debian package
-      uses: dawidd6/action-debian-package@v1
+      uses: dawidd6/action-debian-package@v1.4.0
       with:
         artifacts_directory: debian/build/release/
 #    - name: Build Debian package
@@ -59,7 +59,7 @@ jobs:
 #        artifacts_directory: debian/build/release/
 #        target_architectures: "amd64,i386"
     - name: Upload the artifacts
-      uses: skx/github-action-publish-binaries@master
+      uses: skx/github-action-publish-binaries@release-0.15
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
