@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 #
 ##
-# Linux Malware Detect v1.6.2
-#             (C) 2002-2017, R-fx Networks <proj@r-fx.org>
-#             (C) 2017, Ryan MacDonald <ryan@r-fx.org>
+# Linux Malware Detect v1.6.4
+#             (C) 2002-2019, R-fx Networks <proj@r-fx.org>
+#             (C) 2019, Ryan MacDonald <ryan@r-fx.org>
 # This program may be freely redistributed under the terms of the GNU GPL v2
 ##
 #
 PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
-ver=1.6
+ver=1.6.4
+ver_major=1.6
 inspath=/usr/local/maldetect
 logf=$inspath/logs/event_log
 conftemp="$inspath/internals/importconf"
@@ -39,11 +40,12 @@ if [ ! -d "$inspath" ] && [ -d "files" ]; then
 	done
 	killall -SIGUSR2 clamd 2> /dev/null
 else
-	if [ "$(ps -A --user root -o "cmd" 2> /dev/null | grep maldetect | grep inotifywait)" ]; then
+	if [ "$(ps -A --user root -o "command" 2> /dev/null | grep maldetect | grep inotifywait)" ]; then
 		$inspath/maldet -k >> /dev/null 2>&1
 		monmode=1
 	fi
 	$find ${inspath}.* -maxdepth 0 -type d -mtime +30 2> /dev/null | xargs rm -rf
+	chattr -ia $inspath/internals/internals.conf
 	mv $inspath $inspath.bk$$
 	ln -fs $inspath.bk$$ $inspath.last
 	mkdir -p $inspath
@@ -56,7 +58,7 @@ else
 	gzip -9 $inspath/maldet.1
 	ln -fs $inspath/maldet.1.gz /usr/local/share/man/man1/maldet.1.gz
 	cp -f $inspath.bk$$/ignore_* $inspath/  >> /dev/null 2>&1
-	if [ "$ver" == "1.5" ] || [ "$ver" == "1.6" ]; then
+	if [ "$ver_major" == "1.5" ] || [ "$ver_major" == "1.6" ]; then
 		cp -f $inspath.bk$$/sess/* $inspath/sess/ >> /dev/null 2>&1
 		cp -f $inspath.bk$$/tmp/* $inspath/tmp/ >> /dev/null 2>&1
 		cp -f $inspath.bk$$/quarantine/* $inspath/quarantine/ >> /dev/null 2>&1
@@ -127,8 +129,8 @@ ln -fs $logf $inspath/event_log
 $inspath/maldet --alert-daily 2> /dev/null
 
 echo "Linux Malware Detect v$ver"
-echo "            (C) 2002-2017, R-fx Networks <proj@r-fx.org>"
-echo "            (C) 2017, Ryan MacDonald <ryan@r-fx.org>"
+echo "            (C) 2002-2019, R-fx Networks <proj@r-fx.org>"
+echo "            (C) 2019, Ryan MacDonald <ryan@r-fx.org>"
 echo "This program may be freely redistributed under the terms of the GNU GPL"
 echo ""
 echo "installation completed to $inspath"
