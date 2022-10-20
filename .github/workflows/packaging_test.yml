@@ -17,9 +17,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       env:
         DEBIAN_FRONTEND: "noninteractive"
+    - name: Remove github artefacts
+      run: |
+        rm -rf .github*
     - name: Adjust distibution in changelog file
       run: |
         sed -i '0,/restricted/s//stable/' debian/changelog
@@ -27,6 +30,7 @@ jobs:
       uses: dawidd6/action-debian-package@v1.4.0
       with:
         artifacts_directory: debian/build/release/
+        os_distribution: testing
     - name: Debug
       run: |
         ls -la

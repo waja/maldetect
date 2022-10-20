@@ -18,7 +18,7 @@ jobs:
       release-id: ${{ steps.create_release.outputs.id }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Install needed packages
         run: |
           if [ $(dpkg -l | grep -c dpkg-dev) -ne 1 ]; then sudo apt-get update && sudo apt-get install -y dpkg-dev; fi
@@ -43,9 +43,12 @@ jobs:
     needs: create-release
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       env:
         DEBIAN_FRONTEND: "noninteractive"
+    - name: Remove github artefacts
+      run: |
+        rm -rf .github*
     - name: Adjust distibution in changelog file
       run: |
         sed -i '0,/restricted/s//stable/' debian/changelog
@@ -53,13 +56,14 @@ jobs:
       uses: dawidd6/action-debian-package@v1.4.0
       with:
         artifacts_directory: debian/build/release/
+        os_distribution: testing
 #    - name: Build Debian package
 #      uses: pi-top/action-debian-package@v0.2.0
 #      with:
 #        artifacts_directory: debian/build/release/
 #        target_architectures: "amd64,i386"
     - name: Upload the artifacts
-      uses: skx/github-action-publish-binaries@release-0.15
+      uses: skx/github-action-publish-binaries@release-2.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
