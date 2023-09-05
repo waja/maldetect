@@ -18,7 +18,7 @@ jobs:
       release-id: ${{ steps.create_release.outputs.id }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install needed packages
         run: |
           if [ $(dpkg -l | grep -c dpkg-dev) -ne 1 ]; then sudo apt-get update && sudo apt-get install -y dpkg-dev; fi
@@ -43,7 +43,7 @@ jobs:
     needs: create-release
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       env:
         DEBIAN_FRONTEND: "noninteractive"
     - name: Remove github artefacts
