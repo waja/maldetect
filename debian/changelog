@@ -1,7 +1,5 @@
-maldetect (1.6.5-1) UNRELEASED; urgency=medium
+maldetect (1.6.5-1) unstable; urgency=medium
 
-  [ Jan Wagner ]
-  * 
   * [c8b445c] travis-ci: Use xenial image
   * [1b57987] Adding CI
   * [8f845ee] d/control: Raise compat level to 12
@@ -13,8 +11,14 @@ maldetect (1.6.5-1) UNRELEASED; urgency=medium
   * [84dfd28] Updating build pipelines
   * [14c0cb3] Fixing d/watch
   * [1e05a05] New upstream version 1.6.5
+  * [d804acf] Adding d/p/0010-20_fix_man_section.patch for fixing man page section
+  * [1d15e8b] Readd Github CI
+  * [912130e] Refresh d/p/0001-10_maldetect-paths.patch
+  * [1acf6e4] Refresh d/p/0002-12_maldetect-cron.daily-documentroots.patch
+  * [4d7ac9b] Refresh d/p/0004-14_maldetect-manpage.patch
+  * [9a65ed0] Refresh d/p/0005-15_maldetect-no-autoupdate.patch
 
- -- Jan Wagner <waja@cyconet.org>  Tue, 10 Oct 2023 11:00:47 +0000
+ -- Jan Wagner <waja@cyconet.org>  Tue, 10 Oct 2023 11:44:15 +0000
 
 maldetect (1.6.2-1) unstable; urgency=medium
 
