@@ -3,3 +3,4 @@
 0003-13_maldetect-cron.daily-default.patch
 0004-14_maldetect-manpage.patch
 0005-15_maldetect-no-autoupdate.patch
+0010-20_fix_man_section.patch
