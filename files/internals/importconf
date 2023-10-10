@@ -1,9 +1,9 @@
 cat > /usr/local/maldetect/conf.maldet <<EOF
 #
 ##
-# Linux Malware Detect v1.6.2.1
-#             (C) 2002-2017, R-fx Networks <proj@r-fx.org>
-#             (C) 2017, Ryan MacDonald <ryan@r-fx.org>
+# Linux Malware Detect v1.6.5
+#             (C) 2002-2023, R-fx Networks <proj@r-fx.org>
+#             (C) 2023, Ryan MacDonald <ryan@r-fx.org>
 # This program may be freely redistributed under the terms of the GNU GPL v2
 ##
 #
@@ -25,7 +25,45 @@ email_addr="$email_addr"
 # Ignore e-mail alerts for scan reports in which all malware hits
 # have been automatically and successfully cleaned.
 # [0 = disabled, 1 = enabled]
-email_ignore_clean="$email_ignore_clean"
+email_ignore_clean="1"
+
+# Enable user alerts for specific web hosting control panels. If hits are detected,
+# attempt to determine the web hosting control in use, if any. If a control
+# panel is detected, determine the user contact information from the panel's
+# toolset and send an email summary of the detected hits to that user.
+# The list of hits will be limited to files owned by the panel user/account in question.
+# Disabling alerts globally with email_alert will also disable this function.
+email_panel_user_alerts="$email_panel_user_alerts"
+
+# The from header that will be set on alerts to control panel users. This should
+# be set by any web hosts that will be supporting the control panel users/accounts 
+# on this server.
+email_panel_from="$email_panel_from"
+
+# The reply-to header that will be set on alerts to control panel users. This should
+# be set by any web hosts that will be supporting the control panel users/accounts 
+# on this server.
+email_panel_replyto="$email_panel_replyto"
+
+# The subject that will be used on alerts to control panel account contacts
+email_panel_alert_subj="$email_panel_alert_subj"
+
+# Enable or disable slack alerts, this will upload the scan report as a file
+# into one or more slack channels
+# [0 = disabled, 1 = enabled]
+slack_alert="$slack_alert"
+
+# The file name of the file that will be uploaded to slack channel(s)
+slack_subj="$slack_subj"
+
+# Slack authentication token.
+# Requires scope: files:write:user
+# more information https://api.slack.com/methods/files.upload
+slack_token="$slack_token"
+
+# Comma-separated list of channel names or IDs
+# where the scan report will be shared.
+slack_channels="$slack_channels"
 
 # This controls the daily automatic updates of LMD signature files
 # and cleaner rules. The signature update process preserves any
@@ -44,7 +82,7 @@ autoupdate_version="1"
 
 # This controls validating the LMD executable MD5 hash with known
 # good upstream hash value. This allows LMD to replace the the
-# executable / force a reinstalltion in the event the LMD executable
+# executable / force a reinstallation in the event the LMD executable
 # is tampered with or corrupted. If you intend to make customizations
 # to the LMD executable, you should disable this feature.
 # [0 = disabled, 1 = enabled]
@@ -54,6 +92,11 @@ autoupdate_version_hashed="1"
 # session information should be retained. Data older than this value is deleted
 # with the daily cron execution.
 cron_prune_days="$cron_prune_days"
+
+# This controls whether or not daily automatic scanning of standard web
+# directories is performed via cron.
+# [0 = disabled, 1 = enabled]
+cron_daily_scan="1"
 
 # When defined, the import_config_url option allows a configuration file to be
 # downloaded from a remote URL. The local conf.maldet and internals.conf are
@@ -127,7 +170,7 @@ scan_tmpdir_paths="/tmp /var/tmp /dev/shm"
 # Allows non-root users to perform scans. This must be enabled when
 # using mod_security2 upload scanning or if you want to allow users
 # to perform scans. When enabled, this will populate 'pub/' with user
-# owned quarantine, session and temporary paths to faciliate scans.
+# owned quarantine, session and temporary paths to facilitate scans.
 # [ 0 = disabled, 1 = enabled, disabled by default ]
 scan_user_access="$scan_user_access"
 
@@ -201,13 +244,29 @@ quarantine_suspend_user="$quarantine_suspend_user"
 # [ default = 500 ]
 quarantine_suspend_user_minuid="$quarantine_suspend_user_minuid"
 
+# When using an external scan engine, such as ClamAV, should files be
+# quarantined if an error from the scanner engine is received?
+# This is defaulted to 1, always quarantine, as ClamAV generates an
+# error exit code for trivial errors such as file not found. As such, a
+# large percentage of scans will have ClamAV exiting with error code 2.
+# [ 0 = do not quarantine, 1 = always quarantine ]
+quarantine_on_error="$quarantine_on_error"
+
 ##
 # [ MONITORING OPTIONS ]
 ##
 # The default startup option for monitor mode, either 'users' or path to line
-# spaced file containing local paths to monitor. This option is used for the
-# init based startup script. This value is ignored when '/etc/sysconfig/maldet'
-# or '/etc/default/maldet' is present with a defined value for $MONITOR_MODE.
+# spaced file containing local paths to monitor.
+#
+# This option is optional for the init based startup script, maldet.sh. This
+# value is ignored when '/etc/sysconfig/maldet' or '/etc/default/maldet' is
+# present with a defined value for $MONITOR_MODE.
+#
+# This option is REQUIRED for the systemd maldet.service script. That script
+# only checks for the value of $default_monitor_mode. The service will fail to
+# start if a value is not provided.
+# default_monitor_mode="users"
+# default_monitor_mode="/usr/local/maldetect/monitor_paths"
 default_monitor_mode="$default_monitor_mode"
 
 # The base number of files that can be watched under a path
@@ -249,6 +308,34 @@ inotify_cpulimit="$inotify_cpulimit"
 # Log every file scanned by inotify monitoring mode; this is not recommended
 # and will drown out your 'event_log' file, intended only for debugging purposes.
 inotify_verbose="0"
+
+# Remote clamd support
+# If you're running a dedicated clamd server, you can instruct clamdscan to use
+# it instead of the local daemon (which doesn't even need to run). To use
+# this you need to create a 'clamd.remote.conf' with:
+#
+# TCPSocket 3310
+# TCPAddr clamd.example.com
+#
+#
+# Enable connecting to a remote clamd service to conduct all file scanning
+# offload from local system. This requires that clamdscan binary be available
+# to the local system.
+#
+# Files being scanned are effectively piped to remote daemon, this can be very
+# bandwidth intensive.
+# [ 0 = disabled, 1 = enabled ]
+scan_clamd_remote="$scan_clamd_remote"
+
+# To instruct maldetect to use that config, enter the path to that file:
+remote_clamd_config="$remote_clamd_config"
+
+# If remote clamd doesn't respond properly, how many times should we retry
+# the same file
+remote_clamd_max_retry="$remote_clamd_max_retry"
+
+# How many seconds to sleep between retrys
+remote_clamd_retry_sleep="$remote_clamd_retry_sleep"
 
 ##
 # [ STATISTICAL ANALYSIS ]
