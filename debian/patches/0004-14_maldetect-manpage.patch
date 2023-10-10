@@ -9,7 +9,7 @@
  e.g: maldet \fB\-\-monitor\fR \fI\,/home/mike\/\fP,/home/ashton
  .HP
  \fB\-k\fR, \fB\-\-kill\-monitor\fR
-@@ -191,7 +191,7 @@
+@@ -197,7 +197,7 @@
  .IP
  Restore file from quarantine queue to orginal path or restore all items from
  a specific SCANID
