@@ -8,7 +8,7 @@ Subject: 15_maldetect-no-autoupdate
 
 --- a/files/internals/functions
 +++ b/files/internals/functions
-@@ -375,7 +375,7 @@
+@@ -438,7 +438,7 @@
        [-f|--file-list PATH] [-i|--include-regex] [-x|--exclude-regex]
        [-b|--background] [-m|--monitor] [-k|--kill-monitor] [-c|--checkout]
        [-q|--quarantine] [-s|--restore] [-n|--clean] [-l|--log] [-e|--report]
@@ -17,7 +17,7 @@ Subject: 15_maldetect-no-autoupdate
  EOF
  }
  
-@@ -390,9 +390,6 @@
+@@ -453,9 +453,6 @@
      -u, --update-sigs [--force]
         Update malware detection signatures from rfxn.com
  
@@ -27,7 +27,7 @@ Subject: 15_maldetect-no-autoupdate
      -f, --file-list
         Scan files or paths defined in line spaced file
         e.g: maldet -f /root/scan_file_list
-@@ -1846,104 +1843,6 @@
+@@ -2149,111 +2146,6 @@
  	fi
  }
  
@@ -36,6 +36,12 @@ Subject: 15_maldetect-no-autoupdate
 -	tmpwd="$tmpdir/.lmdup.$RANDOM.$$"
 -	upstreamver="$tmpwd/.lmdup_vercheck.$$"
 -	mkdir -p $tmpwd ; chmod 700 $tmpwd
+-
+-	if [ "$lmdup_beta" ]; then
+-		lmd_hash_url="${lmd_hash_url}.beta"
+-		lmd_version_url="${lmd_version_url}.beta"
+-		lmd_current_tgzfile="maldetect-beta.tar.gz"
+-	fi
 -	
 -	eout "{update} checking for available updates..." 1
 -        get_remote_file "$lmd_version_url" "update" "1"
@@ -111,7 +117,8 @@ Subject: 15_maldetect-no-autoupdate
 -		fi
 -		if [ -s "$tmpwd/${lmd_current_tgzfile}" ]; then
 -			tar xfz ${lmd_current_tgzfile}
--			cd maldetect-*
+-			rm -f ${lmd_current_tgzfile} ${lmd_current_tgzfile}.md5
+-			cd maldetect-${upstreamver_readable}
 -			chmod 750 install.sh
 -			sh -c './install.sh' >> /dev/null 2>&1
 -			cp -f $inspath.last/sigs/custom.* $sigdir/ 2> /dev/null
