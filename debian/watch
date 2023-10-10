@@ -1,5 +1,6 @@
-# Compulsory line, this is a version 3 file
-version=3
-
-opts=filenamemangle=s/.+\/v?(\d\S*)\.tar\.gz/linux-malware-detect-$1\.tar\.gz/,uversionmangle=s/(\d)[_\.\-\+]?((RC|rc|pre|dev|beta|alpha)\d*)$/$1-$2/ \
-  https://github.com/rfxn/linux-malware-detect/releases .*/v?(\d\S*)\.tar\.gz
+# Compulsory line, this is a version 4 file
+version=4
+opts="searchmode=plain,\
+filenamemangle=s%v?@ANY_VERSION@%@PACKAGE@-$1.tar.xz%" \
+https://api.github.com/repos/rfxn/linux-malware-detect/releases?per_page=50 \
+https://api.github.com/repos/[^/]+/[^/]+/tarball/v?@ANY_VERSION@
