@@ -23,7 +23,7 @@ Subject: 12_maldetect-cron.daily-documentroots
                  $inspath/maldet -b -r ${conf_hosting_path:-/var/www/sites}/?/?/subdomains/?/html/ $scan_days >> /dev/null 2>&1
  	else
  		# cpanel, interworx and other standard home/user/public_html setups
--	        $inspath/maldet -b -r /home?/?/public_html/,/var/www/html/,/usr/local/apache/htdocs/ $scan_days >> /dev/null 2>&1
+-	        $inspath/maldet -b -r /home?/?/public_html/,/var/www/,/usr/local/apache/htdocs/ $scan_days >> /dev/null 2>&1
 +	        $inspath/maldet -b -r /home?/?/public_html/,/var/www/html/,${STDDOCROOT} $scan_days >> /dev/null 2>&1
  	fi
  fi
