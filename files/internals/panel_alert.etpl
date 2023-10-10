@@ -1,23 +1,14 @@
 if [ -z "$type" ]; then
 	type=scan
 fi
-cat > $tmpf <<EOF
+cat >> $tmpf <<EOF
 HOST:      $HOSTNAME
 SCAN ID:   $scanid
 STARTED:   $scan_start_hr
-EOF
-if [ ! "$type" == "digest" ]; then
-cat >> $tmpf <<EOF
 COMPLETED: $scan_end_hr
 ELAPSED:   ${scan_et}s [find: ${file_list_et}s]
 
 EOF
-else
-cat >> $tmpf <<EOF
-MODE:      inotify digest
-ELAPSED:   $inotify_run_time
-EOF
-fi
 if [ "$spath" ]; then
 	echo "PATH:          $hrspath" >> $tmpf
 fi
@@ -25,21 +16,22 @@ if [ "$days" ] && [ ! "$days" == "all" ]; then
 	echo "RANGE:         $days days" >> $tmpf
 fi
 cat >> $tmpf <<EOF
-TOTAL FILES:   $tot_files
-TOTAL HITS:    $tot_hits
-TOTAL CLEANED: $tot_cl
+TOTAL HITS:    $user_tot_hits
+TOTAL CLEANED: $user_tot_cl
 
 EOF
 if [ "$quarantine_hits" == "0" ] && [ ! "$tot_hits" == "0" ]; then
  echo "WARNING: Automatic quarantine is currently disabled, detected threats are still accessible to users!" >> $tmpf
  echo "To enable, set quarantine_hits=1 and/or to quarantine hits from this scan run:" >> $tmpf
  echo -e "/usr/local/sbin/maldet -q $datestamp.$$\n" >> $tmpf
+elif [ "$quarantine_hits" == "1" ]; then
+ echo "NOTICE: Automatic quarantine is enabled, and all detected threats have been quarantined." >> $tmpf
+ echo "All quarantined files have been moved to $quardir, and their metadata have been preserved." >> $tmpf
+ echo "Please see below for details on which files have been moved to quarantine." >> $tmpf
 fi
 if [ "$quarantine_clean" == "1" ]; then
   if [ "$type" == "scan" ] && [ -f "$sessdir/clean.$$" ] && [ ! -z "$(cat $sessdir/clean.$$)" ]; then
 	cleaned_list="$sessdir/clean.$$"
-  elif [ "$type" == "digest" ] && [ -f "$tmpdir/.digest.clean.hits" ] && [ ! "$tot_cl" == "0" ]; then
-	cleaned_list="$tmpdir/.digest.clean.hits"
   fi
   if [ -f "$cleaned_list" ]; then
 cat >> $tmpf <<EOF
@@ -51,8 +43,6 @@ EOF
  if [ "$quarantine_suspend_user" == "1" ]; then
   if [ -f "$sessdir/suspend.users.$$" ] && [ ! -z "$(cat $sessdir/suspend.users.$$)" ]; then
 	suspended_list="$sessdir/suspend.users.$$"
-  elif [ "$type" == "digest" ] && [ -f "$tmpdir/.digest.susp.hits" ] && [ ! "$tot_susp" == "0" ]; then
-	suspended_list="$tmpdir/.digest.susp.hits"
   fi
   if [ -f "$suspended_list" ]; then
 cat >> $tmpf <<EOF
@@ -64,12 +54,8 @@ EOF
  fi
 fi
 
-if [ ! "$tot_hits" == "0" ]; then
- if [ "$type" == "digest" ]; then
-	hitlist_file="$tmpdir/.digest.alert.hits"
- else
-	hitlist_file="$scan_session"
- fi
+if [ ! "$user_tot_hits" == "0" ]; then
+ hitlist_file="$tmpdir/.${sys_user}.hits"
  if [ -f "$hitlist_file" ]; then
  	echo "FILE HIT LIST:" >> $tmpf
         if [ "$coltest" ]; then

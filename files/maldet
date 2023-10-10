@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 #
 ##
-# Linux Malware Detect v1.6.2
-#             (C) 2002-2017, R-fx Networks <proj@rfxn.com>
-#             (C) 2017, Ryan MacDonald <ryan@rfxn.com>
+# Linux Malware Detect v1.6.5
+#             (C) 2002-2023, R-fx Networks <proj@rfxn.com>
+#             (C) 2023, Ryan MacDonald <ryan@rfxn.com>
 # This program may be freely redistributed under the terms of the GNU GPL v2
 ##
 #
 PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
-ver=1.6.2
+ver=1.6.5
 inspath='/usr/local/maldetect'
 intcnf="$inspath/internals/internals.conf"
 if [ -f "/etc/sysconfig/maldet" ]; then
@@ -19,8 +19,8 @@ fi
 
 header() {
 	echo "Linux Malware Detect v$ver"
-	echo "            (C) 2002-2017, R-fx Networks <proj@rfxn.com>"
-	echo "            (C) 2017, Ryan MacDonald <ryan@rfxn.com>"
+	echo "            (C) 2002-2023, R-fx Networks <proj@rfxn.com>"
+	echo "            (C) 2023, Ryan MacDonald <ryan@rfxn.com>"
 	echo "This program may be freely redistributed under the terms of the GNU GPL v2"
 	echo ""
 }
@@ -114,9 +114,12 @@ else
 				tmpco=$tmpdir/config.cli
 				rm -f $tmpco
 				touch $tmpco
-				echo $1 | sed -e 's/--config-option //' -e 's/-co //' | tr -d ' ' | tr ',' '\n' > $tmpco
+				echo ,$1 | sed -e 's/-\(-config-option\|co\) //' -e 's/\(, *[a-zA-Z0-9_][a-zA-Z0-9_]*=\)/\n\1\n/g' | sed -e '1d' -e 's/^\([^,].*\|.*[^=]\)$/"\1"/' | sed -e '$!N;s/\n//' -e 's/^, *//' | grep -v "^ *compatcnf" > $tmpco
 				. $tmpco
 				rm -f $tmpco
+				if [ -f "$compatcnf" ]; then
+					source $compatcnf
+				fi
 			;;
 			-qd)
 				shift
@@ -162,6 +165,8 @@ else
 				elif [ "$1" == "reload" ] || [ "$1" == "RELOAD" ]; then
 					eout "{mon} queued monitor for configuration reload" 1
 					touch $inspath/reload_monitor
+				elif [ ! -f "$(which ed 2> /dev/null)" ]; then
+					eout "{mon} could not find monitor mode dependency 'ed' in PATH, please apt/yum/dnf install ed and try again." 1
 				else
 					svc=m
 					trap trap_exit 2
@@ -215,6 +220,7 @@ else
 				hrspath="$1"
 				if [ "$spath" == "" ]; then
 					spath=/home
+					hrspath="$spath"
 				fi
 				if [ "$set_background" == "1" ]; then
 					eout "{scan} launching scan of $spath to background, see $maldet_log for progress" 1
@@ -254,6 +260,11 @@ else
 				shift
 				view_report "$1" "$2"
 			;;
+			-E|--dump-report)
+				header
+				shift
+				dump_report "$1"
+			;;
 			-p|--purge)
 				header
 				purge
@@ -265,7 +276,9 @@ else
 				fi
 				if [ "$1" == "--force" ]; then
 					lmdup_force=1
-                                fi
+                                elif [ "$1" == "--beta" ]; then
+					lmdup_beta=1
+				fi
                                 lmdup
                         ;;
                         -u|--update|--update-sigs)
