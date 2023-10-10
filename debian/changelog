@@ -1,8 +1,20 @@
-maldetect (1.6.2-2) UNRELEASED; urgency=medium
+maldetect (1.6.5-1) UNRELEASED; urgency=medium
 
+  [ Jan Wagner ]
   * 
+  * [c8b445c] travis-ci: Use xenial image
+  * [1b57987] Adding CI
+  * [8f845ee] d/control: Raise compat level to 12
+  * [7f6d316] d/control: Bump Standards-Version to 4.5.1, no changes needed
+  * [7b159ea] d/source/options: Adding .github to diff ignore
+  * [0983c4d] Adding Dependabot config
+  * [8c34349] Do not remove .git* anymore
+  * [dd946d0] ci: pin action versions
+  * [84dfd28] Updating build pipelines
+  * [14c0cb3] Fixing d/watch
+  * [1e05a05] New upstream version 1.6.5
 
- -- Jan Wagner <waja@cyconet.org>  Wed, 19 Jul 2017 13:16:23 +0200
+ -- Jan Wagner <waja@cyconet.org>  Tue, 10 Oct 2023 11:00:47 +0000
 
 maldetect (1.6.2-1) unstable; urgency=medium
 
