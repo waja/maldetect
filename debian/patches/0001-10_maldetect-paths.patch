@@ -23,9 +23,9 @@
 +cat > /etc/maldetect/maldetect.conf <<EOF
  #
  ##
- # Linux Malware Detect v1.6.2.1
-@@ -56,7 +56,7 @@
- cron_prune_days="$cron_prune_days"
+ # Linux Malware Detect v1.6.5
+@@ -99,7 +99,7 @@
+ cron_daily_scan="1"
  
  # When defined, the import_config_url option allows a configuration file to be
 -# downloaded from a remote URL. The local conf.maldet and internals.conf are
@@ -33,7 +33,7 @@
  # parsed followed by the imported configuration file. As such, only variables
  # defined in the imported configuration file are overridden and a full set of
  # configuration options is not explicitly required in the imported file.
-@@ -175,7 +175,7 @@
+@@ -218,7 +218,7 @@
  # user files. This 'find' operation can be especially resource intensive and it may
  # be desirable to persist the file list results so that other applications/tasks
  # may make use of the results. When scan_export_filelist is set enabled, the most
@@ -42,12 +42,12 @@
  # [ 0 = disabled, 1 = enabled ]
  scan_export_filelist="$scan_export_filelist"
  
-@@ -207,7 +207,7 @@
- # The default startup option for monitor mode, either 'users' or path to line
- # spaced file containing local paths to monitor. This option is used for the
- # init based startup script. This value is ignored when '/etc/sysconfig/maldet'
--# or '/etc/default/maldet' is present with a defined value for $MONITOR_MODE.
-+# or '/etc/default/maldetect' is present with a defined value for $MONITOR_MODE.
+@@ -266,7 +266,7 @@
+ # only checks for the value of $default_monitor_mode. The service will fail to
+ # start if a value is not provided.
+ # default_monitor_mode="users"
+-# default_monitor_mode="/usr/local/maldetect/monitor_paths"
++# default_monitor_mode="/etc/maldetect/monitor_paths"
  default_monitor_mode="$default_monitor_mode"
  
  # The base number of files that can be watched under a path
@@ -61,11 +61,11 @@
 +The configuration of LMD is handled through /etc/maldetect/maldetect.conf
  and all options are well commented for ease of configuration.
  
- By default LMD has the auto-qurantine of files disabled, this will mean that
+ By default LMD has the auto-quarantine of files disabled, this will mean that
  YOU WILL NEED TO ACT on any threats detected or pass the SCANID to the '-q'
- option to batch quarantine the results. To change this please set quar_hits=1
--in conf.maldet.
-+in maldetect.conf.
+ option to batch quarantine the results. To change this please set
+-quarantine_hits=1 in conf.maldet.
++quarantine_hits=1 in maldetect.conf.
  
  .: 8 [ IGNORE OPTIONS ]
  
@@ -73,7 +73,7 @@
  
 -/usr/local/maldetect/ignore_paths
 +/etc/maldetect/ignore_paths
- A line spaced file for paths that are to be execluded from search results
+ A line spaced file for paths that are to be excluded from search results
   Sample ignore entry:
   /home/user/public_html/cgi-bin
  
@@ -95,7 +95,7 @@
  A line spaced file for regexp paths that are excluded from inotify monitoring
   Sample ignore entry:
   ^/home/user$
-@@ -279,7 +279,7 @@
+@@ -284,7 +284,7 @@
      -s, --restore FILE|SCANID
         Restore file from quarantine queue to orginal path or restore all items from
         a specific SCANID
@@ -104,16 +104,30 @@
         e.g: maldet --restore 050910-1534.21135
  
      -q, --quarantine SCANID
-@@ -297,7 +297,7 @@
+@@ -302,7 +302,7 @@
         e.g: maldet --user nobody --restore 050910-1534.21135
  
      -co, --config-option VAR1=VALUE,VAR2=VALUE,VAR3=VALUE
 -       Set or redefine the value of conf.maldet config options
 +       Set or redefine the value of maldetect.conf config options
-        e.g: maldet --config-option email_addr=you@domain.com,quar_hits=1
+        e.g: maldet --config-option email_addr=you@domain.com,quarantine_hits=1
  
      -p, --purge
-@@ -353,7 +353,7 @@
+@@ -321,10 +321,10 @@
+ daily report will be issued for all monitoring events. 
+ 
+ If you need to scan additional paths, you should review the cronjob and use one
+-of the customization hook files, such as '/usr/local/maldetect/cron/custom.cron',
++of the customization hook files, such as '/etc/maldetect/custom.cron.sh',
+ to write in custom scanning execution. For configuration based cron changes, you
+-can redefine any conf.maldet variables at '/etc/sysconfig/maldet' or 
+-'/usr/local/maldetect/cron/conf.maldet.cron'.
++can redefine any maldetect.conf variables at '/etc/sysconfig/maldet' or 
++'/etc/maldetect/maldetect.conf.cron'.
+ 
+ .: 11 [ INOTIFY MONITORING ]
+ 
+@@ -358,7 +358,7 @@
  The scanner component of the monitor watches for notifications from the inotify
  process and batches items to be scanned, by default, every 30 seconds. If you
  need tighter control of the scanning timer, you can edit inotify_stime in
@@ -122,33 +136,51 @@
  
  The alerting of file hits under monitor mode is handled through a daily report
  instead of sending an email on every hit. The cron.daily job installed by LMD
-@@ -386,7 +386,7 @@
+@@ -377,7 +377,7 @@
+ This feature allows for a validation script to be used in permitting or denying an upload. 
+ 
+ The convenience script to facilitate this is called hookscan.sh and is located in the
+-/usr/local/maldetect installation path. The default setup is to run a standard maldet scan
++/usr/lib/maldetect installation path. The default setup is to run a standard maldet scan
+ with no clamav support, no cleaner rule executions and quarantining enabled; these options
+ are set in the interest of performance vs accuracy which is a fair tradeoff. 
+ 
+@@ -391,7 +391,7 @@
  3sec on average while the LMD scanner engine takes 0.5sec or less.
  
- To enable upload scanning with mod_security2 you must set enable the public_scan option
--in conf.maldet (public_scan=1) then add the following rules to your mod_security2 
-+in maldetect.conf (public_scan=1) then add the following rules to your mod_security2 
+ To enable upload scanning with mod_security2 you must set enable the scan_user_access option
+-in conf.maldet (scan_user_access=1) then add the following rules to your mod_security2 
++in maldetect.conf (scan_user_access=1) then add the following rules to your mod_security2 
  configuration. These rules are best placed in your modsec2.user.conf file on cpanel servers
- or at the top of the appropraite rules file for your setup.
+ or at the top of the appropriate rules file for your setup.
  
-@@ -430,13 +430,13 @@
+@@ -412,7 +412,7 @@
+ 
+ The log entry will appear similar to the following:
+ Message: Access denied with code 406 (phase 2). File "/tmp/20121120-....-file" rejected by
+-the approver script "/usr/local/maldetect/hookscan.sh": 0 maldet: {HEX}php.cmdshell.r57.317
++the approver script "/usr/lib/maldetect/hookscan.sh": 0 maldet: {HEX}php.cmdshell.r57.317
+ /tmp/20121120-....-file [file "/usr/local/apache/conf/modsec2.user.conf"] [line "3"]
+ [severity "CRITICAL"]
+ 
+@@ -435,13 +435,13 @@
  path world writable (777) or populate the pub path with user owned paths. It was undesirable
  to set any path world writable and as such a feature to populate path data was created. This
  feature is controlled with the --mkpubpaths flag and is executed from cron every 10 minutes,
--it will only execute if the public_scan variable is enabled in conf.maldet. As such, it is
--important to make sure the public_scan variable is set to enabled (1) in conf.maldet and it is
-+it will only execute if the public_scan variable is enabled in maldetect.conf. As such, it is
-+important to make sure the public_scan variable is set to enabled (1) in maldetect.conf and it is
+-it will only execute if the scan_user_access variable is enabled in conf.maldet. As such, it is
+-important to make sure the scan_user_access variable is set to enabled (1) in conf.maldet and it is
++it will only execute if the scan_user_access variable is enabled in maldetect.conf. As such, it is
++important to make sure the scan_user_access variable is set to enabled (1) in maldetect.conf and it is
  advised to run 'maldet --mkpubpaths' manually to prepopulate the user paths. There after, the
  cron will ensure new users have paths created no later than 10 minutes after creation.
  
  All non-root scans, such as those performed under mod_security2, will be stored under the
 -/usr/local/maldetect/pub/username directory tree. The quarantine paths are relative to the user
 +/var/lib/maldetect/pub/username directory tree. The quarantine paths are relative to the user
- that exectues the scan, so user nobody would be under pub/nobody/quar/. The actual paths
+ that executes the scan, so user nobody would be under pub/nobody/quar/. The actual paths
  for where files are quarantined and the user which executed the scan, can be verified in the
  e-mail reports for upload hits.
-@@ -444,7 +444,7 @@
+@@ -449,7 +449,7 @@
  To restore files quarantined under non-root users, you must pass the -U|--user option to LMD,
  for example if user nobody quarantined a file you would like to restore, it can be restored as
  follows:
@@ -176,8 +208,8 @@
  	source $intcnf
 --- a/files/conf.maldet
 +++ b/files/conf.maldet
-@@ -54,7 +54,7 @@
- cron_prune_days="21"
+@@ -97,7 +97,7 @@
+ cron_daily_scan="1"
  
  # When defined, the import_config_url option allows a configuration file to be
 -# downloaded from a remote URL. The local conf.maldet and internals.conf are
@@ -185,7 +217,7 @@
  # parsed followed by the imported configuration file. As such, only variables
  # defined in the imported configuration file are overridden and a full set of
  # configuration options is not explicitly required in the imported file.
-@@ -173,7 +173,7 @@
+@@ -216,7 +216,7 @@
  # user files. This 'find' operation can be especially resource intensive and it may
  # be desirable to persist the file list results so that other applications/tasks
  # may make use of the results. When scan_export_filelist is set enabled, the most
@@ -194,13 +226,18 @@
  # [ 0 = disabled, 1 = enabled ]
  scan_export_filelist="0"
  
-@@ -205,9 +205,9 @@
- # The default startup option for monitor mode, either 'users' or path to line
- # spaced file containing local paths to monitor. This option is used for the
- # init based startup script. This value is ignored when '/etc/sysconfig/maldet'
--# or '/etc/default/maldet' is present with a defined value for $MONITOR_MODE.
-+# or '/etc/default/maldetect' is present with a defined value for $MONITOR_MODE.
- # default_monitor_mode="users"
+@@ -257,14 +257,14 @@
+ # spaced file containing local paths to monitor.
+ #
+ # This option is optional for the init based startup script, maldet.sh. This
+-# value is ignored when '/etc/sysconfig/maldet' or '/etc/default/maldet' is
++# value is ignored when '/etc/sysconfig/maldet' or '/etc/default/maldetect' is
+ # present with a defined value for $MONITOR_MODE.
+ #
+ # This option is REQUIRED for the systemd maldet.service script. That script
+ # only checks for the value of $default_monitor_mode. The service will fail to
+ # start if a value is not provided.
+ default_monitor_mode="users"
 -# default_monitor_mode="/usr/local/maldetect/monitor_paths"
 +# default_monitor_mode="/etc/maldetect/monitor_paths"
  
@@ -218,17 +255,6 @@
  if [ -f "$intcnf" ]; then
  	source $intcnf
  fi
---- a/files/internals/functions
-+++ b/files/internals/functions
-@@ -423,7 +423,7 @@
-        If FILE is specified, paths will be extracted from file, line spaced
-        If PATHS are specified, must be comma spaced list, NO WILDCARDS!
-        e.g: maldet --monitor users
--       e.g: maldet --monitor /root/monitor_paths
-+       e.g: maldet --monitor /etc/maldetect/monitor_paths
-        e.g: maldet --monitor /home/mike,/home/ashton
- 
-     -k, --kill-monitor
 --- a/files/internals/hexfifo.pl
 +++ b/files/internals/hexfifo.pl
 @@ -15,7 +15,7 @@
@@ -242,7 +268,7 @@
  if (-p $named_pipe_name) {
 --- a/files/internals/internals.conf
 +++ b/files/internals/internals.conf
-@@ -6,18 +6,18 @@
+@@ -6,20 +6,20 @@
  ##
  #
  
@@ -250,7 +276,7 @@
 -intcnf="$inspath/internals/internals.conf"
 -libpath="$inspath/internals"
 +inspath=/usr/bin
-+intcnf="$/etc/maldetect/internals.conf"
++intcnf="/etc/maldetect/internals.conf"
 +libpath="/usr/lib/maldetect"
  intfunc="$libpath/functions"
  
@@ -263,14 +289,16 @@
  cnf="$confpath/$cnffile"
 -varlibpath="$inspath"
 -maldet_log="$logdir/event_log"
--clamscan_log="$logdir/clamscan_log"
 +varlibpath="/var/lib/maldetect"
-+maldet_log="$logdir/maldetect_event.log"
-+clamscan_log="$logdir/maldetect_clamscan.log"
++maldet_log="$logdir/maldetect_event_log"
+ maldet_log_truncate="1"
+ 
+-clamscan_log="$logdir/clamscan_log"
++clamscan_log="$logdir/maldetect_clamscan_log"
  datestamp=`date +"%y%m%d-%H%M"`
  utime=`date +"%s"`
  user=`whoami`
-@@ -63,7 +63,7 @@
+@@ -66,7 +66,7 @@
  sessdir="$varlibpath/sess"
  sigdir="$varlibpath/sigs"
  cldir="$varlibpath/clean"
@@ -279,24 +307,25 @@
  userbasedir="$varlibpath/pub"
  hits_history="$sessdir/hits.hist"
  quar_history="$sessdir/quarantine.hist"
-@@ -108,20 +108,20 @@
- remote_uri_timeout="10"
- remote_uri_retries="3"
+@@ -113,12 +113,12 @@
+ remote_uri_timeout="30"
+ remote_uri_retries="4"
  clamav_paths="/usr/local/cpanel/3rdparty/share/clamav/ /var/lib/clamav/ /var/clamav/ /usr/share/clamav/ /usr/local/share/clamav"
 -tlog="$libpath/tlog"
 +tlog="$libpath/inotify/tlog"
  inotify=`which inotifywait 2> /dev/null`
 -inotify_log="$inspath/logs/inotify_log"
-+inotify_log="$varlibpath/inotify/inotify_log"
++inotify_log="$varlibpath/logs/inotify_log"
  inotify_user_instances=128
- inotify_trim=150000
+ inotify_trim=131072
 -hex_fifo_path="$varlibpath/internals/hexfifo"
 +hex_fifo_path="$varlibpath/hexfifo"
  hex_fifo_script="$libpath/hexfifo.pl"
  hex_string_script="$libpath/hexstring.pl"
- scan_user_access_minuid=30
- find_opts="-regextype posix-egrep"
+ scan_user_access_minuid=100
+@@ -126,8 +126,8 @@
  email_template="$libpath/scan.etpl"
+ email_panel_alert_etpl="$libpath/panel_alert.etpl"
  email_subj="maldet alert from $(hostname)"
 -cron_custom_exec="$confpath/cron/custom.cron"
 -cron_custom_conf="$confpath/cron/conf.maldet.cron"
@@ -307,7 +336,7 @@
  if [ "$OSTYPE" == "FreeBSD" ]; then
 --- a/files/internals/scan.etpl
 +++ b/files/internals/scan.etpl
-@@ -28,7 +28,7 @@
+@@ -33,7 +33,7 @@
  if [ "$quarantine_hits" == "0" ] && [ ! "$tot_hits" == "0" ]; then
   echo "WARNING: Automatic quarantine is currently disabled, detected threats are still accessible to users!" >> $tmpf
   echo "To enable, set quarantine_hits=1 and/or to quarantine hits from this scan run:" >> $tmpf
@@ -332,7 +361,7 @@
 @@ -9,12 +9,11 @@
  #
  PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
- ver=1.6.2
+ ver=1.6.5
 -inspath='/usr/local/maldetect'
 -intcnf="$inspath/internals/internals.conf"
 +intcnf="/etc/maldetect/internals.conf"
@@ -347,13 +376,15 @@
  header() {
 --- a/files/service/maldet.service
 +++ b/files/service/maldet.service
-@@ -3,9 +3,9 @@
+@@ -3,10 +3,10 @@
  After=network.target
  
  [Service]
--ExecStart=/usr/local/maldetect/maldet --monitor /usr/local/maldetect/monitor_paths
+-EnvironmentFile=/usr/local/maldetect/conf.maldet
+-ExecStart=/usr/local/maldetect/maldet --monitor $default_monitor_mode
 -ExecStop=/usr/local/maldetect/maldet --kill-monitor
-+ExecStart=/usr/bin/maldet --monitor /etc/maldetect/monitor_paths
++EnvironmentFile=/etc/maldetect/maldetect.conf
++ExecStart=/usr/bin/maldet --monitor $default_monitor_mode
 +ExecStop=/usr/bin/maldet --kill-monitor
  Type=forking
 -PIDFile=/usr/local/maldetect/tmp/inotifywait.pid
@@ -409,3 +440,21 @@
 +# Any /etc/maldetect/maldetect.conf or /etc/maldetect/internals.conf variable
 +# can be redefined.
  ##
+--- a/files/ignore_paths
++++ b/files/ignore_paths
+@@ -1,2 +1,2 @@
+-/usr/local/maldetect
+-/usr/local/sbin/maldet
++/etc/maldetect
++/usr/bin/maldet
+--- a/files/internals/panel_alert.etpl
++++ b/files/internals/panel_alert.etpl
+@@ -23,7 +23,7 @@
+ if [ "$quarantine_hits" == "0" ] && [ ! "$tot_hits" == "0" ]; then
+  echo "WARNING: Automatic quarantine is currently disabled, detected threats are still accessible to users!" >> $tmpf
+  echo "To enable, set quarantine_hits=1 and/or to quarantine hits from this scan run:" >> $tmpf
+- echo -e "/usr/local/sbin/maldet -q $datestamp.$$\n" >> $tmpf
++ echo -e "/usr/bin/maldetect -q $datestamp.$$\n" >> $tmpf
+ elif [ "$quarantine_hits" == "1" ]; then
+  echo "NOTICE: Automatic quarantine is enabled, and all detected threats have been quarantined." >> $tmpf
+  echo "All quarantined files have been moved to $quardir, and their metadata have been preserved." >> $tmpf
