@@ -290,11 +290,11 @@
 -varlibpath="$inspath"
 -maldet_log="$logdir/event_log"
 +varlibpath="/var/lib/maldetect"
-+maldet_log="$logdir/maldetect_event_log"
++maldet_log="$logdir/maldetect_event.log"
  maldet_log_truncate="1"
  
 -clamscan_log="$logdir/clamscan_log"
-+clamscan_log="$logdir/maldetect_clamscan_log"
++clamscan_log="$logdir/maldetect_clamscan.log"
  datestamp=`date +"%y%m%d-%H%M"`
  utime=`date +"%s"`
  user=`whoami`
@@ -315,7 +315,7 @@
 +tlog="$libpath/inotify/tlog"
  inotify=`which inotifywait 2> /dev/null`
 -inotify_log="$inspath/logs/inotify_log"
-+inotify_log="$varlibpath/logs/inotify_log"
++inotify_log="$logdir/maldetect_inotify.log"
  inotify_user_instances=128
  inotify_trim=131072
 -hex_fifo_path="$varlibpath/internals/hexfifo"
