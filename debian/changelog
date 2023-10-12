@@ -1,3 +1,9 @@
+maldetect (1.6.5-2) unstable; urgency=medium
+
+  * [2006f13] d/p/0001-10_maldetect-paths.patch: Fix logfile locations
+
+ -- Jan Wagner <waja@cyconet.org>  Thu, 12 Oct 2023 15:21:49 +0000
+
 maldetect (1.6.5-1) unstable; urgency=medium
 
   * [c8b445c] travis-ci: Use xenial image
