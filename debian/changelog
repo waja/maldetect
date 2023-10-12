@@ -1,3 +1,9 @@
+maldetect (1.6.5-3) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Jan Wagner <waja@cyconet.org>  Thu, 12 Oct 2023 17:23:36 +0200
+
 maldetect (1.6.5-2) unstable; urgency=medium
 
   * [2006f13] d/p/0001-10_maldetect-paths.patch: Fix logfile locations
